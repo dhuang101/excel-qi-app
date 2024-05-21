@@ -7,6 +7,5 @@ const config: Config = {
 		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
 	plugins: [],
-	corePlugins: { preflight: false },
 }
 export default config
