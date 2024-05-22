@@ -7,6 +7,6 @@ const config: Config = {
 		"./src/app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
 	plugins: [require("daisyui")],
-	daisyui: { themes: ["aqua"] },
+	daisyui: { themes: ["light", "dark"] },
 }
 export default config
