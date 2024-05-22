@@ -20,19 +20,37 @@ function NavBar() {
 	}
 
 	return (
-		<div className="navbar h-[7%] max-h-[64px] bg-primary">
+		<div className="navbar h-[7%] max-h-[64px]">
 			<div className="flex-1">
 				<Link href={"/"}>
-					<div className="btn btn-ghost normal-case rounded-xl text-xl text-primary-content">
+					<article className="btn btn-ghost normal-case rounded-xl text-xl text-base-content">
 						NICE Data Project
-					</div>
+					</article>
 				</Link>
+				<div className="ml-36">
+					<Link href={"/excel"}>
+						<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+							EXCEL Registry
+						</article>
+					</Link>
+					<Link href={"/ecmo"}>
+						<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+							ECMO Outcomes
+						</article>
+					</Link>
+					<Link href={"/virtual-trial"}>
+						<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+							Virtual Trial
+						</article>
+					</Link>
+				</div>
 			</div>
+			<div></div>
 			<div className="btn btn-ghost rounded-xl" onClick={toggleTheme}>
 				{globalState.theme === "light" ? (
-					<LightModeIcon className="text-2xl text-primary-content" />
+					<LightModeIcon className="text-2xl text-base-content" />
 				) : (
-					<DarkModeIcon className="text-2xl text-primary-content" />
+					<DarkModeIcon className="text-2xl text-base-content" />
 				)}
 			</div>
 		</div>
