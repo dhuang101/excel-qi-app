@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
 			<StateLoader>
 				<div className="flex flex-col h-screen min-w-screen">
 					<NavBar />
-					<div className="flex flex-col h-[93%] overflow-auto w-full items-center bg-base-200">
+					<div className="flex flex-col h-[93%] overflow-auto w-full items-center">
 						<Component {...pageProps} />
 					</div>
 				</div>

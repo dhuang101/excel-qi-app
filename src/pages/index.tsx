@@ -1,5 +1,5 @@
 function Home() {
-	return <div className="flex h-full w-full"></div>
+	return <div className="bg-base-100"></div>
 }
 
 export default Home
