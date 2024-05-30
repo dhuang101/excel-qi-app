@@ -1,3 +1,4 @@
+import axios from "axios"
 import { useState } from "react"
 
 function EcmoPage() {
@@ -34,7 +35,9 @@ function EcmoPage() {
 	const [clicked, setClicked] = useState(true)
 
 	function handleClick() {
-		setClicked(!clicked)
+		axios.post("http://localhost:5000/evaluate", testVars).then((res) => {
+			console.log(res)
+		})
 	}
 
 	return (
