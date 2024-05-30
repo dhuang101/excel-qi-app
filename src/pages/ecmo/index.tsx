@@ -1,4 +1,5 @@
 import axios from "axios"
+import React from "react"
 import { useState } from "react"
 
 function EcmoPage() {
@@ -32,22 +33,44 @@ function EcmoPage() {
 		},
 	}
 
-	const [clicked, setClicked] = useState(true)
+	const [prediction, setPrediction] = useState({})
 
 	function handleClick() {
 		axios.post("http://localhost:5000/evaluate", testVars).then((res) => {
-			console.log(res)
+			console.log(res.data)
+			setPrediction(res.data)
 		})
 	}
 
 	return (
 		<div className="flex flex-col h-full w-full justify-center items-center">
-			<button className="btn" onClick={handleClick}>
-				click
-			</button>
-			<article hidden={clicked} className="text-9xl">
-				65%
-			</article>
+			<article>Bruno Wilfred</article>
+			{Object.keys(prediction).length > 0 ? (
+				<React.Fragment>
+					<article>
+						Survival to Discharge:{" "}
+						{(prediction.out_value * 100).toFixed(1)}%
+					</article>
+					<article>
+						Base Value: {(prediction.base_value * 100).toFixed(1)}%
+					</article>
+				</React.Fragment>
+			) : (
+				<React.Fragment>
+					{Object.entries(testVars.variables).map((obj) => {
+						return (
+							<div className="flex" key={obj[0]}>
+								<article>
+									{obj[0]}: {obj[1]}
+								</article>
+							</div>
+						)
+					})}
+					<button className="btn" onClick={handleClick}>
+						Run Prediction
+					</button>
+				</React.Fragment>
+			)}
 		</div>
 	)
 }
