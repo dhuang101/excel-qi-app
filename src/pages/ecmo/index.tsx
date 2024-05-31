@@ -2,6 +2,7 @@ import { testEcmo } from "@/test-data/ecmo"
 import axios from "axios"
 import React, { useEffect, useState } from "react"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
+import { CircularProgress } from "@mui/material"
 
 function EcmoPage() {
 	const testVars = testEcmo
@@ -164,7 +165,9 @@ function EcmoPage() {
 					</button>
 				</React.Fragment>
 			) : (
-				<div>LOADING...</div>
+				<div className="flex justify-center items-center h-[90%]">
+					<CircularProgress size={80} />
+				</div>
 			)}
 		</div>
 	)
