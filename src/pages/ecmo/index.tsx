@@ -46,7 +46,7 @@ function EcmoPage() {
 	return (
 		<div className="flex flex-col h-full w-full mt-8 items-center">
 			<article className="text-3xl font-semibold mb-4">
-				Bruno Wilfred
+				Phil Phillip
 			</article>
 			{prediction.base_value !== null && prediction.out_value !== null ? (
 				<React.Fragment>

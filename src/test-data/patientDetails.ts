@@ -1,0 +1,16 @@
+export const testDetails: any = {
+	id: "963548",
+	name: "Phil Phillip",
+	gender: "Male",
+	birthDate: "11/11/2011",
+	height: 170,
+	weight: 70,
+	phone: "+61400000000",
+	streetAddress: "",
+	suburb: "",
+	postcode: 3000,
+	admissionSite: "The Alfred",
+	doctorName: "Dr. Smith, A",
+	doctorPhone: "+61400000000",
+	doctorCode: 1758,
+}

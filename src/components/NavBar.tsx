@@ -28,7 +28,7 @@ function NavBar() {
 							NICE Data Project
 						</article>
 					</Link>
-					<div className="ml-36">
+					<div className="flex ml-36 gap-x-2">
 						<Link href={"/excel"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								EXCEL Registry

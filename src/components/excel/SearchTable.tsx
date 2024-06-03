@@ -1,15 +1,26 @@
+import { useRouter } from "next/router"
+
 interface Props {
 	// patientData is the object returned by the API
 	patientData: any
 }
 
 function SearchTable({ patientData }: Props) {
+	const router = useRouter()
+
+	function routeToSummary(resource: { id: string }) {
+		router.push(`/excel/` + resource.id)
+	}
+
 	function TableRows() {
 		return patientData.map((obj: any, i: number) => {
 			return (
 				<tr
 					key={i}
 					className="hover:text-accent-content hover:bg-accent cursor-pointer"
+					onClick={() => {
+						routeToSummary(obj)
+					}}
 				>
 					<td>{obj.id}</td>
 					<td>{obj.name}</td>
