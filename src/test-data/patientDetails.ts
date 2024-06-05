@@ -33,4 +33,7 @@ export const testDetails: any = {
 	firstAdmissionExcelSite: "The Alfred",
 	secondAdmissionDate: "03/02/2024 01:05",
 	secondAdmissionName: "The Alfred",
+	IcuAdmissionDate: "03/02/2024 01:35",
+	IcuAdmissionSource: "ICU, other hospital",
+	IcuAdmissionApache: "2501",
 }

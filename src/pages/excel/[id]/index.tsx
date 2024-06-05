@@ -150,6 +150,16 @@ function PatientSummary() {
 						<article className="text-xl font-semibold">
 							ICU Admission
 						</article>
+						<article>
+							ICU Admission Date: {testDetails.IcuAdmissionDate}
+						</article>
+						<article>
+							ICU Admission Source:{" "}
+							{testDetails.IcuAdmissionSource}
+						</article>
+						<article>
+							APACHE III-J Code: {testDetails.IcuAdmissionApache}
+						</article>
 					</div>
 				</div>
 			</div>
