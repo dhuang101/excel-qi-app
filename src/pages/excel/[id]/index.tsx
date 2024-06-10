@@ -31,14 +31,6 @@ function PatientSummary() {
 						<article>Postcode: {testDetails.postcode}</article>
 						<article>Site ID: {testDetails.siteId}</article>
 					</div>
-					<div className="flex flex-col w-1/3">
-						<article className="text-xl font-semibold">
-							Doctor Information
-						</article>
-						<article>Name: {testDetails.doctorName}</article>
-						<article>Code: {testDetails.doctorCode}</article>
-						<article>Phone: {testDetails.doctorPhone}</article>
-					</div>
 				</div>
 				<div className="flex flex-row mt-4 w-full">
 					<div className="flex flex-col w-1/3">
