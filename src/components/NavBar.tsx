@@ -29,19 +29,29 @@ function NavBar() {
 						</article>
 					</Link>
 					<div className="flex ml-36 gap-x-2">
-						<Link href={"/excel"}>
+						<Link href={"/search"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								EXCEL Registry
+								Registry Search
+							</article>
+						</Link>
+						<Link href={"/graphs"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								Visualisations
+							</article>
+						</Link>
+						<Link href={"/models"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								NLP Model
+							</article>
+						</Link>
+						<Link href={"/export"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								Data Export
 							</article>
 						</Link>
 						<Link href={"/ecmo"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								ECMO Outcomes
-							</article>
-						</Link>
-						<Link href={"/virtual-trial"}>
-							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								Virtual Trial
+								ECMO Prediction
 							</article>
 						</Link>
 					</div>

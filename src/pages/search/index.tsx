@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react"
 import SearchTable from "../../components/excel/SearchTable"
 import { testPatients } from "@/test-data/patients"
 
-function ExcelPage() {
+function SearchPage() {
 	const [searchOption, setSearchOption] = useState("name")
 	const [patientData, setPatientData] = useState(testPatients)
 
@@ -41,4 +41,4 @@ function ExcelPage() {
 	)
 }
 
-export default ExcelPage
+export default SearchPage
