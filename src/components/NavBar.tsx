@@ -49,7 +49,7 @@ function NavBar() {
 								Data Export
 							</article>
 						</Link>
-						<Link href={"/ecmo"}>
+						<Link href={"/ecmo-pal"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								ECMO Prediction
 							</article>

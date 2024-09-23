@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import { CircularProgress } from "@mui/material"
 
-function EcmoPage() {
+function EcmoPalPage() {
 	const testVars = testEcmo
 
 	const [modelDetails, setModelDetails]: any = useState({})
@@ -15,14 +15,11 @@ function EcmoPage() {
 	})
 
 	function handleClick() {
-		axios.post("http://localhost:5000/evaluate", testVars).then((res) => {
-			res.data.altering_features.sort(
-				(a: { value: number }, b: { value: number }) => {
-					return Math.abs(b.value) - Math.abs(a.value)
-				}
-			)
-			setPrediction(res.data)
-		})
+		axios
+			.post("/api/ecmo-pal/evaluate", { variables: testEcmo })
+			.then((result: any) => {
+				setPrediction(result.data)
+			})
 	}
 
 	function handleBack() {
@@ -173,4 +170,4 @@ function EcmoPage() {
 	)
 }
 
-export default EcmoPage
+export default EcmoPalPage
