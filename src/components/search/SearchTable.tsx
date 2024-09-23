@@ -22,10 +22,7 @@ function SearchTable({ patientData }: Props) {
 						routeToSummary(obj)
 					}}
 				>
-					<td>{obj.id}</td>
-					<td>{obj.name}</td>
-					<td>{obj.gender}</td>
-					<td>{obj.birthDate}</td>
+					<td>{obj.record_id}</td>
 				</tr>
 			)
 		})
@@ -36,10 +33,7 @@ function SearchTable({ patientData }: Props) {
 			<table className="table table-lg w-full">
 				<thead>
 					<tr>
-						<th className="bg-base-300">ID</th>
-						<th className="bg-base-300">Name</th>
-						<th className="bg-base-300">Gender</th>
-						<th className="bg-base-300">DoB</th>
+						<th className="bg-base-300">Record ID</th>
 					</tr>
 				</thead>
 				<tbody>
