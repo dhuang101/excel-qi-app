@@ -23,6 +23,7 @@ function SearchTable({ patientData }: Props) {
 					}}
 				>
 					<td>{obj.record_id}</td>
+					<td>{obj.sex}</td>
 					<td>{obj.hospadm_date_time}</td>
 				</tr>
 			)
@@ -35,6 +36,7 @@ function SearchTable({ patientData }: Props) {
 				<thead>
 					<tr>
 						<th className="bg-base-300">Record ID</th>
+						<th className="bg-base-300">Sex</th>
 						<th className="bg-base-300">Admission Time</th>
 					</tr>
 				</thead>
