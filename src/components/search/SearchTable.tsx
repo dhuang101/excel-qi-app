@@ -8,8 +8,8 @@ interface Props {
 function SearchTable({ patientData }: Props) {
 	const router = useRouter()
 
-	function routeToSummary(resource: { id: string }) {
-		router.push(`/excel/` + resource.id)
+	function routeToSummary(resource: { record_id: string }) {
+		router.push(`/search/` + resource.record_id)
 	}
 
 	function TableRows() {
