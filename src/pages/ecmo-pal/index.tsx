@@ -31,7 +31,7 @@ function EcmoPalPage() {
 	}
 
 	useEffect(() => {
-		axios.get("http://localhost:5000/models").then((res) => {
+		axios.get("/api/ecmo-pal/models").then((res) => {
 			setModelDetails(
 				res.data.filter((obj: { name: string }) => {
 					return obj.name === "Full"
