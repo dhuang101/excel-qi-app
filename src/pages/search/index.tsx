@@ -3,54 +3,77 @@ import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
 
 function SearchPage() {
-	const [searchInput, setSearchInput] = useState("")
-	const [patientData, setPatientData] = useState([])
-
-	// function that handles input in the search box
-	function handleInput(event: ChangeEvent<HTMLInputElement>) {
-		setSearchInput(event.target.value)
-	}
-	// searches on enter press
-	function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-		if (event.key === "Enter") {
-			handleSearch()
-		}
-	}
-
-	function handleSearch() {
-		axios
-			.get("/api/database/getPatients", {
-				params: {
-					searchInput: searchInput,
-				},
-			})
-			.then((result) => {
-				setPatientData(result.data)
-			})
-	}
-
 	return (
 		<div className="w-7/12 h-full">
 			<article className="my-4 text-3xl font-semibold">
-				EXCEL Registry
+				Cohort Construction
 			</article>
-			<div className="flex flex-row">
-				<input
-					type="text"
-					placeholder="Search By ID"
-					className="input input-bordered w-full max-w-sm"
-					onKeyDown={handleKeyDown}
-					onChange={handleInput}
-				/>
-				<button
-					onClick={handleSearch}
-					className="ml-2 btn rounded btn-primary"
-				>
-					Search
-				</button>
-			</div>
-			<div className="mt-2">
-				<SearchTable patientData={patientData} />
+			<div className="flex flex-col w-full">
+				<article className="my-4 text-xl">
+					Find patients with...
+				</article>
+				<label className="form-control w-full max-w-xs">
+					<div className="label">
+						<span className="label-text">
+							Respiratory Diagnosis
+						</span>
+					</div>
+					<select className="select select-bordered">
+						<option disabled selected>
+							(Optional)
+						</option>
+						<option>ARDS (risk factor)</option>
+						<option>Post lung transplant</option>
+						<option>Direct lung trauma</option>
+						<option>Pulmonary Vasculitis/Haemorrhage</option>
+						<option>Focal lung disease (Not ARDS)</option>
+						<option>Drug/Toxin pulmonary disease</option>
+						<option>Asthma</option>
+						<option>Chronic end stage lung disease</option>
+					</select>
+				</label>
+				<label className="form-control w-full max-w-xs">
+					<div className="label">
+						<span className="label-text">Cardiac Diagnosis</span>
+					</div>
+					<select className="select select-bordered">
+						<option disabled selected>
+							(Optional)
+						</option>
+						<option>Acute myocaridal infarction (AMI)</option>
+						<option>Myocarditis</option>
+						<option>Toxic</option>
+						<option>Septic shock with myocardial depression</option>
+						<option>Pulmonary embolism</option>
+						<option>Advanced pulmonary hypertension</option>
+						<option>Congential heart disease</option>
+						<option>Primary arrhythmia ("Channelopathy")</option>
+						<option>Chronic graft (heart) dysfunction</option>
+						<option>Chronic cardiomyopathy no covered above</option>
+						<option>
+							Acute decompensated heart not covered above
+						</option>
+						<option>Peri-operative support</option>
+					</select>
+				</label>
+				<label className="form-control w-full max-w-xs">
+					<div className="label">
+						<span className="label-text">
+							Hospital Discharge Location
+						</span>
+					</div>
+					<select className="select select-bordered">
+						<option disabled selected>
+							(Optional)
+						</option>
+						<option>Home</option>
+						<option>Transferred to another hospital</option>
+						<option>Transfer to LTAC or rehab</option>
+						<option>Transfer to hospice</option>
+						<option>Dead</option>
+						<option>Other</option>
+					</select>
+				</label>
 			</div>
 		</div>
 	)

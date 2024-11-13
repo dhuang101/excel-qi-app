@@ -10,7 +10,7 @@ async function GetPatients(params: any) {
 		// sort ascending
 		sort: { record_id: 1 },
 		// Include only the particular fields
-		projection: { _id: 0, record_id: 1, hospadm_date_time: 1, sex: 1 },
+		projection: { _id: 0, record_id: 1, hospadm_date_time: 1 },
 	} as FindOptions
 	// run find
 	const results = await collection.find(query, options).toArray()
