@@ -1,9 +1,47 @@
-import { ChangeEvent, KeyboardEvent, useState } from "react"
+import { useEffect, useState } from "react"
 import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
 import StyledDateTimePicker from "@/components/StyledDateTimePicker"
 
+interface searchQuery {
+	diagnosis_resp?: string
+	diagnosis_cardiac?: string
+	outcm_hosp_discharge_loc?: string
+}
+
 function SearchPage() {
+	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
+
+	// arrow function used to pipe input into event handler
+	const handleSelectChange =
+		(
+			area:
+				| "diagnosis_resp"
+				| "diagnosis_cardiac"
+				| "outcm_hosp_discharge_loc"
+		) =>
+		(event: React.ChangeEvent<HTMLSelectElement>) => {
+			setSearchQuery({
+				...searchQuery,
+				[area]: (event.target as HTMLSelectElement).value,
+			})
+		}
+
+	// event handler for search query
+	function handleSearch() {
+		axios
+			.get("/api/database/getPatients", {
+				params: searchQuery,
+			})
+			.then((result) => {
+				// console.log(result)
+			})
+	}
+
+	// useEffect(() => {
+	// 	console.log(searchQuery)
+	// }, [searchQuery])
+
 	return (
 		<div className="w-7/12 h-full">
 			<article className="my-4 text-3xl font-semibold">
@@ -20,7 +58,10 @@ function SearchPage() {
 								Respiratory Diagnosis
 							</span>
 						</div>
-						<select className="select select-bordered">
+						<select
+							className="select select-bordered"
+							onChange={handleSelectChange("diagnosis_resp")}
+						>
 							<option disabled selected>
 								(Optional)
 							</option>
@@ -41,7 +82,10 @@ function SearchPage() {
 								Cardiac Diagnosis
 							</span>
 						</div>
-						<select className="select select-bordered">
+						<select
+							className="select select-bordered"
+							onChange={handleSelectChange("diagnosis_cardiac")}
+						>
 							<option disabled selected>
 								(Optional)
 							</option>
@@ -74,7 +118,12 @@ function SearchPage() {
 								Hospital Discharge Location
 							</span>
 						</div>
-						<select className="select select-bordered">
+						<select
+							className="select select-bordered"
+							onChange={handleSelectChange(
+								"outcm_hosp_discharge_loc"
+							)}
+						>
 							<option disabled selected>
 								(Optional)
 							</option>
@@ -91,17 +140,20 @@ function SearchPage() {
 					<article className="mb-4 text-sm">
 						Hospital Admission Time
 					</article>
-					<div className="flex w-full">
-						<div className="w-1/4">
+					<div className="flex w-full ">
+						<div className="w-1/3">
 							<StyledDateTimePicker label="After" />
 						</div>
-						<div className="w-1/4">
+						<div className="w-1/12" />
+						<div className="w-1/3">
 							<StyledDateTimePicker label="Before" />
 						</div>
 					</div>
 				</div>
 			</div>
-
+			<button className="btn my-4" onClick={handleSearch}>
+				Button
+			</button>
 			{/* footer */}
 			<div className="h-16" />
 		</div>
