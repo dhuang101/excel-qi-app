@@ -2,6 +2,7 @@ import { ChangeEvent, KeyboardEvent, useState } from "react"
 import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
 import StyledDateTimePicker from "@/components/StyledDateTimePicker"
+
 function SearchPage() {
 	return (
 		<div className="w-7/12 h-full">
@@ -87,76 +88,17 @@ function SearchPage() {
 						</select>
 					</label>
 					<article className="my-4 text-xl">Narrow By...</article>
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<StyledDateTimePicker label="With Time Clock" />
+					<article className="mb-4 text-sm">
+						Hospital Admission Time
+					</article>
+					<div className="flex w-full">
+						<div className="w-1/4">
+							<StyledDateTimePicker label="After" />
 						</div>
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</label>
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<span className="label-text">
-								ICU Admission Date and Time
-							</span>
+						<div className="w-1/4">
+							<StyledDateTimePicker label="Before" />
 						</div>
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</label>
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<span className="label-text">
-								ECMO Start Date and Time
-							</span>
-						</div>
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</label>
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<span className="label-text">
-								Decannulation Date and Time
-							</span>
-						</div>
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</label>
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<span className="label-text">
-								ICU Discharge Date and Time
-							</span>
-						</div>
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</label>
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<span className="label-text">
-								Hospital Discharge Date and Time
-							</span>
-						</div>
-						<input
-							type="text"
-							placeholder="Type here"
-							className="input input-bordered w-full max-w-xs"
-						/>
-					</label>
+					</div>
 				</div>
 			</div>
 

@@ -140,7 +140,6 @@ function StyledDateTimePicker(props) {
 				}}
 				onChange={props.onChange}
 				openTo="year"
-				format="DD/MM/YYYY"
 				label={props.label}
 				sx={{
 					"& .MuiOutlinedInput-root": {

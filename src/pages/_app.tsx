@@ -8,7 +8,7 @@ import type { AppProps } from "next/app"
 
 export default function App({ Component, pageProps }: AppProps) {
 	return (
-		<LocalizationProvider dateAdapter={AdapterDayjs}>
+		<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
 			<GlobalStore>
 				<StateLoader>
 					<div className="flex flex-col h-screen min-w-screen">
