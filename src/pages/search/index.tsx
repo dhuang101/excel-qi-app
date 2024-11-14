@@ -1,7 +1,7 @@
 import { ChangeEvent, KeyboardEvent, useState } from "react"
 import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
-
+import StyledDateTimePicker from "@/components/StyledDateTimePicker"
 function SearchPage() {
 	return (
 		<div className="w-7/12 h-full">
@@ -89,9 +89,7 @@ function SearchPage() {
 					<article className="my-4 text-xl">Narrow By...</article>
 					<label className="form-control w-full max-w-xs">
 						<div className="label">
-							<span className="label-text">
-								Hospital Admission Date and Time
-							</span>
+							<StyledDateTimePicker label="With Time Clock" />
 						</div>
 						<input
 							type="text"
@@ -161,6 +159,9 @@ function SearchPage() {
 					</label>
 				</div>
 			</div>
+
+			{/* footer */}
+			<div className="h-16" />
 		</div>
 	)
 }
