@@ -22,7 +22,9 @@ function StateLoader({ children }: React.PropsWithChildren): JSX.Element {
 	return globalState.theme === null ? (
 		<div className="min-h-screen min-w-screen bg-slate-400" />
 	) : (
-		<div data-theme={globalState.theme}>{children}</div>
+		<div id="themeWrapper" data-theme={globalState.theme}>
+			{children}
+		</div>
 	)
 }
 

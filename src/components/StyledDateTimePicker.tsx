@@ -14,7 +14,19 @@ function StyledDateTimePicker(props) {
 					root: {
 						color: "oklch(var(--bc))",
 						"&:hover": {
-							color: "oklch(var(--s))",
+							borderRadius: "10px",
+							backgroundColor: "oklch(var(--b2))",
+							color: "oklch(var(--p))",
+						},
+					},
+				},
+			},
+			// clickable date at top
+			MuiPickersCalendarHeader: {
+				styleOverrides: {
+					labelContainer: {
+						"&:hover": {
+							color: "oklch(var(--p))",
 						},
 					},
 				},
@@ -25,7 +37,7 @@ function StyledDateTimePicker(props) {
 					root: {
 						color: "oklch(var(--bc))",
 						"&.Mui-focused": {
-							color: "oklch(var(--pf))",
+							color: "oklch(var(--n))",
 						},
 						"&.Mui-error": {
 							color: "oklch(var(--er))",
@@ -69,16 +81,16 @@ function StyledDateTimePicker(props) {
 							color: "oklch(var(--nc))",
 						},
 						"&.Mui-selected": {
-							backgroundColor: "oklch(var(--s))",
-							color: "oklch(var(--sc))",
+							backgroundColor: "oklch(var(--p))",
+							color: "oklch(var(--pc))",
 						},
 						"&.Mui-selected:hover": {
-							backgroundColor: "oklch(var(--sf))",
-							color: "oklch(var(--sc))",
+							backgroundColor: "oklch(var(--n))",
+							color: "oklch(var(--nc))",
 						},
 						"&.Mui-selected:focus": {
-							backgroundColor: "oklch(var(--s))",
-							color: "oklch(var(--sc))",
+							backgroundColor: "oklch(var(--p))",
+							color: "oklch(var(--pc))",
 						},
 					},
 				},
@@ -93,16 +105,16 @@ function StyledDateTimePicker(props) {
 							color: "oklch(var(--nc))",
 						},
 						"&.Mui-selected": {
-							backgroundColor: "oklch(var(--s))",
-							color: "oklch(var(--sc))",
+							backgroundColor: "oklch(var(--p))",
+							color: "oklch(var(--pc))",
 						},
 						"&.Mui-selected:hover": {
-							backgroundColor: "oklch(var(--sf))",
-							color: "oklch(var(--sc))",
+							backgroundColor: "oklch(var(--n))",
+							color: "oklch(var(--nc))",
 						},
 						"&.Mui-selected:focus": {
-							backgroundColor: "oklch(var(--s))",
-							color: "oklch(var(--sc))",
+							backgroundColor: "oklch(var(--p))",
+							color: "oklch(var(--pc))",
 						},
 						"&:not(.Mui-selected)": {
 							borderColor: "oklch(var(--nc))",
@@ -114,6 +126,21 @@ function StyledDateTimePicker(props) {
 			MuiDayCalendar: {
 				styleOverrides: {
 					weekDayLabel: { color: "oklch(var(--bc))" },
+				},
+			},
+			// time picker
+			MuiMultiSectionDigitalClockSection: {
+				styleOverrides: {
+					item: {
+						"&.Mui-selected": {
+							backgroundColor: "oklch(var(--p))",
+							color: "oklch(var(--pc))",
+						},
+						"&.Mui-selected:hover": {
+							backgroundColor: "oklch(var(--p))",
+							color: "oklch(var(--pc))",
+						},
+					},
 				},
 			},
 		},
@@ -139,12 +166,11 @@ function StyledDateTimePicker(props) {
 					},
 				}}
 				onChange={props.onChange}
-				openTo="year"
 				label={props.label}
 				sx={{
 					"& .MuiOutlinedInput-root": {
 						"&:hover fieldset": {
-							borderColor: "oklch(var(--s))",
+							borderColor: "oklch(var(--p))",
 						},
 						"&.Mui-error fieldset": {
 							borderColor: "oklch(var(--er))",
