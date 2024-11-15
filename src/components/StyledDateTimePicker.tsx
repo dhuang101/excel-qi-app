@@ -37,7 +37,7 @@ function StyledDateTimePicker(props) {
 					root: {
 						color: "oklch(var(--bc))",
 						"&.Mui-focused": {
-							color: "oklch(var(--n))",
+							color: "oklch(var(--nc))",
 						},
 						"&.Mui-error": {
 							color: "oklch(var(--er))",
@@ -165,6 +165,7 @@ function StyledDateTimePicker(props) {
 						container: popperWrap,
 					},
 				}}
+				timezone="utc"
 				onChange={props.onChange}
 				label={props.label}
 				sx={{

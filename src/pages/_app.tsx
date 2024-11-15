@@ -1,3 +1,7 @@
+import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+import "dayjs/locale/en-gb"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import NavBar from "@/components/NavBar"
@@ -7,6 +11,10 @@ import "@/styles/globals.css"
 import type { AppProps } from "next/app"
 
 export default function App({ Component, pageProps }: AppProps) {
+	dayjs.extend(utc)
+	dayjs.extend(timezone)
+	dayjs.locale("en-gb")
+
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
 			<GlobalStore>

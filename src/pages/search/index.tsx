@@ -27,6 +27,16 @@ function SearchPage() {
 			})
 		}
 
+	// similar for date input
+	const handleDateChange =
+		(area: "hospadm_date_time_after" | "hospadm_date_time_before") =>
+		(event: { $d: Date }) => {
+			setSearchQuery({
+				...searchQuery,
+				[area]: event.$d,
+			})
+		}
+
 	// event handler for search query
 	function handleSearch() {
 		axios
@@ -37,10 +47,6 @@ function SearchPage() {
 				// console.log(result)
 			})
 	}
-
-	// useEffect(() => {
-	// 	console.log(searchQuery)
-	// }, [searchQuery])
 
 	return (
 		<div className="w-7/12 h-full">
@@ -61,8 +67,9 @@ function SearchPage() {
 						<select
 							className="select select-bordered"
 							onChange={handleSelectChange("diagnosis_resp")}
+							defaultValue={0}
 						>
-							<option disabled selected>
+							<option disabled value={0}>
 								(Optional)
 							</option>
 							<option>ARDS (risk factor)</option>
@@ -85,8 +92,9 @@ function SearchPage() {
 						<select
 							className="select select-bordered"
 							onChange={handleSelectChange("diagnosis_cardiac")}
+							defaultValue={0}
 						>
-							<option disabled selected>
+							<option disabled value={0}>
 								(Optional)
 							</option>
 							<option>Acute myocaridal infarction (AMI)</option>
@@ -123,8 +131,9 @@ function SearchPage() {
 							onChange={handleSelectChange(
 								"outcm_hosp_discharge_loc"
 							)}
+							defaultValue={0}
 						>
-							<option disabled selected>
+							<option disabled value={0}>
 								(Optional)
 							</option>
 							<option>Home</option>
@@ -142,17 +151,27 @@ function SearchPage() {
 					</article>
 					<div className="flex w-full ">
 						<div className="w-1/3">
-							<StyledDateTimePicker label="After" />
+							<StyledDateTimePicker
+								label="After"
+								onChange={handleDateChange(
+									"hospadm_date_time_after"
+								)}
+							/>
 						</div>
 						<div className="w-1/12" />
 						<div className="w-1/3">
-							<StyledDateTimePicker label="Before" />
+							<StyledDateTimePicker
+								label="Before"
+								onChange={handleDateChange(
+									"hospadm_date_time_before"
+								)}
+							/>
 						</div>
 					</div>
 				</div>
 			</div>
 			<button className="btn my-4" onClick={handleSearch}>
-				Button
+				Search
 			</button>
 			{/* footer */}
 			<div className="h-16" />

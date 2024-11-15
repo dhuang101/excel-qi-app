@@ -40,6 +40,8 @@ async function GetPatients(params: any) {
 export default async function handler(req: any, res: any) {
 	const params = req.query
 
+	console.log(params)
+
 	try {
 		const results = await GetPatients(params)
 		res.status(200).json(results)
