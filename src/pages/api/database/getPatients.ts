@@ -4,7 +4,8 @@ interface searchQuery {
 	diagnosis_resp?: string
 	diagnosis_cardiac?: string
 	outcm_hosp_discharge_loc?: string
-	hospadm_date_time: { $gte?: Date; $lte?: Date }
+	hospadm_date_time_before?: string
+	hospadm_date_time_after?: string
 }
 
 async function GetPatients(params: searchQuery) {
@@ -30,10 +31,17 @@ async function GetPatients(params: searchQuery) {
 				$options: "i",
 			},
 		}),
-		...(params.hospadm_date_time.$gte ||
-			(params.hospadm_date_time.$lte && {
-				hospadm_date_time: params.hospadm_date_time,
-			})),
+		...((params.hospadm_date_time_before ||
+			params.hospadm_date_time_after) && {
+			hospadm_date_time: {
+				...(params.hospadm_date_time_before && {
+					$lte: new Date(params.hospadm_date_time_before),
+				}),
+				...(params.hospadm_date_time_after && {
+					$gte: new Date(params.hospadm_date_time_after),
+				}),
+			},
+		}),
 	}
 	const options = {
 		// Include only the particular fields
@@ -48,8 +56,6 @@ async function GetPatients(params: searchQuery) {
 // handler for any calls to this endpoint
 export default async function handler(req: any, res: any) {
 	const params = req.query
-
-	console.log(params)
 
 	try {
 		const results = await GetPatients(params)

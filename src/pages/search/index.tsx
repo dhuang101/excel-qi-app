@@ -55,24 +55,24 @@ function SearchPage() {
 						...searchQuery,
 						[area]: UtcDate,
 					})
-				} else {
-					if (area === "hospadm_date_time_after") {
-						setSearchQuery((oldState) => {
-							const {
-								["hospadm_date_time_after"]: Date,
-								...newState
-							} = oldState // Destructure to exclude the key
-							return newState
-						})
-					} else if (area === "hospadm_date_time_before") {
-						setSearchQuery((oldState) => {
-							const {
-								["hospadm_date_time_before"]: Date,
-								...newState
-							} = oldState // Destructure to exclude the key
-							return newState
-						})
-					}
+				}
+			} else {
+				if (area === "hospadm_date_time_after") {
+					setSearchQuery((oldState) => {
+						const {
+							["hospadm_date_time_after"]: Date,
+							...newState
+						} = oldState // Destructure to exclude the key
+						return newState
+					})
+				} else if (area === "hospadm_date_time_before") {
+					setSearchQuery((oldState) => {
+						const {
+							["hospadm_date_time_before"]: Date,
+							...newState
+						} = oldState // Destructure to exclude the key
+						return newState
+					})
 				}
 			}
 		}
