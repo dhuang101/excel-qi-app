@@ -6,8 +6,9 @@ import {
 } from "@/constants/search/selectOptions"
 import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
-import StyledDateTimePicker from "@/components/StyledDateTimePicker"
 import React from "react"
+import DateRangeInput from "@/components/search/DateRangeInput"
+import DropdownInput from "@/components/search/DropdownInput"
 
 interface searchQuery {
 	diagnosis_resp?: string
@@ -129,24 +130,10 @@ function SearchPage() {
 							Find patients with...
 						</article>
 						<div className="flex flex-col w-full">
-							<label className="form-control w-full max-w-xs">
-								<div className="label">
-									<span className="label-text">
-										Respiratory Diagnosis
-									</span>
-								</div>
-								<select
-									className="select select-bordered"
-									onChange={handleSelectChange(
-										"diagnosis_resp"
-									)}
-									defaultValue={0}
-								>
-									{diagnosis_resp_options.map((value) => (
-										<option>{value}</option>
-									))}
-								</select>
-							</label>
+							<DropdownInput
+								title={"Respiratory Diagnosis"}
+								handleSelectChange={handleSelectChange}
+							/>
 							<label className="form-control w-full max-w-xs">
 								<div className="label">
 									<span className="label-text">
@@ -158,7 +145,6 @@ function SearchPage() {
 									onChange={handleSelectChange(
 										"diagnosis_cardiac"
 									)}
-									defaultValue={0}
 								>
 									{diagnosis_cardiac_options.map((value) => (
 										<option>{value}</option>
@@ -176,7 +162,6 @@ function SearchPage() {
 									onChange={handleSelectChange(
 										"outcm_hosp_discharge_loc"
 									)}
-									defaultValue={0}
 								>
 									{outcm_hosp_discharge_loc_options.map(
 										(value) => (
@@ -189,30 +174,10 @@ function SearchPage() {
 								Narrow By...
 							</article>
 							<div className="flex flex-col">
-								<div>
-									<article className="mb-4 text-sm">
-										Hospital Admission Time
-									</article>
-									<div className="flex w-full">
-										<div className="w-1/3">
-											<StyledDateTimePicker
-												label="After"
-												onChange={handleDateChange(
-													"hospadm_date_time_after"
-												)}
-											/>
-										</div>
-										<div className="w-1/12" />
-										<div className="w-1/3">
-											<StyledDateTimePicker
-												label="Before"
-												onChange={handleDateChange(
-													"hospadm_date_time_before"
-												)}
-											/>
-										</div>
-									</div>
-								</div>
+								<DateRangeInput
+									title={"Hospital Admission Time"}
+									handleDateChange={handleDateChange}
+								/>
 							</div>
 						</div>
 					</div>

@@ -6,8 +6,6 @@ interface Props {
 }
 
 function SearchTable({ patientData }: Props) {
-	console.log(patientData)
-
 	function TableRows() {
 		return patientData.map((obj: any, i: number) => {
 			return (
