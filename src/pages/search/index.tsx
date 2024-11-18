@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react"
+import {
+	diagnosis_cardiac_options,
+	diagnosis_resp_options,
+	outcm_hosp_discharge_loc_options,
+} from "@/constants/search/selectOptions"
 import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
 import StyledDateTimePicker from "@/components/StyledDateTimePicker"
+import React from "react"
 
 interface searchQuery {
 	diagnosis_resp?: string
@@ -13,6 +19,7 @@ interface searchQuery {
 
 function SearchPage() {
 	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
+	const [searchResults, setSearchResults] = useState(null)
 
 	// arrow function used to pipe input into event handler
 	const handleSelectChange =
@@ -23,10 +30,17 @@ function SearchPage() {
 				| "outcm_hosp_discharge_loc"
 		) =>
 		(event: React.ChangeEvent<HTMLSelectElement>) => {
-			setSearchQuery({
-				...searchQuery,
-				[area]: (event.target as HTMLSelectElement).value,
-			})
+			if ((event.target as HTMLSelectElement).value === "Any") {
+				setSearchQuery((oldState) => {
+					const { [area]: string, ...newState } = oldState // Destructure to exclude the key
+					return newState
+				})
+			} else {
+				setSearchQuery({
+					...searchQuery,
+					[area]: (event.target as HTMLSelectElement).value,
+				})
+			}
 		}
 
 	// similar for date input
@@ -84,8 +98,12 @@ function SearchPage() {
 				params: searchQuery,
 			})
 			.then((result) => {
-				// console.log(result)
+				setSearchResults(result.data)
 			})
+	}
+
+	function handleBack() {
+		setSearchResults(null)
 	}
 
 	// useEffect(() => {
@@ -97,126 +115,112 @@ function SearchPage() {
 			<article className="my-4 text-3xl font-semibold">
 				Cohort Construction
 			</article>
-			<div className="flex flex-col w-full">
-				<article className="mb-4 text-xl">
-					Find patients with...
-				</article>
-				<div className="flex flex-col w-full">
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<span className="label-text">
-								Respiratory Diagnosis
-							</span>
-						</div>
-						<select
-							className="select select-bordered"
-							onChange={handleSelectChange("diagnosis_resp")}
-							defaultValue={0}
-						>
-							<option disabled value={0}>
-								(Optional)
-							</option>
-							<option>ARDS (risk factor)</option>
-							<option>Post lung transplant</option>
-							<option>Direct lung trauma</option>
-							<option>Pulmonary Vasculitis/Haemorrhage</option>
-							<option>Focal lung disease (Not ARDS)</option>
-							<option>Drug/Toxin pulmonary disease</option>
-							<option>Asthma</option>
-							<option>Chronic end stage lung disease</option>
-							<option>N/A</option>
-						</select>
-					</label>
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<span className="label-text">
-								Cardiac Diagnosis
-							</span>
-						</div>
-						<select
-							className="select select-bordered"
-							onChange={handleSelectChange("diagnosis_cardiac")}
-							defaultValue={0}
-						>
-							<option disabled value={0}>
-								(Optional)
-							</option>
-							<option>Acute myocaridal infarction (AMI)</option>
-							<option>Myocarditis</option>
-							<option>Toxic</option>
-							<option>
-								Septic shock with myocardial depression
-							</option>
-							<option>Pulmonary embolism</option>
-							<option>Advanced pulmonary hypertension</option>
-							<option>Congential heart disease</option>
-							<option>
-								Primary arrhythmia ("Channelopathy")
-							</option>
-							<option>Chronic graft (heart) dysfunction</option>
-							<option>
-								Chronic cardiomyopathy no covered above
-							</option>
-							<option>
-								Acute decompensated heart not covered above
-							</option>
-							<option>Peri-operative support</option>
-							<option>N/A</option>
-						</select>
-					</label>
-					<label className="form-control w-full max-w-xs">
-						<div className="label">
-							<span className="label-text">
-								Hospital Discharge Location
-							</span>
-						</div>
-						<select
-							className="select select-bordered"
-							onChange={handleSelectChange(
-								"outcm_hosp_discharge_loc"
-							)}
-							defaultValue={0}
-						>
-							<option disabled value={0}>
-								(Optional)
-							</option>
-							<option>Home</option>
-							<option>Transferred to another hospital</option>
-							<option>Transfer to LTAC or rehab</option>
-							<option>Transfer to hospice</option>
-							<option>Dead</option>
-							<option>Other</option>
-							<option>N/A</option>
-						</select>
-					</label>
-					<article className="my-4 text-xl">Narrow By...</article>
-					<article className="mb-4 text-sm">
-						Hospital Admission Time
-					</article>
-					<div className="flex w-full">
-						<div className="w-1/3">
-							<StyledDateTimePicker
-								label="After"
-								onChange={handleDateChange(
-									"hospadm_date_time_after"
-								)}
-							/>
-						</div>
-						<div className="w-1/12" />
-						<div className="w-1/3">
-							<StyledDateTimePicker
-								label="Before"
-								onChange={handleDateChange(
-									"hospadm_date_time_before"
-								)}
-							/>
+			{searchResults !== null ? (
+				<React.Fragment>
+					<button className="btn my-4" onClick={handleBack}>
+						Back
+					</button>
+					<SearchTable patientData={searchResults} />
+				</React.Fragment>
+			) : (
+				<React.Fragment>
+					<div className="flex flex-col w-full">
+						<article className="mb-4 text-xl">
+							Find patients with...
+						</article>
+						<div className="flex flex-col w-full">
+							<label className="form-control w-full max-w-xs">
+								<div className="label">
+									<span className="label-text">
+										Respiratory Diagnosis
+									</span>
+								</div>
+								<select
+									className="select select-bordered"
+									onChange={handleSelectChange(
+										"diagnosis_resp"
+									)}
+									defaultValue={0}
+								>
+									{diagnosis_resp_options.map((value) => (
+										<option>{value}</option>
+									))}
+								</select>
+							</label>
+							<label className="form-control w-full max-w-xs">
+								<div className="label">
+									<span className="label-text">
+										Cardiac Diagnosis
+									</span>
+								</div>
+								<select
+									className="select select-bordered"
+									onChange={handleSelectChange(
+										"diagnosis_cardiac"
+									)}
+									defaultValue={0}
+								>
+									{diagnosis_cardiac_options.map((value) => (
+										<option>{value}</option>
+									))}
+								</select>
+							</label>
+							<label className="form-control w-full max-w-xs">
+								<div className="label">
+									<span className="label-text">
+										Hospital Discharge Location
+									</span>
+								</div>
+								<select
+									className="select select-bordered"
+									onChange={handleSelectChange(
+										"outcm_hosp_discharge_loc"
+									)}
+									defaultValue={0}
+								>
+									{outcm_hosp_discharge_loc_options.map(
+										(value) => (
+											<option>{value}</option>
+										)
+									)}
+								</select>
+							</label>
+							<article className="my-4 text-xl">
+								Narrow By...
+							</article>
+							<div className="flex flex-col">
+								<div>
+									<article className="mb-4 text-sm">
+										Hospital Admission Time
+									</article>
+									<div className="flex w-full">
+										<div className="w-1/3">
+											<StyledDateTimePicker
+												label="After"
+												onChange={handleDateChange(
+													"hospadm_date_time_after"
+												)}
+											/>
+										</div>
+										<div className="w-1/12" />
+										<div className="w-1/3">
+											<StyledDateTimePicker
+												label="Before"
+												onChange={handleDateChange(
+													"hospadm_date_time_before"
+												)}
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
-			</div>
-			<button className="btn my-4" onClick={handleSearch}>
-				Search
-			</button>
+					<button className="btn my-4" onClick={handleSearch}>
+						Search
+					</button>
+				</React.Fragment>
+			)}
 			{/* footer */}
 			<div className="h-16" />
 		</div>

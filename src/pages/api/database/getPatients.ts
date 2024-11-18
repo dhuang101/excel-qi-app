@@ -49,7 +49,6 @@ async function GetPatients(params: searchQuery) {
 	} as FindOptions
 	// run find
 	const results = await collection.find(query, options).toArray()
-	console.log(results)
 	return results
 }
 

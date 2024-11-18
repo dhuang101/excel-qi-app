@@ -6,11 +6,7 @@ interface Props {
 }
 
 function SearchTable({ patientData }: Props) {
-	const router = useRouter()
-
-	function routeToSummary(resource: { record_id: string }) {
-		router.push(`/search/` + resource.record_id)
-	}
+	console.log(patientData)
 
 	function TableRows() {
 		return patientData.map((obj: any, i: number) => {
@@ -18,12 +14,8 @@ function SearchTable({ patientData }: Props) {
 				<tr
 					key={i}
 					className="hover:text-accent-content hover:bg-accent cursor-pointer"
-					onClick={() => {
-						routeToSummary(obj)
-					}}
 				>
 					<td>{obj.record_id}</td>
-					<td>{obj.sex}</td>
 					<td>{obj.hospadm_date_time}</td>
 				</tr>
 			)
@@ -36,7 +28,6 @@ function SearchTable({ patientData }: Props) {
 				<thead>
 					<tr>
 						<th className="bg-base-300">Record ID</th>
-						<th className="bg-base-300">Sex</th>
 						<th className="bg-base-300">Admission Time</th>
 					</tr>
 				</thead>
