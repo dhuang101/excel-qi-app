@@ -7,13 +7,12 @@ interface searchQuery {
 	diagnosis_resp?: string
 	diagnosis_cardiac?: string
 	outcm_hosp_discharge_loc?: string
-	hospadm_date_time: { $gte?: Date; $lte?: Date }
+	hospadm_date_time_before?: Date
+	hospadm_date_time_after?: Date
 }
 
 function SearchPage() {
-	const [searchQuery, setSearchQuery] = useState<searchQuery>({
-		hospadm_date_time: {},
-	})
+	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
 
 	// arrow function used to pipe input into event handler
 	const handleSelectChange =
@@ -34,44 +33,46 @@ function SearchPage() {
 	const handleDateChange =
 		(area: "hospadm_date_time_after" | "hospadm_date_time_before") =>
 		(event?: {
+			$d: Date
 			$y: number
 			$M: number | undefined
 			$D: number | undefined
 			$H: number | undefined
 			$m: number | undefined
 		}) => {
-			let value = {}
-			// construct the object required by MongoDB to query the database
-			if (event && event !== null) {
-				const UtcDate = new Date(
-					Date.UTC(event.$y, event.$M, event.$D, event.$H, event.$m)
-				)
-				if (area === "hospadm_date_time_after") {
-					value = { $gte: UtcDate }
-				} else if (area === "hospadm_date_time_before") {
-					value = { $lte: UtcDate }
-				}
-				value = { ...searchQuery.hospadm_date_time, ...value }
-
-				setSearchQuery({
-					...searchQuery,
-					hospadm_date_time: value,
-				})
-			} else {
-				if (area === "hospadm_date_time_after") {
-					const { $gte, ...removedObj } =
-						searchQuery.hospadm_date_time
+			if (event) {
+				if (!Number.isNaN(event.$d.getTime())) {
+					const UtcDate = new Date(
+						Date.UTC(
+							event.$y,
+							event.$M,
+							event.$D,
+							event.$H,
+							event.$m
+						)
+					)
 					setSearchQuery({
 						...searchQuery,
-						hospadm_date_time: removedObj,
+						[area]: UtcDate,
 					})
-				} else if (area === "hospadm_date_time_before") {
-					const { $lte, ...removedObj } =
-						searchQuery.hospadm_date_time
-					setSearchQuery({
-						...searchQuery,
-						hospadm_date_time: removedObj,
-					})
+				} else {
+					if (area === "hospadm_date_time_after") {
+						setSearchQuery((oldState) => {
+							const {
+								["hospadm_date_time_after"]: Date,
+								...newState
+							} = oldState // Destructure to exclude the key
+							return newState
+						})
+					} else if (area === "hospadm_date_time_before") {
+						setSearchQuery((oldState) => {
+							const {
+								["hospadm_date_time_before"]: Date,
+								...newState
+							} = oldState // Destructure to exclude the key
+							return newState
+						})
+					}
 				}
 			}
 		}
@@ -87,9 +88,9 @@ function SearchPage() {
 			})
 	}
 
-	useEffect(() => {
-		console.log(searchQuery.hospadm_date_time.$gte?.toISOString())
-	}, [searchQuery])
+	// useEffect(() => {
+	// 	console.log(searchQuery)
+	// }, [searchQuery])
 
 	return (
 		<div className="w-7/12 h-full">
