@@ -165,7 +165,6 @@ function StyledDateTimePicker(props) {
 						container: popperWrap,
 					},
 				}}
-				timezone="utc"
 				onChange={props.onChange}
 				label={props.label}
 				sx={{

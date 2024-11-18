@@ -1,6 +1,13 @@
 import { FindOptions, MongoClient } from "mongodb"
 
-async function GetPatients(params: any) {
+interface searchQuery {
+	diagnosis_resp?: string
+	diagnosis_cardiac?: string
+	outcm_hosp_discharge_loc?: string
+	hospadm_date_time: { $gte?: Date; $lte?: Date }
+}
+
+async function GetPatients(params: searchQuery) {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
@@ -23,16 +30,18 @@ async function GetPatients(params: any) {
 				$options: "i",
 			},
 		}),
+		...(params.hospadm_date_time.$gte ||
+			(params.hospadm_date_time.$lte && {
+				hospadm_date_time: params.hospadm_date_time,
+			})),
 	}
-	// const query = {
-	// 	...params.diagnosis_resp ? diagnosis_resp: { $regex: params.diagnosis_resp, $options: "i" },
-	// }
 	const options = {
 		// Include only the particular fields
 		projection: { _id: 0 },
 	} as FindOptions
 	// run find
 	const results = await collection.find(query, options).toArray()
+	console.log(results)
 	return results
 }
 

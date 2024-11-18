@@ -7,10 +7,13 @@ interface searchQuery {
 	diagnosis_resp?: string
 	diagnosis_cardiac?: string
 	outcm_hosp_discharge_loc?: string
+	hospadm_date_time: { $gte?: Date; $lte?: Date }
 }
 
 function SearchPage() {
-	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
+	const [searchQuery, setSearchQuery] = useState<searchQuery>({
+		hospadm_date_time: {},
+	})
 
 	// arrow function used to pipe input into event handler
 	const handleSelectChange =
@@ -30,11 +33,47 @@ function SearchPage() {
 	// similar for date input
 	const handleDateChange =
 		(area: "hospadm_date_time_after" | "hospadm_date_time_before") =>
-		(event: { $d: Date }) => {
-			setSearchQuery({
-				...searchQuery,
-				[area]: event.$d,
-			})
+		(event?: {
+			$y: number
+			$M: number | undefined
+			$D: number | undefined
+			$H: number | undefined
+			$m: number | undefined
+		}) => {
+			let value = {}
+			// construct the object required by MongoDB to query the database
+			if (event && event !== null) {
+				const UtcDate = new Date(
+					Date.UTC(event.$y, event.$M, event.$D, event.$H, event.$m)
+				)
+				if (area === "hospadm_date_time_after") {
+					value = { $gte: UtcDate }
+				} else if (area === "hospadm_date_time_before") {
+					value = { $lte: UtcDate }
+				}
+				value = { ...searchQuery.hospadm_date_time, ...value }
+
+				setSearchQuery({
+					...searchQuery,
+					hospadm_date_time: value,
+				})
+			} else {
+				if (area === "hospadm_date_time_after") {
+					const { $gte, ...removedObj } =
+						searchQuery.hospadm_date_time
+					setSearchQuery({
+						...searchQuery,
+						hospadm_date_time: removedObj,
+					})
+				} else if (area === "hospadm_date_time_before") {
+					const { $lte, ...removedObj } =
+						searchQuery.hospadm_date_time
+					setSearchQuery({
+						...searchQuery,
+						hospadm_date_time: removedObj,
+					})
+				}
+			}
 		}
 
 	// event handler for search query
@@ -47,6 +86,10 @@ function SearchPage() {
 				// console.log(result)
 			})
 	}
+
+	useEffect(() => {
+		console.log(searchQuery.hospadm_date_time.$gte?.toISOString())
+	}, [searchQuery])
 
 	return (
 		<div className="w-7/12 h-full">
@@ -149,7 +192,7 @@ function SearchPage() {
 					<article className="mb-4 text-sm">
 						Hospital Admission Time
 					</article>
-					<div className="flex w-full ">
+					<div className="flex w-full">
 						<div className="w-1/3">
 							<StyledDateTimePicker
 								label="After"
