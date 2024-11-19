@@ -2,6 +2,7 @@ import StyledDateTimePicker from "../StyledDateTimePicker"
 
 interface Props {
 	title: string
+	queryAttribute: string
 	handleDateChange(area: string): void
 }
 
@@ -14,7 +15,7 @@ function DateRangeInput(props: Props) {
 					<StyledDateTimePicker
 						label="After"
 						onChange={props.handleDateChange(
-							"hospadm_date_time_after"
+							props.queryAttribute + "_after"
 						)}
 					/>
 				</div>
@@ -23,7 +24,7 @@ function DateRangeInput(props: Props) {
 					<StyledDateTimePicker
 						label="Before"
 						onChange={props.handleDateChange(
-							"hospadm_date_time_after"
+							props.queryAttribute + "_before"
 						)}
 					/>
 				</div>

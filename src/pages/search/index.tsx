@@ -16,6 +16,16 @@ interface searchQuery {
 	outcm_hosp_discharge_loc?: string
 	hospadm_date_time_before?: Date
 	hospadm_date_time_after?: Date
+	icuadm_date_time_before?: Date
+	icuadm_date_time_after?: Date
+	ecmo_start_date_time_before?: Date
+	ecmo_start_date_time_after?: Date
+	decan_date_time_before?: Date
+	decan_date_time_after?: Date
+	outcm_icu_discharge_before?: Date
+	outcm_icu_discharge_after?: Date
+	outcm_hosp_discharge_before?: Date
+	outcm_hosp_discharge_after?: Date
 }
 
 function SearchPage() {
@@ -107,9 +117,9 @@ function SearchPage() {
 		setSearchResults(null)
 	}
 
-	// useEffect(() => {
-	// 	console.log(searchQuery)
-	// }, [searchQuery])
+	useEffect(() => {
+		console.log(searchQuery)
+	}, [searchQuery])
 
 	return (
 		<div className="w-7/12 h-full">
@@ -147,7 +157,7 @@ function SearchPage() {
 									)}
 								>
 									{diagnosis_cardiac_options.map((value) => (
-										<option>{value}</option>
+										<option key={value}>{value}</option>
 									))}
 								</select>
 							</label>
@@ -165,7 +175,7 @@ function SearchPage() {
 								>
 									{outcm_hosp_discharge_loc_options.map(
 										(value) => (
-											<option>{value}</option>
+											<option key={value}>{value}</option>
 										)
 									)}
 								</select>
@@ -177,6 +187,7 @@ function SearchPage() {
 								<DateRangeInput
 									title={"Hospital Admission Time"}
 									handleDateChange={handleDateChange}
+									queryAttribute={"hospadm_date_time"}
 								/>
 							</div>
 						</div>
