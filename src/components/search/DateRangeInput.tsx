@@ -11,7 +11,7 @@ function DateRangeInput(props: Props) {
 		<div>
 			<article className="mb-4 text-sm">{props.title}</article>
 			<div className="flex w-full">
-				<div className="w-1/3">
+				<div className="w-1/4">
 					<StyledDateTimePicker
 						label="After"
 						onChange={props.handleDateChange(
@@ -20,7 +20,7 @@ function DateRangeInput(props: Props) {
 					/>
 				</div>
 				<div className="w-1/12" />
-				<div className="w-1/3">
+				<div className="w-1/4">
 					<StyledDateTimePicker
 						label="Before"
 						onChange={props.handleDateChange(

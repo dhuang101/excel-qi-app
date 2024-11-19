@@ -122,13 +122,13 @@ function SearchPage() {
 	}, [searchQuery])
 
 	return (
-		<div className="w-7/12 h-full">
+		<div className="w-2/3 h-full">
 			<article className="my-4 text-3xl font-semibold">
 				Cohort Construction
 			</article>
 			{searchResults !== null ? (
 				<React.Fragment>
-					<button className="btn my-4" onClick={handleBack}>
+					<button className="btn mb-4" onClick={handleBack}>
 						Back
 					</button>
 					<SearchTable patientData={searchResults} />
@@ -183,18 +183,46 @@ function SearchPage() {
 							<article className="my-4 text-xl">
 								Narrow By...
 							</article>
-							<div className="flex flex-col">
+							<div className="flex flex-col gap-y-4">
 								<DateRangeInput
 									title={"Hospital Admission Time"}
 									handleDateChange={handleDateChange}
 									queryAttribute={"hospadm_date_time"}
 								/>
+								<DateRangeInput
+									title={"ICU Admission Time"}
+									handleDateChange={handleDateChange}
+									queryAttribute={"icuadm_date_time"}
+								/>
+								<DateRangeInput
+									title={"ECMO Start Time"}
+									handleDateChange={handleDateChange}
+									queryAttribute={"ecmo_start_date_time"}
+								/>
+								<DateRangeInput
+									title={"Decannulation Time"}
+									handleDateChange={handleDateChange}
+									queryAttribute={"decan_date_time"}
+								/>
+								<DateRangeInput
+									title={"ICU Discharge Time"}
+									handleDateChange={handleDateChange}
+									queryAttribute={"outcm_icu_discharge"}
+								/>
+								<DateRangeInput
+									title={"Hospital Discharge Time"}
+									handleDateChange={handleDateChange}
+									queryAttribute={"outcm_hosp_discharge"}
+								/>
 							</div>
 						</div>
 					</div>
-					<button className="btn my-4" onClick={handleSearch}>
-						Search
-					</button>
+					<div className="flex items-center">
+						<button className="btn my-4" onClick={handleSearch}>
+							Search
+						</button>
+						<article className="ml-12 text-error font-semibold"></article>
+					</div>
 				</React.Fragment>
 			)}
 			{/* footer */}
