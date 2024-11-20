@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react"
-import {
-	diagnosis_cardiac_options,
-	diagnosis_resp_options,
-	outcm_hosp_discharge_loc_options,
-} from "@/constants/search/selectOptions"
 import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
 import React from "react"
 import DateRangeInput from "@/components/search/DateRangeInput"
 import DropdownInput from "@/components/search/DropdownInput"
+import { CircularProgress } from "@mui/material"
 
 interface searchQuery {
 	diagnosis_resp?: string
@@ -31,6 +27,8 @@ interface searchQuery {
 function SearchPage() {
 	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
 	const [searchResults, setSearchResults] = useState(null)
+	const [errorMessage, setErrorMessage] = useState("")
+	const [loading, setLoading] = useState(false)
 
 	// arrow function used to pipe input into event handler
 	const handleSelectChange =
@@ -104,13 +102,24 @@ function SearchPage() {
 
 	// event handler for search query
 	function handleSearch() {
-		axios
-			.get("/api/database/getPatients", {
-				params: searchQuery,
-			})
-			.then((result) => {
-				setSearchResults(result.data)
-			})
+		// form validation
+		if (Object.keys(searchQuery).length === 0) {
+			// no empty fields
+			setErrorMessage("Error: No Fields Inputted")
+		} else {
+			// run search
+			setLoading(true)
+			axios
+				.get("/api/database/getPatients", {
+					params: searchQuery,
+				})
+				.then((result) => {
+					setSearchResults(result.data)
+				})
+				.then(() => {
+					setLoading(false)
+				})
+		}
 	}
 
 	function handleBack() {
@@ -126,7 +135,14 @@ function SearchPage() {
 			<article className="my-4 text-3xl font-semibold">
 				Cohort Construction
 			</article>
-			{searchResults !== null ? (
+			{loading === true ? (
+				<div className="flex flex-col justify-center items-center h-[89%]">
+					<CircularProgress size={100} />
+					<article className="text-lg font-semibold pt-4">
+						Fetching Patients...
+					</article>
+				</div>
+			) : searchResults !== null ? (
 				<React.Fragment>
 					<button className="btn mb-4" onClick={handleBack}>
 						Back
@@ -143,43 +159,18 @@ function SearchPage() {
 							<DropdownInput
 								title={"Respiratory Diagnosis"}
 								handleSelectChange={handleSelectChange}
+								queryAttribute={"diagnosis_resp"}
 							/>
-							<label className="form-control w-full max-w-xs">
-								<div className="label">
-									<span className="label-text">
-										Cardiac Diagnosis
-									</span>
-								</div>
-								<select
-									className="select select-bordered"
-									onChange={handleSelectChange(
-										"diagnosis_cardiac"
-									)}
-								>
-									{diagnosis_cardiac_options.map((value) => (
-										<option key={value}>{value}</option>
-									))}
-								</select>
-							</label>
-							<label className="form-control w-full max-w-xs">
-								<div className="label">
-									<span className="label-text">
-										Hospital Discharge Location
-									</span>
-								</div>
-								<select
-									className="select select-bordered"
-									onChange={handleSelectChange(
-										"outcm_hosp_discharge_loc"
-									)}
-								>
-									{outcm_hosp_discharge_loc_options.map(
-										(value) => (
-											<option key={value}>{value}</option>
-										)
-									)}
-								</select>
-							</label>
+							<DropdownInput
+								title={"Cardiac Diagnosis"}
+								handleSelectChange={handleSelectChange}
+								queryAttribute={"diagnosis_cardiac"}
+							/>
+							<DropdownInput
+								title={"Respiratory Diagnosis"}
+								handleSelectChange={handleSelectChange}
+								queryAttribute={"diagnosis_resp"}
+							/>
 							<article className="my-4 text-xl">
 								Narrow By...
 							</article>
@@ -221,7 +212,9 @@ function SearchPage() {
 						<button className="btn my-4" onClick={handleSearch}>
 							Search
 						</button>
-						<article className="ml-12 text-error font-semibold"></article>
+						<article className="ml-12 text-error font-semibold">
+							{errorMessage}
+						</article>
 					</div>
 				</React.Fragment>
 			)}
