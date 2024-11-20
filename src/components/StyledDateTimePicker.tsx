@@ -5,7 +5,12 @@ import React from "react"
 import { ThemeProvider, createTheme } from "@mui/material/styles"
 import { DateTimePicker } from "@mui/x-date-pickers"
 
-function StyledDateTimePicker(props) {
+interface Props {
+	label: string
+	onChange: void
+}
+
+function StyledDateTimePicker({ onChange, label }: Props) {
 	const theme = createTheme({
 		components: {
 			// calendar icon
@@ -165,8 +170,8 @@ function StyledDateTimePicker(props) {
 						container: popperWrap,
 					},
 				}}
-				onChange={props.onChange}
-				label={props.label}
+				onChange={onChange}
+				label={label}
 				sx={{
 					"& .MuiOutlinedInput-root": {
 						"&:hover fieldset": {

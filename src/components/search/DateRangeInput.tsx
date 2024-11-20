@@ -6,26 +6,22 @@ interface Props {
 	handleDateChange(area: string): void
 }
 
-function DateRangeInput(props: Props) {
+function DateRangeInput({ title, queryAttribute, handleDateChange }: Props) {
 	return (
 		<div>
-			<article className="mb-4 text-sm">{props.title}</article>
+			<article className="mb-4 text-sm">{title}</article>
 			<div className="flex w-full">
 				<div className="w-1/4">
 					<StyledDateTimePicker
 						label="After"
-						onChange={props.handleDateChange(
-							props.queryAttribute + "_after"
-						)}
+						onChange={handleDateChange(queryAttribute + "_after")}
 					/>
 				</div>
 				<div className="w-1/12" />
 				<div className="w-1/4">
 					<StyledDateTimePicker
 						label="Before"
-						onChange={props.handleDateChange(
-							props.queryAttribute + "_before"
-						)}
+						onChange={handleDateChange(queryAttribute + "_before")}
 					/>
 				</div>
 			</div>
