@@ -17,7 +17,7 @@ function StateLoader({ children }: React.PropsWithChildren): JSX.Element {
 			dispatch({ type: ACTION.UPDATE_THEME, payload: "light" })
 			window.localStorage.setItem("theme", "light")
 		}
-	}, [])
+	}, [dispatch])
 
 	return globalState.theme === null ? (
 		<div className="min-h-screen min-w-screen bg-slate-400" />

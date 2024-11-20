@@ -34,7 +34,7 @@ function DropdownInput({ title, queryAttribute, handleSelectChange }: Props) {
 				onChange={handleSelectChange(queryAttribute)}
 			>
 				{optionsMap[queryAttribute].map((value) => (
-					<option>{value}</option>
+					<option key={value}>{value}</option>
 				))}
 			</select>
 		</label>
