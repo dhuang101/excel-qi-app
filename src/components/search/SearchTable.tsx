@@ -1,3 +1,5 @@
+import React from "react"
+
 interface Props {
 	// patientData is the object returned by the API
 	patientData: patientRecord[]
@@ -29,7 +31,11 @@ function SearchTable({ patientData }: Props) {
 					<td>{obj.diagnosis_cardiac}</td>
 					<td>{obj.outcm_hosp_discharge_loc}</td>
 					<td>
-						{obj.hospadm_date_time.replace("T", " ").slice(0, 16)}
+						{obj.hospadm_date_time
+							? obj.hospadm_date_time
+									.replace("T", " ")
+									.slice(0, 16)
+							: ""}
 					</td>
 				</tr>
 			)
@@ -37,24 +43,40 @@ function SearchTable({ patientData }: Props) {
 	}
 
 	return (
-		<div className="overflow-x-auto">
-			<table className="table table-lg w-full">
-				<thead>
-					<tr>
-						<th className="bg-base-300">Record ID</th>
-						<th className="bg-base-300">Respiratory Diagnosis</th>
-						<th className="bg-base-300">Cardiac Diagnosis</th>
-						<th className="bg-base-300">
-							Hospital Discharge Outcome
-						</th>
-						<th className="bg-base-300">Hospital Admission Time</th>
-					</tr>
-				</thead>
-				<tbody>
-					<TableRows />
-				</tbody>
-			</table>
-		</div>
+		<React.Fragment>
+			{patientData.length > 0 ? (
+				<div className="overflow-x-auto">
+					<table className="table table-lg w-full">
+						<thead>
+							<tr>
+								<th className="bg-base-300">Record ID</th>
+								<th className="bg-base-300">
+									Respiratory Diagnosis
+								</th>
+								<th className="bg-base-300">
+									Cardiac Diagnosis
+								</th>
+								<th className="bg-base-300">
+									Hospital Discharge Outcome
+								</th>
+								<th className="bg-base-300">
+									Hospital Admission Time
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<TableRows />
+						</tbody>
+					</table>
+				</div>
+			) : (
+				<div className="flex flex-col justify-center items-center h-[89%]">
+					<article className="text-3xl font-semibold pt-4">
+						No Patients With Values Inputted
+					</article>
+				</div>
+			)}
+		</React.Fragment>
 	)
 }
 
