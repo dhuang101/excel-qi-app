@@ -157,19 +157,19 @@ function SearchPage() {
 						</article>
 						<div className="flex flex-col w-full">
 							<DropdownInput
-								title={"Respiratory Diagnosis"}
+								title={"Primary Respiratory Diagnosis"}
 								handleSelectChange={handleSelectChange}
 								queryAttribute={"diagnosis_resp"}
 							/>
 							<DropdownInput
-								title={"Cardiac Diagnosis"}
+								title={"Primary Cardiac Diagnosis"}
 								handleSelectChange={handleSelectChange}
 								queryAttribute={"diagnosis_cardiac"}
 							/>
 							<DropdownInput
-								title={"Respiratory Diagnosis"}
+								title={"Discharge Outcome"}
 								handleSelectChange={handleSelectChange}
-								queryAttribute={"diagnosis_resp"}
+								queryAttribute={"outcm_hosp_discharge_loc"}
 							/>
 							<article className="my-4 text-xl">
 								Narrow By...
