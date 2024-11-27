@@ -13,12 +13,17 @@ function EcmoPalPage() {
 		base_value: null,
 		altering_features: [],
 	})
+	const [loading, setLoading] = useState(false)
 
 	function handleClick() {
+		setLoading(true)
 		axios
 			.post("/api/ecmo-pal/evaluate", { variables: testEcmo })
 			.then((result: any) => {
 				setPrediction(result.data)
+			})
+			.then(() => {
+				setLoading(false)
 			})
 	}
 
@@ -45,7 +50,15 @@ function EcmoPalPage() {
 			<article className="text-3xl font-semibold mb-4">
 				Phil Phillip
 			</article>
-			{prediction.base_value !== null && prediction.out_value !== null ? (
+			{loading ? (
+				<div className="flex justify-center items-center h-[90%]">
+					<CircularProgress size={80} />
+					<article className="text-lg font-semibold pt-4">
+						Running Prediction...
+					</article>
+				</div>
+			) : prediction.base_value !== null &&
+			  prediction.out_value !== null ? (
 				<React.Fragment>
 					<article className="text-3xl mb-4">
 						Survival to Discharge:{" "}
@@ -164,6 +177,9 @@ function EcmoPalPage() {
 			) : (
 				<div className="flex justify-center items-center h-[90%]">
 					<CircularProgress size={80} />
+					<article className="text-lg font-semibold pt-4">
+						Fetching Models...
+					</article>
 				</div>
 			)}
 		</div>
