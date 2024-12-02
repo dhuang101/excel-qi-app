@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useRef, useState } from "react"
 import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
 import React from "react"
@@ -40,6 +40,7 @@ function SearchPage({ parentRef }: Props) {
 	const [rowsPerPage, setRowsPerPage] = useState(10)
 	const [loading, setLoading] = useState(false)
 
+	const modalRef = useRef<HTMLDialogElement>(null)
 	// returns to query page
 	function handleBack() {
 		setSearchResults(null)
@@ -184,13 +185,29 @@ function SearchPage({ parentRef }: Props) {
 				</div>
 			) : searchResults !== null ? (
 				<React.Fragment>
+					<dialog ref={modalRef} className="modal overflow-hidden">
+						<div className="modal-box">
+							<h3 className="font-bold text-lg">Hello!</h3>
+							<p className="py-4">
+								Press ESC key or click outside to close
+							</p>
+						</div>
+						<form method="dialog" className="modal-backdrop">
+							<button>close</button>
+						</form>
+					</dialog>
 					<div className="flex w-full justify-between">
 						<button className="btn mb-4" onClick={handleBack}>
 							Back
 						</button>
-						<Link href={"/search/export"}>
-							<button className="btn mb-4">Export Results</button>
-						</Link>
+						<button
+							className="btn mb-4"
+							onClick={() => {
+								modalRef.current!.showModal()
+							}}
+						>
+							Export Cohort
+						</button>
 					</div>
 					<SearchTable patientData={slicedResults} />
 					<div className="flex flex-col items-center mt-8">
