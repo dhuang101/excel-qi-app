@@ -5,6 +5,7 @@ import React from "react"
 import DateRangeInput from "@/components/search/DateRangeInput"
 import DropdownInput from "@/components/search/DropdownInput"
 import { CircularProgress, TablePagination } from "@mui/material"
+import Link from "next/link"
 
 interface searchQuery {
 	diagnosis_resp?: string
@@ -183,9 +184,14 @@ function SearchPage({ parentRef }: Props) {
 				</div>
 			) : searchResults !== null ? (
 				<React.Fragment>
-					<button className="btn mb-4" onClick={handleBack}>
-						Back
-					</button>
+					<div className="flex w-full justify-between">
+						<button className="btn mb-4" onClick={handleBack}>
+							Back
+						</button>
+						<Link href={"/search/export"}>
+							<button className="btn mb-4">Export Results</button>
+						</Link>
+					</div>
 					<SearchTable patientData={slicedResults} />
 					<div className="flex flex-col items-center mt-8">
 						<TablePagination
