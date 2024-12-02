@@ -4,8 +4,9 @@ import axios from "axios"
 import React from "react"
 import DateRangeInput from "@/components/search/DateRangeInput"
 import DropdownInput from "@/components/search/DropdownInput"
+import { keyToTitle } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
-import Link from "next/link"
+import { DateStringFormatter } from "@/utilities/DateStringFormatter"
 
 interface searchQuery {
 	diagnosis_resp?: string
@@ -180,15 +181,56 @@ function SearchPage() {
 					</div>
 				) : searchResults !== null ? (
 					<React.Fragment>
-						<dialog
-							ref={modalRef}
-							className="modal overflow-hidden"
-						>
-							<div className="modal-box">
-								<h3 className="font-bold text-lg">Hello!</h3>
-								<p className="py-4">
-									Press ESC key or click outside to close
-								</p>
+						<dialog ref={modalRef} className="modal">
+							<div className="modal-box max-w-3xl">
+								<article className="font-bold text-xl">
+									Request Cohort Export
+								</article>
+								<div className="flex flex-col mt-4">
+									<article className="font-semibold text-lg">
+										Searched for Patients With
+									</article>
+									{Object.keys(searchQuery).map((key) => {
+										let value =
+											searchQuery[
+												key as keyof searchQuery
+											] instanceof Date
+												? DateStringFormatter(
+														(
+															searchQuery[
+																key as keyof searchQuery
+															] as Date
+														).toISOString()
+												  )
+												: searchQuery[
+														key as keyof searchQuery
+												  ]?.toString()
+
+										return (
+											<div>
+												{
+													keyToTitle[
+														key as keyof searchQuery
+													]
+												}
+												: {value}
+											</div>
+										)
+									})}
+									<article className="mt-3">
+										Total Cohort Size:{" "}
+										{searchResults.length} patient(s)
+									</article>
+									<article className="font-semibold mt-3">
+										Further Comments
+									</article>
+									<textarea className="textarea textarea-bordered mt-2"></textarea>
+									<div>
+										<button className="btn mt-2">
+											Submit Request
+										</button>
+									</div>
+								</div>
 							</div>
 							<form method="dialog" className="modal-backdrop">
 								<button>close</button>
