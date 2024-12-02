@@ -20,8 +20,8 @@ function NavBar() {
 	}
 
 	return (
-		<div className="flex flex-col">
-			<div className="navbar h-[7%] max-h-[64px]">
+		<div className="sticky top-0 bg-base-100">
+			<div className="navbar">
 				<div className="flex-1">
 					<Link href={"/"}>
 						<article className="btn btn-ghost normal-case rounded-xl text-xl text-base-content">

@@ -9,20 +9,13 @@ import type { AppProps } from "next/app"
 import { useRef } from "react"
 
 export default function App({ Component, pageProps }: AppProps) {
-	const parentRef = useRef(null)
-
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
 			<GlobalStore>
 				<StateLoader>
-					<div className="flex flex-col h-screen min-w-screen">
+					<div className="flex flex-col h-fit min-h-screen min-w-screen">
 						<NavBar />
-						<div
-							ref={parentRef}
-							className="flex flex-col h-[93%] overflow-auto w-full items-center"
-						>
-							<Component {...pageProps} parentRef={parentRef} />
-						</div>
+						<Component {...pageProps} />
 					</div>
 				</StateLoader>
 			</GlobalStore>

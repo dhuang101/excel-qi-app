@@ -25,13 +25,7 @@ interface searchQuery {
 	outcm_hosp_discharge_after?: Date
 }
 
-interface Props {
-	parentRef: {
-		current: HTMLDivElement
-	}
-}
-
-function SearchPage({ parentRef }: Props) {
+function SearchPage() {
 	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
 	const [searchResults, setSearchResults] = useState<Array<any> | null>(null)
 	const [slicedResults, setSlicedResults] = useState<Array<any>>([])
@@ -164,7 +158,7 @@ function SearchPage({ parentRef }: Props) {
 				)
 			)
 		}
-		parentRef.current.scrollTop = 0
+		window.scrollTo(0, 0)
 	}, [pageNum, rowsPerPage])
 
 	// useEffect(() => {
@@ -172,139 +166,144 @@ function SearchPage({ parentRef }: Props) {
 	// }, [searchQuery])
 
 	return (
-		<div className="w-2/3 h-full">
-			<article className="my-4 text-3xl font-semibold">
-				Cohort Construction
-			</article>
-			{loading === true ? (
-				<div className="flex flex-col justify-center items-center h-[89%]">
-					<CircularProgress size={100} />
-					<article className="text-lg font-semibold pt-4">
-						Fetching Patients...
-					</article>
-				</div>
-			) : searchResults !== null ? (
-				<React.Fragment>
-					<dialog ref={modalRef} className="modal overflow-hidden">
-						<div className="modal-box">
-							<h3 className="font-bold text-lg">Hello!</h3>
-							<p className="py-4">
-								Press ESC key or click outside to close
-							</p>
-						</div>
-						<form method="dialog" className="modal-backdrop">
-							<button>close</button>
-						</form>
-					</dialog>
-					<div className="flex w-full justify-between">
-						<button className="btn mb-4" onClick={handleBack}>
-							Back
-						</button>
-						<button
-							className="btn mb-4"
-							onClick={() => {
-								modalRef.current!.showModal()
-							}}
-						>
-							Export Cohort
-						</button>
-					</div>
-					<SearchTable patientData={slicedResults} />
-					<div className="flex flex-col items-center mt-8">
-						<TablePagination
-							component="div"
-							count={searchResults.length}
-							page={pageNum}
-							onPageChange={handleChangePage}
-							rowsPerPage={rowsPerPage}
-							onRowsPerPageChange={handleChangeRowsPerPage}
-							sx={{
-								"& .MuiToolbar-root": {
-									color: "oklch(var(--bc))",
-								},
-								"& .MuiSelect-icon": {
-									color: "oklch(var(--bc))",
-								},
-								"& .MuiButtonBase-root": {
-									"&.Mui-disabled": {
-										color: "oklch(var(disabled))",
-									},
-								},
-							}}
-						/>
-					</div>
-				</React.Fragment>
-			) : (
-				<React.Fragment>
-					<div className="flex flex-col w-full">
-						<article className="mb-4 text-xl">
-							Find patients with...
+		<div className="flex flex-col flex-grow w-full items-center">
+			<div className="w-2/3 h-full">
+				<article className="my-4 text-3xl font-semibold">
+					Cohort Construction
+				</article>
+				{loading === true ? (
+					<div className="flex flex-col justify-center items-center h-[89%]">
+						<CircularProgress size={100} />
+						<article className="text-lg font-semibold pt-4">
+							Fetching Patients...
 						</article>
+					</div>
+				) : searchResults !== null ? (
+					<React.Fragment>
+						<dialog
+							ref={modalRef}
+							className="modal overflow-hidden"
+						>
+							<div className="modal-box">
+								<h3 className="font-bold text-lg">Hello!</h3>
+								<p className="py-4">
+									Press ESC key or click outside to close
+								</p>
+							</div>
+							<form method="dialog" className="modal-backdrop">
+								<button>close</button>
+							</form>
+						</dialog>
+						<div className="flex w-full justify-between">
+							<button className="btn mb-4" onClick={handleBack}>
+								Back
+							</button>
+							<button
+								className="btn mb-4"
+								onClick={() => {
+									modalRef.current!.showModal()
+								}}
+							>
+								Export Cohort
+							</button>
+						</div>
+						<SearchTable patientData={slicedResults} />
+						<div className="flex flex-col items-center mt-8">
+							<TablePagination
+								component="div"
+								count={searchResults.length}
+								page={pageNum}
+								onPageChange={handleChangePage}
+								rowsPerPage={rowsPerPage}
+								onRowsPerPageChange={handleChangeRowsPerPage}
+								sx={{
+									"& .MuiToolbar-root": {
+										color: "oklch(var(--bc))",
+									},
+									"& .MuiSelect-icon": {
+										color: "oklch(var(--bc))",
+									},
+									"& .MuiButtonBase-root": {
+										"&.Mui-disabled": {
+											color: "oklch(var(disabled))",
+										},
+									},
+								}}
+							/>
+						</div>
+					</React.Fragment>
+				) : (
+					<React.Fragment>
 						<div className="flex flex-col w-full">
-							<DropdownInput
-								title={"Primary Respiratory Diagnosis"}
-								handleSelectChange={handleSelectChange}
-								queryAttribute={"diagnosis_resp"}
-							/>
-							<DropdownInput
-								title={"Primary Cardiac Diagnosis"}
-								handleSelectChange={handleSelectChange}
-								queryAttribute={"diagnosis_cardiac"}
-							/>
-							<DropdownInput
-								title={"Discharge Outcome"}
-								handleSelectChange={handleSelectChange}
-								queryAttribute={"outcm_hosp_discharge_loc"}
-							/>
-							<article className="my-4 text-xl">
-								Narrow By...
+							<article className="mb-4 text-xl">
+								Find patients with...
 							</article>
-							<div className="flex flex-col gap-y-4">
-								<DateRangeInput
-									title={"Hospital Admission Time"}
-									handleDateChange={handleDateChange}
-									queryAttribute={"hospadm_date_time"}
+							<div className="flex flex-col w-full">
+								<DropdownInput
+									title={"Primary Respiratory Diagnosis"}
+									handleSelectChange={handleSelectChange}
+									queryAttribute={"diagnosis_resp"}
 								/>
-								<DateRangeInput
-									title={"ICU Admission Time"}
-									handleDateChange={handleDateChange}
-									queryAttribute={"icuadm_date_time"}
+								<DropdownInput
+									title={"Primary Cardiac Diagnosis"}
+									handleSelectChange={handleSelectChange}
+									queryAttribute={"diagnosis_cardiac"}
 								/>
-								<DateRangeInput
-									title={"ECMO Start Time"}
-									handleDateChange={handleDateChange}
-									queryAttribute={"ecmo_start_date_time"}
+								<DropdownInput
+									title={"Discharge Outcome"}
+									handleSelectChange={handleSelectChange}
+									queryAttribute={"outcm_hosp_discharge_loc"}
 								/>
-								<DateRangeInput
-									title={"Decannulation Time"}
-									handleDateChange={handleDateChange}
-									queryAttribute={"decan_date_time"}
-								/>
-								<DateRangeInput
-									title={"ICU Discharge Time"}
-									handleDateChange={handleDateChange}
-									queryAttribute={"outcm_icu_discharge"}
-								/>
-								<DateRangeInput
-									title={"Hospital Discharge Time"}
-									handleDateChange={handleDateChange}
-									queryAttribute={"outcm_hosp_discharge"}
-								/>
+								<article className="my-4 text-xl">
+									Narrow By...
+								</article>
+								<div className="flex flex-col gap-y-4">
+									<DateRangeInput
+										title={"Hospital Admission Time"}
+										handleDateChange={handleDateChange}
+										queryAttribute={"hospadm_date_time"}
+									/>
+									<DateRangeInput
+										title={"ICU Admission Time"}
+										handleDateChange={handleDateChange}
+										queryAttribute={"icuadm_date_time"}
+									/>
+									<DateRangeInput
+										title={"ECMO Start Time"}
+										handleDateChange={handleDateChange}
+										queryAttribute={"ecmo_start_date_time"}
+									/>
+									<DateRangeInput
+										title={"Decannulation Time"}
+										handleDateChange={handleDateChange}
+										queryAttribute={"decan_date_time"}
+									/>
+									<DateRangeInput
+										title={"ICU Discharge Time"}
+										handleDateChange={handleDateChange}
+										queryAttribute={"outcm_icu_discharge"}
+									/>
+									<DateRangeInput
+										title={"Hospital Discharge Time"}
+										handleDateChange={handleDateChange}
+										queryAttribute={"outcm_hosp_discharge"}
+									/>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div className="flex items-center">
-						<button className="btn my-4" onClick={handleSearch}>
-							Search
-						</button>
-						<article className="ml-12 text-error font-semibold">
-							{errorMessage}
-						</article>
-					</div>
-				</React.Fragment>
-			)}
-			{/* footer */}
-			<div className="h-16" />
+						<div className="flex items-center">
+							<button className="btn my-4" onClick={handleSearch}>
+								Search
+							</button>
+							<article className="ml-12 text-error font-semibold">
+								{errorMessage}
+							</article>
+						</div>
+					</React.Fragment>
+				)}
+				{/* footer */}
+				<div className="h-16" />
+			</div>
 		</div>
 	)
 }
