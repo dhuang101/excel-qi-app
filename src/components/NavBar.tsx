@@ -44,9 +44,9 @@ function NavBar() {
 								NLP Model
 							</article>
 						</Link>
-						<Link href={"/export"}>
+						<Link href={"/reporting"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								Data Export
+								Reporting
 							</article>
 						</Link>
 						<Link href={"/ecmo-pal"}>
