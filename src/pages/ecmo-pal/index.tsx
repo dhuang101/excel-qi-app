@@ -176,7 +176,7 @@ function EcmoPalPage() {
 						</button>
 					</React.Fragment>
 				) : (
-					<div className="flex justify-center items-center h-[90%]">
+					<div className="flex justify-center items-center h-[83vh]">
 						<CircularProgress size={80} />
 						<article className="text-lg font-semibold pt-4">
 							Fetching Models...
