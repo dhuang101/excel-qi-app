@@ -1,5 +1,6 @@
 import { useContext } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { ACTION, GlobalContext } from "@/store/GlobalStore"
 
 import ASSETS from "@/assets/assets"
@@ -26,7 +27,9 @@ function NavBar() {
 				<div className="flex-1">
 					<Link href={"/"}>
 						<article className="btn btn-ghost normal-case rounded-xl text-xl text-base-content">
-							<img
+							<Image
+								width={1672}
+								height={971}
 								src={ASSETS.logo}
 								className="max-h-11 max-w-20 w-auto h-auto"
 								alt="Logo"
