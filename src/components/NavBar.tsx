@@ -2,6 +2,7 @@ import { useContext } from "react"
 import Link from "next/link"
 import { ACTION, GlobalContext } from "@/store/GlobalStore"
 
+import ASSETS from "@/assets/assets"
 import LightModeIcon from "@mui/icons-material/LightMode"
 import DarkModeIcon from "@mui/icons-material/DarkMode"
 
@@ -25,6 +26,11 @@ function NavBar() {
 				<div className="flex-1">
 					<Link href={"/"}>
 						<article className="btn btn-ghost normal-case rounded-xl text-xl text-base-content">
+							<img
+								src={ASSETS.logo}
+								className="max-h-11 max-w-20 w-auto h-auto"
+								alt="Logo"
+							/>
 							NICE Data Project
 						</article>
 					</Link>
