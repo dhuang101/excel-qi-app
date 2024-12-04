@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import Link from "next/link"
-import { ACTION, GlobalContext } from "@/contexts/GlobalStore"
+import { ACTION, GlobalContext } from "@/store/GlobalStore"
 
 import LightModeIcon from "@mui/icons-material/LightMode"
 import DarkModeIcon from "@mui/icons-material/DarkMode"

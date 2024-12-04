@@ -13,7 +13,6 @@ export interface State {
 	theme: String | null
 }
 
-// https://fhirdb-monash.fhir-web-apps.cloud.edu.au/fhir/ for web server vm
 const initialState: State = {
 	theme: null,
 }
