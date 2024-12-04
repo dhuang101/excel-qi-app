@@ -173,7 +173,7 @@ function SearchPage() {
 					Cohort Construction
 				</article>
 				{loading === true ? (
-					<div className="flex flex-col justify-center items-center h-[89%]">
+					<div className="flex flex-col justify-center items-center h-[83vh]">
 						<CircularProgress size={100} />
 						<article className="text-lg font-semibold pt-4">
 							Fetching Patients...
@@ -196,11 +196,9 @@ function SearchPage() {
 												key as keyof searchQuery
 											] instanceof Date
 												? DateStringFormatter(
-														(
-															searchQuery[
-																key as keyof searchQuery
-															] as Date
-														).toISOString()
+														searchQuery[
+															key as keyof searchQuery
+														] as Date
 												  )
 												: searchQuery[
 														key as keyof searchQuery
