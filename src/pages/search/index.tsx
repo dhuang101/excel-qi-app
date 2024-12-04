@@ -7,7 +7,7 @@ import DropdownInput from "@/components/search/DropdownInput"
 import { keyToTitle } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
 import { DateStringFormatter } from "@/utilities/DateStringFormatter"
-import paginationReducer, { ACTION } from "@/reducers/paginationReducer"
+import searchReducer, { ACTION } from "@/reducers/searchReducer"
 
 // type for the search query passed to mongo
 interface searchQuery {
@@ -30,22 +30,23 @@ interface searchQuery {
 
 // component
 function SearchPage() {
-	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
-	const [searchResults, setSearchResults] = useState<Array<any> | null>(null)
-	const [slicedResults, setSlicedResults] = useState<Array<any>>([])
-	const [errorMessage, setErrorMessage] = useState("")
-	const [modalSubmitted, setModalSubmitted] = useState(false)
-
-	const [pagination, dispatch] = useReducer(paginationReducer, {
+	const [state, dispatch] = useReducer(searchReducer, {
+		searchResults: null,
+		slicedResults: [],
 		pageNum: 0,
 		rowsPerPage: 10,
 	})
+
+	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
+	const [errorMessage, setErrorMessage] = useState("")
+	const [modalSubmitted, setModalSubmitted] = useState(false)
 	const [loading, setLoading] = useState(false)
 
 	const modalRef = useRef<HTMLDialogElement>(null)
+
 	// returns to query page
 	function handleBack() {
-		setSearchResults(null)
+		dispatch({ type: ACTION.RESET_RESULTS })
 	}
 
 	// arrow function used to pipe input into event handler
@@ -132,8 +133,10 @@ function SearchPage() {
 					params: searchQuery,
 				})
 				.then((result) => {
-					setSearchResults(result.data)
-					setSlicedResults(result.data.slice(0, 10))
+					dispatch({
+						type: ACTION.UPDATE_RESULTS,
+						payload: result.data,
+					})
 				})
 				.then(() => {
 					setLoading(false)
@@ -161,17 +164,17 @@ function SearchPage() {
 	}
 
 	useEffect(() => {
-		if (searchResults !== null) {
-			setSlicedResults(
-				searchResults.slice(
-					pagination.pageNum * pagination.rowsPerPage,
-					pagination.pageNum * pagination.rowsPerPage +
-						pagination.rowsPerPage
-				)
-			)
-		}
+		// if (pagination.searchResults !== null) {
+		// setSlicedResults(
+		// 	searchResults.slice(
+		// 		pagination.pageNum * pagination.rowsPerPage,
+		// 		pagination.pageNum * pagination.rowsPerPage +
+		// 			pagination.rowsPerPage
+		// 	)
+		// )
+		// }
 		window.scrollTo(0, 0)
-	}, [pagination])
+	}, [state])
 
 	// useEffect(() => {
 	// 	console.log(searchQuery)
@@ -190,7 +193,7 @@ function SearchPage() {
 							Fetching Patients...
 						</article>
 					</div>
-				) : searchResults !== null ? (
+				) : state.searchResults !== null ? (
 					// search completed
 					<React.Fragment>
 						{/* dialog overlay for modal */}
@@ -227,7 +230,7 @@ function SearchPage() {
 															  ]?.toString()
 
 													return (
-														<div>
+														<div key={key}>
 															{
 																keyToTitle[
 																	key as keyof searchQuery
@@ -240,7 +243,7 @@ function SearchPage() {
 											)}
 											<article className="mt-3">
 												Total Cohort Size:{" "}
-												{searchResults.length}{" "}
+												{state.searchResults.length}{" "}
 												patient(s)
 											</article>
 											<article className="font-semibold mt-3">
@@ -279,14 +282,14 @@ function SearchPage() {
 								Export Cohort
 							</button>
 						</div>
-						<SearchTable patientData={slicedResults} />
+						<SearchTable patientData={state.slicedResults} />
 						<div className="flex flex-col items-center mt-8">
 							<TablePagination
 								component="div"
-								count={searchResults.length}
-								page={pagination.pageNum}
+								count={state.searchResults.length}
+								page={state.pageNum}
 								onPageChange={handleChangePage}
-								rowsPerPage={pagination.rowsPerPage}
+								rowsPerPage={state.rowsPerPage}
 								onRowsPerPageChange={handleChangeRowsPerPage}
 								sx={{
 									"& .MuiToolbar-root": {
