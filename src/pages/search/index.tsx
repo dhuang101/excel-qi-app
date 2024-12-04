@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react"
+import { ChangeEvent, useEffect, useReducer, useRef, useState } from "react"
 import SearchTable from "../../components/search/SearchTable"
 import axios from "axios"
 import React from "react"
@@ -7,7 +7,9 @@ import DropdownInput from "@/components/search/DropdownInput"
 import { keyToTitle } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
 import { DateStringFormatter } from "@/utilities/DateStringFormatter"
+import paginationReducer, { ACTION } from "@/reducers/paginationReducer"
 
+// type for the search query passed to mongo
 interface searchQuery {
 	diagnosis_resp?: string
 	diagnosis_cardiac?: string
@@ -26,13 +28,18 @@ interface searchQuery {
 	outcm_hosp_discharge_after?: Date
 }
 
+// component
 function SearchPage() {
 	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
 	const [searchResults, setSearchResults] = useState<Array<any> | null>(null)
 	const [slicedResults, setSlicedResults] = useState<Array<any>>([])
 	const [errorMessage, setErrorMessage] = useState("")
-	const [pageNum, setPageNum] = useState(0)
-	const [rowsPerPage, setRowsPerPage] = useState(10)
+	const [modalSubmitted, setModalSubmitted] = useState(false)
+
+	const [pagination, dispatch] = useReducer(paginationReducer, {
+		pageNum: 0,
+		rowsPerPage: 10,
+	})
 	const [loading, setLoading] = useState(false)
 
 	const modalRef = useRef<HTMLDialogElement>(null)
@@ -130,6 +137,7 @@ function SearchPage() {
 				})
 				.then(() => {
 					setLoading(false)
+					window.scrollTo(0, 0)
 				})
 		}
 	}
@@ -138,8 +146,10 @@ function SearchPage() {
 	function handleChangeRowsPerPage(
 		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	): void {
-		setPageNum(0)
-		setRowsPerPage(parseInt(event.target.value)) // calls useEffect
+		dispatch({
+			type: ACTION.UPDATE_ROWSPERPAGE,
+			payload: parseInt(event.target.value),
+		})
 	}
 
 	// handles change of page
@@ -147,20 +157,21 @@ function SearchPage() {
 		event: React.MouseEvent<HTMLButtonElement> | null,
 		page: number
 	): void {
-		setPageNum(page) // calls useEffect
+		dispatch({ type: ACTION.UPDATE_PAGENUM, payload: page }) // calls useEffect
 	}
 
 	useEffect(() => {
 		if (searchResults !== null) {
 			setSlicedResults(
 				searchResults.slice(
-					pageNum * rowsPerPage,
-					pageNum * rowsPerPage + rowsPerPage
+					pagination.pageNum * pagination.rowsPerPage,
+					pagination.pageNum * pagination.rowsPerPage +
+						pagination.rowsPerPage
 				)
 			)
 		}
 		window.scrollTo(0, 0)
-	}, [pageNum, rowsPerPage])
+	}, [pagination])
 
 	// useEffect(() => {
 	// 	console.log(searchQuery)
@@ -180,60 +191,81 @@ function SearchPage() {
 						</article>
 					</div>
 				) : searchResults !== null ? (
+					// search completed
 					<React.Fragment>
+						{/* dialog overlay for modal */}
 						<dialog ref={modalRef} className="modal">
 							<div className="modal-box max-w-3xl">
-								<article className="font-bold text-xl">
-									Request Cohort Export
-								</article>
-								<div className="flex flex-col mt-4">
-									<article className="font-semibold text-lg">
-										Searched for Patients With
-									</article>
-									{Object.keys(searchQuery).map((key) => {
-										let value =
-											searchQuery[
-												key as keyof searchQuery
-											] instanceof Date
-												? DateStringFormatter(
+								{modalSubmitted ? (
+									<div className="flex flex-col items-center justify-center h-20">
+										<article className="font-semibold text-2xl">
+											Request Submitted
+										</article>
+									</div>
+								) : (
+									<React.Fragment>
+										<article className="font-bold text-xl">
+											Request Cohort Export
+										</article>
+										<div className="flex flex-col mt-4">
+											<article className="font-semibold text-lg">
+												Searched for Patients With
+											</article>
+											{Object.keys(searchQuery).map(
+												(key) => {
+													let value =
 														searchQuery[
 															key as keyof searchQuery
-														] as Date
-												  )
-												: searchQuery[
-														key as keyof searchQuery
-												  ]?.toString()
+														] instanceof Date
+															? DateStringFormatter(
+																	searchQuery[
+																		key as keyof searchQuery
+																	] as Date
+															  )
+															: searchQuery[
+																	key as keyof searchQuery
+															  ]?.toString()
 
-										return (
-											<div>
-												{
-													keyToTitle[
-														key as keyof searchQuery
-													]
+													return (
+														<div>
+															{
+																keyToTitle[
+																	key as keyof searchQuery
+																]
+															}
+															: {value}
+														</div>
+													)
 												}
-												: {value}
+											)}
+											<article className="mt-3">
+												Total Cohort Size:{" "}
+												{searchResults.length}{" "}
+												patient(s)
+											</article>
+											<article className="font-semibold mt-3">
+												Further Comments
+											</article>
+											<textarea className="textarea textarea-bordered mt-2"></textarea>
+											<div>
+												<button
+													className="btn mt-2"
+													onClick={() => {
+														setModalSubmitted(true)
+													}}
+												>
+													Submit Request
+												</button>
 											</div>
-										)
-									})}
-									<article className="mt-3">
-										Total Cohort Size:{" "}
-										{searchResults.length} patient(s)
-									</article>
-									<article className="font-semibold mt-3">
-										Further Comments
-									</article>
-									<textarea className="textarea textarea-bordered mt-2"></textarea>
-									<div>
-										<button className="btn mt-2">
-											Submit Request
-										</button>
-									</div>
-								</div>
+										</div>
+									</React.Fragment>
+								)}
 							</div>
 							<form method="dialog" className="modal-backdrop">
 								<button>close</button>
 							</form>
 						</dialog>
+						{/* rest of the page */}
 						<div className="flex w-full justify-between">
 							<button className="btn mb-4" onClick={handleBack}>
 								Back
@@ -252,9 +284,9 @@ function SearchPage() {
 							<TablePagination
 								component="div"
 								count={searchResults.length}
-								page={pageNum}
+								page={pagination.pageNum}
 								onPageChange={handleChangePage}
-								rowsPerPage={rowsPerPage}
+								rowsPerPage={pagination.rowsPerPage}
 								onRowsPerPageChange={handleChangeRowsPerPage}
 								sx={{
 									"& .MuiToolbar-root": {
@@ -273,6 +305,7 @@ function SearchPage() {
 						</div>
 					</React.Fragment>
 				) : (
+					// search page
 					<React.Fragment>
 						<div className="flex flex-col w-full">
 							<article className="mb-4 text-xl">
