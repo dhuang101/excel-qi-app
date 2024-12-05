@@ -164,21 +164,8 @@ function SearchPage() {
 	}
 
 	useEffect(() => {
-		// if (pagination.searchResults !== null) {
-		// setSlicedResults(
-		// 	searchResults.slice(
-		// 		pagination.pageNum * pagination.rowsPerPage,
-		// 		pagination.pageNum * pagination.rowsPerPage +
-		// 			pagination.rowsPerPage
-		// 	)
-		// )
-		// }
 		window.scrollTo(0, 0)
 	}, [state])
-
-	// useEffect(() => {
-	// 	console.log(searchQuery)
-	// }, [searchQuery])
 
 	return (
 		<div className="flex flex-col flex-grow w-full items-center">
