@@ -36,21 +36,46 @@ function ReportingPage() {
 					</article>
 					<div className="flex w-full h-96">
 						<div className="w-full">
-							<ResponsiveContainer width="100%" height="100%">
+							<ResponsiveContainer
+								width={"100%"}
+								height={
+									80 *
+									state.attributes.outcm_hosp_discharge_loc
+										.length
+								}
+								debounce={50}
+							>
 								<BarChart
-									width={730}
-									height={250}
+									layout="vertical"
 									data={
 										state.attributes
 											.outcm_hosp_discharge_loc
 									}
+									margin={{ left: 30, right: 10 }}
 								>
-									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis dataKey="_id" />
-									<YAxis />
-									<Tooltip />
-									<Legend />
-									<Bar dataKey="count" fill="#82ca9d" />
+									<CartesianGrid
+										strokeDasharray="3 5"
+										stroke="oklch(var(--bc))"
+										horizontal={false}
+									/>
+									<XAxis
+										type="number"
+										stroke="oklch(var(--bc))"
+									/>
+									<YAxis
+										dataKey="_id"
+										type="category"
+										stroke="oklch(var(--bc))"
+									/>
+									<Bar
+										dataKey="count"
+										fill="oklch(var(--p))"
+										label={{
+											fill: "oklch(var(--bc))",
+											fontSize: 16,
+											position: "right",
+										}}
+									/>
 								</BarChart>
 							</ResponsiveContainer>
 						</div>
