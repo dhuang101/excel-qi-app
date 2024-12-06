@@ -1,13 +1,19 @@
 import { useContext } from "react"
+import { useSession, signOut } from "next-auth/react"
 import Link from "next/link"
 import Image from "next/image"
 import { ACTION, GlobalContext } from "@/store/GlobalStore"
 
 import ASSETS from "@/assets/assets"
+import PersonIcon from "@mui/icons-material/Person"
+import LoginIcon from "@mui/icons-material/Login"
+import LogoutIcon from "@mui/icons-material/Logout"
 import LightModeIcon from "@mui/icons-material/LightMode"
 import DarkModeIcon from "@mui/icons-material/DarkMode"
 
 function NavBar() {
+	// auth session
+	const { data: session, status } = useSession()
 	// global store access
 	const [globalState, dispatch] = useContext(GlobalContext)
 
@@ -65,7 +71,6 @@ function NavBar() {
 						</Link>
 					</div>
 				</div>
-				<div></div>
 				<div className="btn btn-ghost rounded-xl" onClick={toggleTheme}>
 					{globalState.theme === "light" ? (
 						<LightModeIcon className="text-2xl text-base-content" />
@@ -73,6 +78,43 @@ function NavBar() {
 						<DarkModeIcon className="text-2xl text-base-content" />
 					)}
 				</div>
+				{status === "authenticated" ? (
+					<div className="ml-4 mr-6 dropdown dropdown-end text-base-content">
+						<label
+							tabIndex={0}
+							className="btn btn-ghost rounded-btn"
+						>
+							<PersonIcon />
+						</label>
+						<ul
+							tabIndex={0}
+							className="menu dropdown-content z-[1] p-2 shadow rounded-box w-60 mt-4 bg-primary text-primary-content"
+						>
+							<article className="mx-2 my-2">
+								Signed In As
+								<br />
+								<b>{session.user && session.user.email}</b>
+							</article>
+							<li>
+								<a
+									onClick={() => {
+										signOut()
+									}}
+								>
+									<LogoutIcon />
+									Sign Out
+								</a>
+							</li>
+						</ul>
+					</div>
+				) : (
+					<Link href={"/api/auth/signin"}>
+						<div className="ml-4 mr-6 btn btn-ghost normal-case rounded-xl text-lg text-primary-content outline outline-1 outline-primary-content">
+							<LoginIcon />
+							Sign In
+						</div>
+					</Link>
+				)}
 			</div>
 			<div className="divider divider-base-200 m-0 h-0 "></div>
 		</div>
