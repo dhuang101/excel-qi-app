@@ -1,26 +1,45 @@
+import Barplot from "@/components/reporting/Barplot"
 import reportReducer, { ACTION } from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
 import axios from "axios"
-import { useEffect, useReducer } from "react"
-import {
-	Bar,
-	BarChart,
-	CartesianGrid,
-	Legend,
-	ResponsiveContainer,
-	Tooltip,
-	XAxis,
-	YAxis,
-} from "recharts"
+import { useEffect, useReducer, useRef, useState } from "react"
 
 function ReportingPage() {
 	const [state, dispatch] = useReducer(reportReducer, null)
+	const [width, setWidth] = useState(0)
+
+	const graphContainer = useRef<HTMLDivElement>(null)
+
+	function updateDimensions() {
+		console.log("t")
+		setWidth(document.body.clientWidth)
+	}
 
 	useEffect(() => {
+		// fetch summary
 		axios.get("/api/database/getSummary").then((result) => {
 			dispatch({ type: ACTION.SET_SUMMARY, payload: result.data })
 		})
 	}, [])
+
+	// dynamically assigns width variable to create responsive d3 graphs
+	useEffect(() => {
+		if (!graphContainer.current) {
+			return
+		}
+
+		const resizeObserver = new ResizeObserver(() => {
+			if (graphContainer.current!.offsetWidth !== width) {
+				setWidth(graphContainer.current!.offsetWidth)
+			}
+		})
+
+		resizeObserver.observe(graphContainer.current)
+
+		return function cleanup() {
+			resizeObserver.disconnect()
+		}
+	}, [graphContainer.current])
 
 	useEffect(() => {
 		console.log(state)
@@ -34,51 +53,12 @@ function ReportingPage() {
 						There are currently {state.totalDocuments} patients
 						enrolled in the NICE Data Project.
 					</article>
-					<div className="flex w-full h-96">
-						<div className="w-full">
-							<ResponsiveContainer
-								width={"100%"}
-								height={
-									80 *
-									state.attributes.outcm_hosp_discharge_loc
-										.length
-								}
-								debounce={50}
-							>
-								<BarChart
-									layout="vertical"
-									data={
-										state.attributes
-											.outcm_hosp_discharge_loc
-									}
-									margin={{ left: 30, right: 10 }}
-								>
-									<CartesianGrid
-										strokeDasharray="3 5"
-										stroke="oklch(var(--bc))"
-										horizontal={false}
-									/>
-									<XAxis
-										type="number"
-										stroke="oklch(var(--bc))"
-									/>
-									<YAxis
-										dataKey="_id"
-										type="category"
-										stroke="oklch(var(--bc))"
-									/>
-									<Bar
-										dataKey="count"
-										fill="oklch(var(--p))"
-										label={{
-											fill: "oklch(var(--bc))",
-											fontSize: 16,
-											position: "right",
-										}}
-									/>
-								</BarChart>
-							</ResponsiveContainer>
-						</div>
+					<div ref={graphContainer} className="flex w-full h-96">
+						<Barplot
+							width={width}
+							height={750}
+							data={state.attributes.outcm_hosp_discharge_loc}
+						/>
 					</div>
 				</div>
 			) : (

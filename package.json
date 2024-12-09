@@ -24,6 +24,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
     "@types/node": "^20",
     "@types/qs": "^6.9.17",
     "@types/react": "^18",
