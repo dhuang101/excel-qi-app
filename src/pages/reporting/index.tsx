@@ -1,7 +1,8 @@
+import axios from "axios"
 import Barplot from "@/components/reporting/Barplot"
+import { Boxplot } from "@/components/reporting/boxplot/Boxplot"
 import reportReducer, { ACTION } from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
-import axios from "axios"
 import { useEffect, useReducer, useRef, useState } from "react"
 
 function ReportingPage() {
@@ -55,10 +56,11 @@ function ReportingPage() {
 					</article>
 					<div ref={graphContainer} className="flex w-full h-96">
 						<Barplot
-							width={width}
+							width={width / 2}
 							height={750}
 							data={state.attributes.outcm_hosp_discharge_loc}
 						/>
+						{/* <Boxplot width={width / 2} height={750} data={data} /> */}
 					</div>
 				</div>
 			) : (
