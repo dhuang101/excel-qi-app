@@ -8,7 +8,7 @@ type AxisBottomProps = {
 }
 
 // tick length
-const TICK_LENGTH = 10
+const TICK_LENGTH = 0
 
 export const AxisBottom = ({
 	xScale,
@@ -39,8 +39,9 @@ export const AxisBottom = ({
 					<line
 						y1={TICK_LENGTH}
 						y2={-height - TICK_LENGTH}
-						stroke="#D2D7D3"
-						strokeWidth={0.5}
+						stroke="oklch(var(--bc))"
+						strokeWidth={1}
+						opacity={0.25}
 					/>
 					<text
 						key={value}
