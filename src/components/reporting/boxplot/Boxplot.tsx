@@ -63,8 +63,9 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 					q3={xScale(q3)}
 					min={xScale(min)}
 					max={xScale(max)}
-					stroke="black"
-					fill={"#ead4f5"}
+					stroke="oklch(var(--bc))"
+					fill={"oklch(var(--p))"}
+					fillOpacity={0.5}
 				/>
 			</g>
 		)

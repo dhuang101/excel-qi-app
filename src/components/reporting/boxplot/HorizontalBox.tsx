@@ -12,6 +12,7 @@ type HorizontalBoxProps = {
 	height: number
 	stroke: string
 	fill: string
+	fillOpacity: number
 }
 
 export const HorizontalBox = ({
@@ -23,6 +24,7 @@ export const HorizontalBox = ({
 	height,
 	stroke,
 	fill,
+	fillOpacity,
 }: HorizontalBoxProps) => {
 	return (
 		<>
@@ -41,6 +43,7 @@ export const HorizontalBox = ({
 				height={height}
 				stroke={stroke}
 				fill={fill}
+				fillOpacity={fillOpacity}
 			/>
 			<line
 				y1={0}

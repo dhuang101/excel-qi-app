@@ -48,7 +48,7 @@ export const AxisBottom = ({
 							fontSize: "10px",
 							textAnchor: "middle",
 							transform: "translateY(20px)",
-							fill: "black",
+							fill: "oklch(var(--bc))",
 						}}
 					>
 						{value}

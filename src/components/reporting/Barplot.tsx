@@ -51,7 +51,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					opacity={0.7}
 					stroke="oklch(var(--bc))"
 					fill="oklch(var(--p))"
-					fillOpacity={0.3}
+					fillOpacity={0.5}
 					strokeWidth={1}
 					rx={1}
 				/>
