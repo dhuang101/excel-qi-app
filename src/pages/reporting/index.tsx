@@ -4,6 +4,7 @@ import { Boxplot } from "@/components/reporting/boxplot/Boxplot"
 import reportReducer, { ACTION } from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
 import { useEffect, useReducer, useRef, useState } from "react"
+import { data } from "./data"
 
 function ReportingPage() {
 	const [state, dispatch] = useReducer(reportReducer, null)
@@ -12,7 +13,6 @@ function ReportingPage() {
 	const graphContainer = useRef<HTMLDivElement>(null)
 
 	function updateDimensions() {
-		console.log("t")
 		setWidth(document.body.clientWidth)
 	}
 
@@ -40,7 +40,7 @@ function ReportingPage() {
 		return function cleanup() {
 			resizeObserver.disconnect()
 		}
-	}, [graphContainer.current])
+	}, [graphContainer.current, state])
 
 	useEffect(() => {
 		console.log(state)
@@ -54,13 +54,16 @@ function ReportingPage() {
 						There are currently {state.totalDocuments} patients
 						enrolled in the NICE Data Project.
 					</article>
-					<div ref={graphContainer} className="flex w-full h-96">
+					<div
+						ref={graphContainer}
+						className="flex flex-col w-full h-96"
+					>
 						<Barplot
-							width={width / 2}
+							width={width}
 							height={750}
 							data={state.attributes.outcm_hosp_discharge_loc}
 						/>
-						{/* <Boxplot width={width / 2} height={750} data={data} /> */}
+						<Boxplot width={width} height={750} data={data} />
 					</div>
 				</div>
 			) : (
