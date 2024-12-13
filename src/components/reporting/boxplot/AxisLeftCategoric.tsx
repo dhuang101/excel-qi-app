@@ -34,7 +34,7 @@ export const AxisLeft = ({ yScale }: AxisLeftProps) => {
 					<text
 						key={value}
 						style={{
-							fontSize: "10px",
+							fontSize: "12px",
 							textAnchor: "middle",
 							alignmentBaseline: "middle",
 							transform: "translateX(-20px)",

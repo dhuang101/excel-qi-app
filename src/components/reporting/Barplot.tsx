@@ -98,7 +98,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					y={boundsHeight + 10}
 					textAnchor="middle"
 					alignmentBaseline="central"
-					fontSize={9}
+					fontSize={12}
 					fill="oklch(var(--bc))"
 					opacity={0.8}
 				>
