@@ -9,7 +9,11 @@ async function GetCounts() {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
-	const attributes = ["outcm_hosp_discharge_loc"]
+	const attributes = [
+		"outcm_hosp_discharge_loc",
+		"diagnosis_cardiac",
+		"diagnosis_resp",
+	]
 
 	// First, get the total number of documents in the collection
 	const totalDocuments = await collection.countDocuments()

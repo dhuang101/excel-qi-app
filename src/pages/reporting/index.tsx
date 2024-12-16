@@ -70,6 +70,16 @@ function ReportingPage() {
 							height={750}
 							data={state.counts.outcm_hosp_discharge_loc}
 						/>
+						<Barplot
+							width={width}
+							height={750}
+							data={state.counts.diagnosis_cardiac}
+						/>
+						<Barplot
+							width={width}
+							height={750}
+							data={state.counts.diagnosis_resp}
+						/>
 						<Boxplot
 							width={width}
 							height={750}
