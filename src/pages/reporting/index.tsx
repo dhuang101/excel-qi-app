@@ -17,6 +17,10 @@ function ReportingPage() {
 		axios.get("/api/database/getCounts").then((result) => {
 			dispatch({ type: ACTION.SET_COUNTS, payload: result.data })
 		})
+
+		axios.get("api/database/getLosValues").then((result) => {
+			dispatch({ type: ACTION.SET_LOS, payload: result.data })
+		})
 	}, [])
 
 	// dynamically assigns width variable to create responsive d3 graphs
@@ -57,9 +61,13 @@ function ReportingPage() {
 						<Barplot
 							width={width}
 							height={750}
-							data={state.attributes.outcm_hosp_discharge_loc}
+							data={state.counts.outcm_hosp_discharge_loc}
 						/>
-						<Boxplot width={width} height={750} data={data} />
+						<Boxplot
+							width={width}
+							height={750}
+							data={state.losData}
+						/>
 					</div>
 				</div>
 			) : (

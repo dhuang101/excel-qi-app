@@ -28,23 +28,30 @@ export const AxisLeft = ({ yScale }: AxisLeftProps) => {
 			/>
 
 			{/* Ticks and labels */}
-			{ticks.map(({ value, yOffset }) => (
-				<g key={value} transform={`translate(0, ${yOffset})`}>
-					<line x2={-TICK_LENGTH} stroke="currentColor" />
-					<text
-						key={value}
-						style={{
-							fontSize: "12px",
-							textAnchor: "middle",
-							alignmentBaseline: "middle",
-							transform: "translateX(-20px)",
-							fill: "oklch(var(--bc))",
-						}}
-					>
-						{value}
-					</text>
-				</g>
-			))}
+			{ticks.map(({ value, yOffset }) => {
+				const valueMap: { [index: string]: any } = {
+					outcm_ecmo_days_2: "Days on ECMO",
+					outcm_icu_days: "Days in ICU",
+					outcm_hosp_days: "Days in Hospital",
+				}
+				return (
+					<g key={value} transform={`translate(0, ${yOffset})`}>
+						<line x2={-TICK_LENGTH} stroke="currentColor" />
+						<text
+							key={value}
+							style={{
+								fontSize: "12px",
+								textAnchor: "middle",
+								alignmentBaseline: "middle",
+								transform: "translateX(-20px)",
+								fill: "oklch(var(--bc))",
+							}}
+						>
+							{valueMap[value]}
+						</text>
+					</g>
+				)
+			})}
 		</>
 	)
 }
