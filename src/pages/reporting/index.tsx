@@ -12,14 +12,10 @@ function ReportingPage() {
 
 	const graphContainer = useRef<HTMLDivElement>(null)
 
-	function updateDimensions() {
-		setWidth(document.body.clientWidth)
-	}
-
 	useEffect(() => {
 		// fetch summary
-		axios.get("/api/database/getSummary").then((result) => {
-			dispatch({ type: ACTION.SET_SUMMARY, payload: result.data })
+		axios.get("/api/database/getCounts").then((result) => {
+			dispatch({ type: ACTION.SET_COUNTS, payload: result.data })
 		})
 	}, [])
 

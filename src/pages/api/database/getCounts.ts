@@ -5,7 +5,7 @@ interface ValueCount {
 	count: number
 }
 
-async function GetSummary() {
+async function GetCounts() {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
@@ -40,7 +40,7 @@ async function GetSummary() {
 // handler for any calls to this endpoint
 export default async function handler(req: any, res: any) {
 	try {
-		const results = await GetSummary()
+		const results = await GetCounts()
 		res.status(200).json(results)
 	} catch (err) {
 		res.status(500).json(err)
