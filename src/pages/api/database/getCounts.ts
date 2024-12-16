@@ -16,10 +16,10 @@ async function GetCounts() {
 	// Explicitly type the results object
 	const results: {
 		totalDocuments: number
-		attributes: Record<string, { _id: string; count: number }[]>
+		counts: Record<string, { _id: string; count: number }[]>
 	} = {
 		totalDocuments,
-		attributes: {},
+		counts: {},
 	}
 
 	for (const attribute of attributes) {
@@ -31,7 +31,7 @@ async function GetCounts() {
 		const values = await collection
 			.aggregate<ValueCount>(pipeline)
 			.toArray()
-		results.attributes[attribute] = values
+		results.counts[attribute] = values
 	}
 
 	return results
