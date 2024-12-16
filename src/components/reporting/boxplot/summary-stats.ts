@@ -15,9 +15,8 @@ export const getSummaryStats = (data: number[]) => {
 		return
 	}
 
-	const interQuantileRange = q3 - q1
-	const min = q1 - 1.5 * interQuantileRange
-	const max = q3 + 1.5 * interQuantileRange
+	const min = data[0]
+	const max = data[data.length - 1]
 
 	return { min, q1, median, q3, max }
 }
