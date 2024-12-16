@@ -10,6 +10,8 @@ function ReportingPage() {
 
 	const graphContainer = useRef<HTMLDivElement>(null)
 
+	// sequentially fetch the data
+	// TODO: fetch them in parallel?
 	useEffect(() => {
 		let payload = {}
 		axios
@@ -47,9 +49,9 @@ function ReportingPage() {
 		}
 	}, [graphContainer.current, state])
 
-	useEffect(() => {
-		console.log(state)
-	}, [state])
+	// useEffect(() => {
+	// 	console.log(state)
+	// }, [state])
 
 	return (
 		<div className="flex flex-col flex-grow w-full items-center">
