@@ -6,7 +6,7 @@ import { AxisLeft } from "./AxisLeftCategoric"
 import { HorizontalBox } from "./HorizontalBox"
 import { AxisBottom } from "./AxisBottom"
 
-const MARGIN = { top: 30, right: 30, bottom: 30, left: 50 }
+const MARGIN = { top: 30, right: 30, bottom: 30, left: 100 }
 
 type BoxplotProps = {
 	width: number
