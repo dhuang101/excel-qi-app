@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import * as d3 from "d3"
 
-const MARGIN = { top: 30, right: 30, bottom: 30, left: 30 }
+const MARGIN = { top: 30, right: 30, bottom: 30, left: 168 }
 const BAR_PADDING = 0.3
 
 type BarplotProps = {
@@ -67,9 +67,9 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					{d.count}
 				</text>
 				<text
-					x={xScale(0) + 7}
+					x={xScale(0) - 8}
 					y={y + yScale.bandwidth() / 2}
-					textAnchor="start"
+					textAnchor="end"
 					fill="oklch(var(--bc))"
 					alignmentBaseline="central"
 					fontSize={12}
@@ -95,7 +95,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 				/>
 				<text
 					x={xScale(value)}
-					y={boundsHeight + 10}
+					y={boundsHeight + 12}
 					textAnchor="middle"
 					alignmentBaseline="central"
 					fontSize={12}
