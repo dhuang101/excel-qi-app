@@ -13,14 +13,21 @@ function ReportingPage() {
 	const graphContainer = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
-		// fetch summary
-		axios.get("/api/database/getCounts").then((result) => {
-			dispatch({ type: ACTION.SET_COUNTS, payload: result.data })
-		})
-
-		axios.get("api/database/getLosValues").then((result) => {
-			dispatch({ type: ACTION.SET_LOS, payload: result.data })
-		})
+		let payload = {}
+		axios
+			.get("/api/database/getCounts")
+			.then((result) => {
+				payload = result.data
+			})
+			.then(() => {
+				return Promise.resolve(axios.get("/api/database/getLosValues"))
+			})
+			.then((result) => {
+				payload = { ...payload, losData: result.data }
+			})
+			.then(() => {
+				dispatch({ type: ACTION.SET_SUMMARY, payload: payload })
+			})
 	}, [])
 
 	// dynamically assigns width variable to create responsive d3 graphs

@@ -21,19 +21,13 @@ interface State {
 }
 
 export enum ACTION {
-	SET_COUNTS,
-	SET_LOS,
+	SET_SUMMARY,
 }
 
 export default function reportReducer(state: State, action: Action) {
 	switch (action.type) {
-		case ACTION.SET_COUNTS:
-			return {
-				...state,
-				...action.payload,
-			}
-		case ACTION.SET_LOS:
-			return { ...state, losData: action.payload }
+		case ACTION.SET_SUMMARY:
+			return action.payload
 		default:
 			return state
 	}
