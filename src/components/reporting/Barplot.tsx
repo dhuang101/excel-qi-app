@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import * as d3 from "d3"
 
-const MARGIN = { top: 30, right: 30, bottom: 30, left: 168 }
+const MARGIN = { top: 30, right: 30, bottom: 30, left: 140 }
 const BAR_PADDING = 0.3
 
 type BarplotProps = {
@@ -127,7 +127,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 						// Use the wrapText function to wrap the text
 						if (node) {
 							const textElement = d3.select(node)
-							wrapText(textElement, xScale(0) + 100) // Wrap the text to fit within the available width
+							wrapText(textElement, xScale(0) + 128) // Wrap the text to fit within the available width
 						}
 					}}
 				>
