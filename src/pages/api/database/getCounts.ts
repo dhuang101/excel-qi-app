@@ -24,6 +24,13 @@ async function GetCounts() {
 
 	for (const attribute of attributes) {
 		const pipeline = [
+			{
+				$project: {
+					[attribute]: {
+						$ifNull: [`$${attribute}`, "N/A"], // Replace null with "N/A"
+					},
+				},
+			},
 			{ $group: { _id: `$${attribute}`, count: { $sum: 1 } } },
 			{ $sort: { count: -1 } },
 		]
