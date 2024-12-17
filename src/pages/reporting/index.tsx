@@ -61,30 +61,52 @@ function ReportingPage() {
 						There are currently {state.totalDocuments} patients
 						enrolled in the NICE Data Project.
 					</article>
-					<div
-						ref={graphContainer}
-						className="flex flex-col w-full h-96"
-					>
-						<Barplot
-							width={width}
-							height={750}
-							data={state.counts.outcm_hosp_discharge_loc}
-						/>
-						<Barplot
-							width={width}
-							height={750}
-							data={state.counts.diagnosis_cardiac}
-						/>
-						<Barplot
-							width={width}
-							height={750}
-							data={state.counts.diagnosis_resp}
-						/>
-						<Boxplot
-							width={width}
-							height={750}
-							data={state.losData}
-						/>
+					<div ref={graphContainer} className="flex flex-col w-full">
+						<div className="flex mt-4 h-fit">
+							<div className="flex items-center flex-col">
+								<article className="font-semibold">
+									Hospital Outcomes
+								</article>
+								<Barplot
+									width={width / 3}
+									height={650}
+									data={state.counts.outcm_hosp_discharge_loc}
+								/>
+								<article className="mt-4">subtitle</article>
+							</div>
+							<div className="flex items-center flex-col">
+								<article className="font-semibold">
+									Primary Cardiac Diagnosis
+								</article>
+								<Barplot
+									width={width / 3}
+									height={650}
+									data={state.counts.diagnosis_cardiac}
+								/>
+								<article className="mt-4">subtitle</article>
+							</div>
+							<div className="flex items-center flex-col">
+								<article className="font-semibold">
+									Primary Respiratory Diagnosis
+								</article>
+								<Barplot
+									width={width / 3}
+									height={650}
+									data={state.counts.diagnosis_resp}
+								/>
+								<article className="mt-4">subtitle</article>
+							</div>
+						</div>
+						<div className="flex items-center flex-col mt-16">
+							<article className="font-semibold">
+								Length of Stay Distribution
+							</article>
+							<Boxplot
+								width={width / 1.5}
+								height={500}
+								data={state.losData}
+							/>
+						</div>
 					</div>
 				</div>
 			) : (
