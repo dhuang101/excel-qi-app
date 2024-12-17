@@ -8,7 +8,7 @@ function ReportingPage() {
 	const [state, dispatch] = useReducer(reportReducer, null)
 	const [width, setWidth] = useState(0)
 
-	const graphContainer = useRef<HTMLDivElement>(null)
+	const graphContainer = useRef<HTMLDivElement | null>(null)
 
 	// sequentially fetch the data
 	// TODO: fetch them in parallel?
@@ -37,17 +37,22 @@ function ReportingPage() {
 		}
 
 		const resizeObserver = new ResizeObserver(() => {
-			if (graphContainer.current!.offsetWidth !== width) {
+			if (
+				graphContainer.current?.offsetWidth !== width &&
+				graphContainer.current !== null
+			) {
 				setWidth(graphContainer.current!.offsetWidth)
 			}
 		})
 
-		resizeObserver.observe(graphContainer.current)
+		if (graphContainer.current) {
+			resizeObserver.observe(graphContainer.current)
+		}
 
-		return function cleanup() {
+		return () => {
 			resizeObserver.disconnect()
 		}
-	}, [graphContainer.current, state])
+	}, [state, width])
 
 	// useEffect(() => {
 	// 	console.log(state)
@@ -106,8 +111,11 @@ function ReportingPage() {
 								height={500}
 								data={state.losData}
 							/>
+							<article className="mt-4">subtitle</article>
 						</div>
 					</div>
+					{/* footer */}
+					<div className="h-16" />
 				</div>
 			) : (
 				<div className="flex flex-col justify-center items-center h-[83vh]">
