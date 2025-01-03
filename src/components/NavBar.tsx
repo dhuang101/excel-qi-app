@@ -49,11 +49,6 @@ function NavBar() {
 								Registry Search
 							</article>
 						</Link>
-						<Link href={"/graphs"}>
-							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								Visualisations
-							</article>
-						</Link>
 						<Link href={"/models"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								NLP Model
