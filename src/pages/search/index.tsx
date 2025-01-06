@@ -273,13 +273,15 @@ function SearchPage() {
 						{/* rest of the page */}
 						<div className="flex w-full justify-between">
 							<button className="btn mb-4" onClick={handleBack}>
-								Back
+								New Search
 							</button>
 							<button
 								className="btn mb-4"
 								onClick={handleToggleVis}
 							>
-								Visualise Cohort
+								{showingVis
+									? "Close Graph"
+									: "Visualise Cohort"}
 							</button>
 							<button
 								className="btn mb-4"
