@@ -121,6 +121,7 @@ function SearchPage() {
 
 	// event handler for search query
 	function handleSearch() {
+		window.scrollTo(0, 0)
 		// form validation
 		if (Object.keys(searchQuery).length === 0) {
 			// no empty fields
@@ -140,7 +141,6 @@ function SearchPage() {
 				})
 				.then(() => {
 					setLoading(false)
-					window.scrollTo(0, 0)
 				})
 		}
 	}
