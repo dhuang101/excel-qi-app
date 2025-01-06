@@ -14,7 +14,7 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 	keys,
 	width = 800,
 	height = 400,
-	margin = { top: 30, right: 8, bottom: 50, left: 50 },
+	margin = { top: 30, right: 100, bottom: 50, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
 
@@ -129,25 +129,28 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 		const legend = svg
 			.append("g")
 			.attr("class", "legend")
-			.attr("transform", `translate(${margin.left},${margin.top - 10})`)
+			.attr(
+				"transform",
+				`translate(${width - margin.right + 20}, ${margin.top})`
+			)
 
 		keys.forEach((key, i) => {
 			const legendGroup = legend
 				.append("g")
-				.attr("transform", `translate(${i * 120}, 0)`)
+				.attr("transform", `translate(0, ${i * 20})`)
 
 			legendGroup
 				.append("rect")
-				.attr("x", 10)
-				.attr("y", -10)
+				.attr("x", 0)
+				.attr("y", 0)
 				.attr("width", 15)
 				.attr("height", 15)
 				.attr("fill", color(key) || "#000")
 
 			legendGroup
 				.append("text")
-				.attr("x", 30)
-				.attr("y", 2)
+				.attr("x", 20)
+				.attr("y", 12)
 				.style("font-size", "12px")
 				.style("fill", "oklch(var(--bc)")
 				.text(key)
