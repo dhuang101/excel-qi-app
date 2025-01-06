@@ -176,15 +176,6 @@ function SearchPage() {
 		window.scrollTo(0, 0)
 	}, [state])
 
-	const exampleData = [
-		{ category: "Q1", ProductA: 30, ProductB: 50, ProductC: 40 },
-		{ category: "Q2", ProductA: 40, ProductB: 60, ProductC: 50 },
-		{ category: "Q3", ProductA: 35, ProductB: 45, ProductC: 55 },
-		{ category: "Q4", ProductA: 50, ProductB: 70, ProductC: 60 },
-	]
-
-	const exampleKeys = ["ProductA", "ProductB", "ProductC"]
-
 	return (
 		<div className="flex flex-col flex-grow w-full items-center">
 			<div className="w-2/3 h-full">
