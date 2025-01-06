@@ -12,9 +12,9 @@ type ClusteredBarChartProps = {
 const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 	data,
 	keys,
-	width = 2500,
+	width = 2100,
 	height = 400,
-	margin = { top: 30, right: 200, bottom: 50, left: 50 },
+	margin = { top: 50, right: 30, bottom: 50, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
 
@@ -113,7 +113,7 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 			.attr("y", height - 5)
 			.attr("text-anchor", "middle")
 			.attr("fill", "oklch(var(--bc)")
-			.text("Categories")
+			.text("Diagnoses")
 
 		// Add labels for the y-axis
 		svg.append("text")
@@ -123,34 +123,31 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 			.attr("transform", "rotate(-90)")
 			.attr("fill", "oklch(var(--bc)")
 			.attr("text-anchor", "middle")
-			.text("Values")
+			.text("Count")
 
 		// Add legend
 		const legend = svg
 			.append("g")
 			.attr("class", "legend")
-			.attr(
-				"transform",
-				`translate(${width - margin.right + 20}, ${margin.top})`
-			)
+			.attr("transform", `translate(${margin.left},${margin.top - 10})`)
 
 		keys.forEach((key, i) => {
 			const legendGroup = legend
 				.append("g")
-				.attr("transform", `translate(0, ${i * 20})`)
+				.attr("transform", `translate(${i * 200}, 0)`)
 
 			legendGroup
 				.append("rect")
-				.attr("x", 0)
-				.attr("y", 0)
+				.attr("x", 20)
+				.attr("y", -20)
 				.attr("width", 15)
 				.attr("height", 15)
 				.attr("fill", color(key) || "#000")
 
 			legendGroup
 				.append("text")
-				.attr("x", 20)
-				.attr("y", 12)
+				.attr("x", 40)
+				.attr("y", -8)
 				.style("font-size", "12px")
 				.style("fill", "oklch(var(--bc)")
 				.text(key)

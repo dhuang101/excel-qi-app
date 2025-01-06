@@ -274,7 +274,7 @@ function SearchPage() {
 								onClick={handleToggleVis}
 							>
 								{showingVis
-									? "Close Graph"
+									? "Close Graphs"
 									: "Visualise Cohort"}
 							</button>
 							<button
@@ -287,11 +287,16 @@ function SearchPage() {
 							</button>
 						</div>
 						{showingVis ? (
-							<div>
-								<ClusteredBarChart
-									data={state.graphData}
-									keys={state.graphKeys}
-								/>
+							<div className="flex flex-col items-center mt-4">
+								<article className="font-semibold">
+									Outcomes for Respiratory Diagnoses
+								</article>
+								<div className="w-full overflow-x-auto">
+									<ClusteredBarChart
+										data={state.graphData}
+										keys={state.graphKeys}
+									/>
+								</div>
 							</div>
 						) : (
 							<React.Fragment>

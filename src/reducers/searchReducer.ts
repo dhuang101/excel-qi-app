@@ -46,6 +46,7 @@ export default function searchReducer(state: State, action: Action) {
 				),
 			}
 		case ACTION.UPDATE_RESULTS:
+			// generate data for the graphs
 			const keys = [
 				...new Set(
 					action.payload.map(
@@ -55,7 +56,7 @@ export default function searchReducer(state: State, action: Action) {
 				),
 			]
 
-			// Group by `outcm_hosp_discharge_loc` and count `diagnosis_resp`
+			// aggregate for counting outcome against respiratory diagnosis
 			const grouped = action.payload.reduce(
 				(
 					acc: { [x: string]: { [x: string]: number } },
@@ -64,7 +65,6 @@ export default function searchReducer(state: State, action: Action) {
 						outcm_hosp_discharge_loc: any
 					}
 				) => {
-					console.log("tes")
 					const diagnosis = record.diagnosis_resp
 					const loc = record.outcm_hosp_discharge_loc
 
@@ -84,10 +84,9 @@ export default function searchReducer(state: State, action: Action) {
 				{}
 			)
 
-			// Transform grouped data into the desired array format
+			// transform grouped data into the desired array format
 			const result: OutputRow[] = Object.entries(grouped).map(
 				([diagnosis, locations]) => {
-					// Assert that `locations` is a `Record<string, number>`
 					const locs = locations as Record<string, number>
 					const row: OutputRow = { category: diagnosis }
 					for (const [loc, count] of Object.entries(locs)) {
