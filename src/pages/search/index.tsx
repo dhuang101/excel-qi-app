@@ -37,7 +37,8 @@ function SearchPage() {
 		pageNum: 0,
 		rowsPerPage: 10,
 		graphKeys: [],
-		graphData: [],
+		graphDataResp: [],
+		graphDataCardiac: [],
 	})
 
 	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
@@ -288,12 +289,21 @@ function SearchPage() {
 						</div>
 						{showingVis ? (
 							<div className="flex flex-col items-center mt-4">
-								<article className="font-semibold">
-									Outcomes for Respiratory Diagnoses
+								<article className="font-semibold text-lg">
+									Outcomes for Primary Respiratory Diagnoses
 								</article>
 								<div className="w-full overflow-x-auto">
 									<ClusteredBarChart
-										data={state.graphData}
+										data={state.graphDataResp}
+										keys={state.graphKeys}
+									/>
+								</div>
+								<article className="font-semibold text-lg mt-16">
+									Outcomes for Primary Cardiac Diagnoses
+								</article>
+								<div className="w-full overflow-x-auto">
+									<ClusteredBarChart
+										data={state.graphDataCardiac}
 										keys={state.graphKeys}
 									/>
 								</div>

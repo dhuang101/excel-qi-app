@@ -12,8 +12,8 @@ type ClusteredBarChartProps = {
 const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 	data,
 	keys,
-	width = 2100,
-	height = 400,
+	width = 3500,
+	height = 500,
 	margin = { top: 50, right: 30, bottom: 50, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
@@ -113,7 +113,7 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 			.attr("y", height - 5)
 			.attr("text-anchor", "middle")
 			.attr("fill", "oklch(var(--bc)")
-			.text("Diagnoses")
+			.text("Primary Diagnosis")
 
 		// Add labels for the y-axis
 		svg.append("text")

@@ -10,7 +10,8 @@ interface State {
 	pageNum: number
 	rowsPerPage: 10 | 25 | 50 | 100
 	graphKeys: any[]
-	graphData: any[]
+	graphDataResp: any[]
+	graphDataCardiac: any[]
 }
 
 export enum ACTION {
@@ -56,52 +57,56 @@ export default function searchReducer(state: State, action: Action) {
 				),
 			]
 
-			// aggregate for counting outcome against respiratory diagnosis
-			const grouped = action.payload.reduce(
-				(
-					acc: { [x: string]: { [x: string]: number } },
-					record: {
-						diagnosis_resp: any
-						outcm_hosp_discharge_loc: any
-					}
-				) => {
-					const diagnosis = record.diagnosis_resp
-					const loc = record.outcm_hosp_discharge_loc
+			function createGraphData(
+				type: "diagnosis_resp" | "diagnosis_cardiac"
+			) {
+				// aggregate for counting outcome against respiratory diagnosis
+				const grouped = action.payload.reduce(
+					(
+						acc: { [x: string]: { [x: string]: number } },
+						record: {
+							diagnosis_cardiac: any
+							diagnosis_resp: any
+							outcm_hosp_discharge_loc: any
+						}
+					) => {
+						const diagnosis = record[type]
+						const loc = record.outcm_hosp_discharge_loc
 
-					// Ensure the diagnosis exists in the accumulator
-					if (!acc[diagnosis]) {
-						acc[diagnosis] = {}
-					}
+						// Ensure the diagnosis exists in the accumulator
+						if (!acc[diagnosis]) {
+							acc[diagnosis] = {}
+						}
 
-					// Count occurrences of each location
-					if (!acc[diagnosis][loc]) {
-						acc[diagnosis][loc] = 0
-					}
-					acc[diagnosis][loc]++
+						// Count occurrences of each location
+						if (!acc[diagnosis][loc]) {
+							acc[diagnosis][loc] = 0
+						}
+						acc[diagnosis][loc]++
 
-					return acc
-				},
-				{}
-			)
+						return acc
+					},
+					{}
+				)
 
-			// transform grouped data into the desired array format
-			const result: OutputRow[] = Object.entries(grouped).map(
-				([diagnosis, locations]) => {
+				// transform grouped data into the desired array format
+				return Object.entries(grouped).map(([diagnosis, locations]) => {
 					const locs = locations as Record<string, number>
 					const row: OutputRow = { category: diagnosis }
 					for (const [loc, count] of Object.entries(locs)) {
 						row[loc] = count
 					}
 					return row
-				}
-			)
+				})
+			}
 
 			return {
 				...state,
 				searchResults: action.payload,
 				slicedResults: action.payload.slice(0, 10),
 				graphKeys: keys,
-				graphData: result,
+				graphDataResp: createGraphData("diagnosis_resp"),
+				graphDataCardiac: createGraphData("diagnosis_cardiac"),
 			}
 		case ACTION.RESET_RESULTS:
 			return {
