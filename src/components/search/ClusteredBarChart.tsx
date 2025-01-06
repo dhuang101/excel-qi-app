@@ -3,7 +3,7 @@ import * as d3 from "d3"
 
 type ClusteredBarChartProps = {
 	data: { category: string; [key: string]: number | string }[]
-	keys: string[]
+	keys: any[]
 	width?: number
 	height?: number
 	margin?: { top: number; right: number; bottom: number; left: number }
@@ -12,9 +12,9 @@ type ClusteredBarChartProps = {
 const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 	data,
 	keys,
-	width = 800,
+	width = 2500,
 	height = 400,
-	margin = { top: 30, right: 100, bottom: 50, left: 50 },
+	margin = { top: 30, right: 200, bottom: 50, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
 

@@ -36,6 +36,8 @@ function SearchPage() {
 		slicedResults: [],
 		pageNum: 0,
 		rowsPerPage: 10,
+		graphKeys: [],
+		graphData: [],
 	})
 
 	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
@@ -51,6 +53,7 @@ function SearchPage() {
 		dispatch({ type: ACTION.RESET_RESULTS })
 	}
 
+	// toggles viewing of the clustered bar chart
 	function handleToggleVis() {
 		setShowingVis(!showingVis)
 	}
@@ -127,7 +130,6 @@ function SearchPage() {
 
 	// event handler for search query
 	function handleSearch() {
-		window.scrollTo(0, 0)
 		// form validation
 		if (Object.keys(searchQuery).length === 0) {
 			// no empty fields
@@ -140,6 +142,7 @@ function SearchPage() {
 					params: searchQuery,
 				})
 				.then((result) => {
+					window.scrollTo(0, 0)
 					dispatch({
 						type: ACTION.UPDATE_RESULTS,
 						payload: result.data,
@@ -295,8 +298,8 @@ function SearchPage() {
 						{showingVis ? (
 							<div>
 								<ClusteredBarChart
-									data={exampleData}
-									keys={exampleKeys}
+									data={state.graphData}
+									keys={state.graphKeys}
 								/>
 							</div>
 						) : (
