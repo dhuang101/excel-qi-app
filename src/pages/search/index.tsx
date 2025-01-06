@@ -8,6 +8,7 @@ import { keyToTitle } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
 import { DateStringFormatter } from "@/utilities/DateStringFormatter"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
+import ClusteredBarChart from "@/components/search/ClusteredBarChart"
 
 // type for the search query passed to mongo
 interface searchQuery {
@@ -39,6 +40,7 @@ function SearchPage() {
 
 	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
 	const [errorMessage, setErrorMessage] = useState("")
+	const [showingVis, setShowingVis] = useState(false)
 	const [modalSubmitted, setModalSubmitted] = useState(false)
 	const [loading, setLoading] = useState(false)
 
@@ -47,6 +49,10 @@ function SearchPage() {
 	// returns to query page
 	function handleBack() {
 		dispatch({ type: ACTION.RESET_RESULTS })
+	}
+
+	function handleToggleVis() {
+		setShowingVis(!showingVis)
 	}
 
 	// arrow function used to pipe input into event handler
@@ -167,6 +173,15 @@ function SearchPage() {
 		window.scrollTo(0, 0)
 	}, [state])
 
+	const exampleData = [
+		{ category: "Q1", ProductA: 30, ProductB: 50, ProductC: 40 },
+		{ category: "Q2", ProductA: 40, ProductB: 60, ProductC: 50 },
+		{ category: "Q3", ProductA: 35, ProductB: 45, ProductC: 55 },
+		{ category: "Q4", ProductA: 50, ProductB: 70, ProductC: 60 },
+	]
+
+	const exampleKeys = ["ProductA", "ProductB", "ProductC"]
+
 	return (
 		<div className="flex flex-col flex-grow w-full items-center">
 			<div className="w-2/3 h-full">
@@ -262,6 +277,12 @@ function SearchPage() {
 							</button>
 							<button
 								className="btn mb-4"
+								onClick={handleToggleVis}
+							>
+								Visualise Cohort
+							</button>
+							<button
+								className="btn mb-4"
 								onClick={() => {
 									modalRef.current!.showModal()
 								}}
@@ -269,30 +290,45 @@ function SearchPage() {
 								Export Cohort
 							</button>
 						</div>
-						<SearchTable patientData={state.slicedResults} />
-						<div className="flex flex-col items-center mt-8">
-							<TablePagination
-								component="div"
-								count={state.searchResults.length}
-								page={state.pageNum}
-								onPageChange={handleChangePage}
-								rowsPerPage={state.rowsPerPage}
-								onRowsPerPageChange={handleChangeRowsPerPage}
-								sx={{
-									"& .MuiToolbar-root": {
-										color: "oklch(var(--bc))",
-									},
-									"& .MuiSelect-icon": {
-										color: "oklch(var(--bc))",
-									},
-									"& .MuiButtonBase-root": {
-										"&.Mui-disabled": {
-											color: "oklch(var(disabled))",
-										},
-									},
-								}}
-							/>
-						</div>
+						{showingVis ? (
+							<div>
+								<ClusteredBarChart
+									data={exampleData}
+									keys={exampleKeys}
+								/>
+							</div>
+						) : (
+							<React.Fragment>
+								<SearchTable
+									patientData={state.slicedResults}
+								/>
+								<div className="flex flex-col items-center mt-8">
+									<TablePagination
+										component="div"
+										count={state.searchResults.length}
+										page={state.pageNum}
+										onPageChange={handleChangePage}
+										rowsPerPage={state.rowsPerPage}
+										onRowsPerPageChange={
+											handleChangeRowsPerPage
+										}
+										sx={{
+											"& .MuiToolbar-root": {
+												color: "oklch(var(--bc))",
+											},
+											"& .MuiSelect-icon": {
+												color: "oklch(var(--bc))",
+											},
+											"& .MuiButtonBase-root": {
+												"&.Mui-disabled": {
+													color: "oklch(var(disabled))",
+												},
+											},
+										}}
+									/>
+								</div>
+							</React.Fragment>
+						)}
 					</React.Fragment>
 				) : (
 					// search page
