@@ -326,7 +326,7 @@ function SearchPage() {
 								</article>
 								<div
 									ref={graphContainer}
-									className="flex justify-center w-[80vw]"
+									className="flex justify-center w-[85vw]"
 								>
 									<ClusteredBarplot
 										data={state.graphDataResp}
@@ -338,7 +338,7 @@ function SearchPage() {
 								<article className="font-semibold text-lg mt-16">
 									Outcomes for Primary Cardiac Diagnoses
 								</article>
-								<div className="flex justify-center w-[80vw]">
+								<div className="flex justify-center w-[85vw]">
 									<ClusteredBarplot
 										data={state.graphDataCardiac}
 										keys={state.graphKeys}
