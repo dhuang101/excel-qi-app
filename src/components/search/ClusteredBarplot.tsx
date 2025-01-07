@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react"
 import * as d3 from "d3"
 
-type ClusteredBarChartProps = {
+type ClusteredBarplotProps = {
 	data: { category: string; [key: string]: number | string }[]
 	keys: any[]
 	width?: number
@@ -9,11 +9,11 @@ type ClusteredBarChartProps = {
 	margin?: { top: number; right: number; bottom: number; left: number }
 }
 
-const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
+const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 	data,
 	keys,
 	width = 1400,
-	height = 500,
+	height = 600,
 	margin = { top: 50, right: 200, bottom: 100, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
@@ -206,4 +206,4 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 	return <svg ref={svgRef}></svg>
 }
 
-export default ClusteredBarChart
+export default ClusteredBarplot

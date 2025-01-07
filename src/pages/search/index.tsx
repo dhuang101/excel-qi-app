@@ -8,7 +8,7 @@ import { keyToTitle } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
 import { DateStringFormatter } from "@/utilities/DateStringFormatter"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
-import ClusteredBarChart from "@/components/search/ClusteredBarChart"
+import ClusteredBarplot from "@/components/search/ClusteredBarplot"
 
 // type for the search query passed to mongo
 interface searchQuery {
@@ -41,13 +41,19 @@ function SearchPage() {
 		graphDataCardiac: [],
 	})
 
+	// presearch state
 	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
 	const [errorMessage, setErrorMessage] = useState("")
+	// visualisations state
 	const [showingVis, setShowingVis] = useState(false)
+	const [width, setWidth] = useState(0)
+	// modal
 	const [modalSubmitted, setModalSubmitted] = useState(false)
+	// loading
 	const [loading, setLoading] = useState(false)
 
 	const modalRef = useRef<HTMLDialogElement>(null)
+	const graphContainer = useRef<HTMLDivElement | null>(null)
 
 	// returns to query page
 	function handleBack() {
@@ -293,7 +299,7 @@ function SearchPage() {
 									Outcomes for Primary Respiratory Diagnoses
 								</article>
 								<div className="flex justify-center w-[80vw]">
-									<ClusteredBarChart
+									<ClusteredBarplot
 										data={state.graphDataResp}
 										keys={state.graphKeys}
 									/>
@@ -302,7 +308,7 @@ function SearchPage() {
 									Outcomes for Primary Cardiac Diagnoses
 								</article>
 								<div className="flex justify-center w-[80vw]">
-									<ClusteredBarChart
+									<ClusteredBarplot
 										data={state.graphDataCardiac}
 										keys={state.graphKeys}
 									/>
