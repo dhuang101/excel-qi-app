@@ -4,6 +4,7 @@ import { Boxplot } from "@/components/reporting/boxplot/Boxplot"
 import reportReducer, { ACTION } from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
 import { useEffect, useReducer, useRef, useState } from "react"
+
 function ReportingPage() {
 	const [state, dispatch] = useReducer(reportReducer, null)
 	const [width, setWidth] = useState(0)
