@@ -5,6 +5,8 @@ interface ValueCount {
 	count: number
 }
 
+// this api fetches each each the count of unique value of each attribute in the attributes list
+
 async function GetCounts() {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
@@ -15,9 +17,9 @@ async function GetCounts() {
 		"diagnosis_resp",
 	]
 
-	// First, get the total number of documents in the collection
+	// first, get the total number of documents in the collection
 	const totalDocuments = await collection.countDocuments()
-	// Explicitly type the results object
+	// explicitly type the results object
 	const results: {
 		totalDocuments: number
 		counts: Record<string, { _id: string; count: number }[]>
@@ -26,12 +28,13 @@ async function GetCounts() {
 		counts: {},
 	}
 
+	// create query for db fetch
 	for (const attribute of attributes) {
-		const pipeline = [
+		const pipeline: any[] = [
 			{
-				$project: {
+				$match: {
 					[attribute]: {
-						$ifNull: [`$${attribute}`, "N/A"], // Replace null with "N/A"
+						$nin: [null, "N/A"],
 					},
 				},
 			},
@@ -39,9 +42,25 @@ async function GetCounts() {
 			{ $sort: { count: -1 } },
 		]
 
+		// replaces Dead with Deceased for the outcome
+		if (attribute === "outcm_hosp_discharge_loc") {
+			pipeline.splice(2, 0, {
+				$addFields: {
+					_id: {
+						$cond: {
+							if: { $eq: ["$_id", "Dead"] },
+							then: "Deceased",
+							else: "$_id",
+						},
+					},
+				},
+			})
+		}
+
 		const values = await collection
 			.aggregate<ValueCount>(pipeline)
 			.toArray()
+
 		results.counts[attribute] = values
 	}
 
