@@ -77,7 +77,6 @@ function ReportingPage() {
 									height={650}
 									data={state.counts.outcm_hosp_discharge_loc}
 								/>
-								<article className="mt-4">subtitle</article>
 							</div>
 							<div className="flex items-center flex-col">
 								<article className="font-semibold">
@@ -88,7 +87,11 @@ function ReportingPage() {
 									height={650}
 									data={state.counts.diagnosis_cardiac}
 								/>
-								<article className="mt-4">subtitle</article>
+								<article className="mt-4">
+									These figures display the number of patients
+									for each unique value of the titled
+									attribute
+								</article>
 							</div>
 							<div className="flex items-center flex-col">
 								<article className="font-semibold">
@@ -99,7 +102,6 @@ function ReportingPage() {
 									height={650}
 									data={state.counts.diagnosis_resp}
 								/>
-								<article className="mt-4">subtitle</article>
 							</div>
 						</div>
 						<div className="flex items-center flex-col mt-16">
@@ -111,7 +113,10 @@ function ReportingPage() {
 								height={500}
 								data={state.losData}
 							/>
-							<article className="mt-4">subtitle</article>
+							<article className="mt-4 w-1/3">
+								Boxplot detailing the distribution of length of
+								stays in vital hospital locations
+							</article>
 						</div>
 					</div>
 					{/* footer */}
