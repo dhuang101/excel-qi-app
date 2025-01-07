@@ -292,7 +292,7 @@ function SearchPage() {
 								<article className="font-semibold text-lg">
 									Outcomes for Primary Respiratory Diagnoses
 								</article>
-								<div className="w-full overflow-x-auto">
+								<div className="flex justify-center w-[80vw]">
 									<ClusteredBarChart
 										data={state.graphDataResp}
 										keys={state.graphKeys}
@@ -301,7 +301,7 @@ function SearchPage() {
 								<article className="font-semibold text-lg mt-16">
 									Outcomes for Primary Cardiac Diagnoses
 								</article>
-								<div className="w-full overflow-x-auto">
+								<div className="flex justify-center w-[80vw]">
 									<ClusteredBarChart
 										data={state.graphDataCardiac}
 										keys={state.graphKeys}

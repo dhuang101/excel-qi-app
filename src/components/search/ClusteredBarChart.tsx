@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react"
 import * as d3 from "d3"
-import { SvgWrapText } from "@/utilities/SvgWrapText"
 
 type ClusteredBarChartProps = {
 	data: { category: string; [key: string]: number | string }[]
@@ -13,9 +12,9 @@ type ClusteredBarChartProps = {
 const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 	data,
 	keys,
-	width = 3500,
+	width = 1400,
 	height = 500,
-	margin = { top: 50, right: 30, bottom: 50, left: 50 },
+	margin = { top: 50, right: 200, bottom: 100, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
 
@@ -76,9 +75,53 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 			.style("font-size", "12px")
 			.style("fill", "oklch(var(--bc))")
 			.style("text-anchor", "middle")
-			.each(function () {
-				SvgWrapText(d3.select(this), 75)
+			.call(wrapText, 80)
+
+		// Function to wrap text
+		function wrapText(
+			text: d3.Selection<d3.BaseType, unknown, SVGGElement, unknown>, // Use BaseType for broader compatibility
+			width: number
+		): void {
+			text.each(function () {
+				const textElement = d3.select<SVGTextElement, unknown>(
+					this as SVGTextElement
+				) // Assert `this` as SVGTextElement
+				const words: string[] = textElement.text().split(/\s+/) // Split text into words
+				let line: string[] = []
+				const lineHeight = 1.1 // Line height for wrapping
+				const y: string | null = textElement.attr("y")
+				let dy: number = parseFloat(textElement.attr("dy") || "0")
+
+				// Clear the existing text and append the first tspan
+				let tspan = textElement
+					.text(null)
+					.append("tspan")
+					.attr("x", 0)
+					.attr("y", y)
+					.attr("dy", `${dy}em`)
+
+				words.forEach((word) => {
+					line.push(word)
+					tspan.text(line.join(" "))
+
+					const tspanNode = tspan.node() // Safely get the DOM node
+					if (
+						tspanNode &&
+						tspanNode.getComputedTextLength() > width
+					) {
+						line.pop() // Remove the word that caused the overflow
+						tspan.text(line.join(" ")) // Set the text for the current line
+						line = [word] // Start a new line with the overflow word
+						tspan = textElement
+							.append("tspan")
+							.attr("x", 0)
+							.attr("y", y)
+							.attr("dy", `${++dy * lineHeight}em`) // Move the new line downward
+							.text(word)
+					}
+				})
 			})
+		}
 
 		// Add y-axis
 		chartGroup
@@ -133,25 +176,27 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 		const legend = svg
 			.append("g")
 			.attr("class", "legend")
-			.attr("transform", `translate(${margin.left},${margin.top - 10})`)
+			.attr(
+				"transform",
+				`translate(${width - margin.right + 20}, ${margin.top})`
+			)
 
 		keys.forEach((key, i) => {
 			const legendGroup = legend
 				.append("g")
-				.attr("transform", `translate(${i * 200}, 0)`)
-
+				.attr("transform", `translate(0, ${i * 20})`)
 			legendGroup
 				.append("rect")
-				.attr("x", 20)
-				.attr("y", -20)
+				.attr("x", 0)
+				.attr("y", 0)
 				.attr("width", 15)
 				.attr("height", 15)
 				.attr("fill", color(key) || "#000")
 
 			legendGroup
 				.append("text")
-				.attr("x", 40)
-				.attr("y", -8)
+				.attr("x", 20)
+				.attr("y", 12)
 				.style("font-size", "12px")
 				.style("fill", "oklch(var(--bc)")
 				.text(key)
