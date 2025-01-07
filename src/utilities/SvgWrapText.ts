@@ -1,7 +1,4 @@
-export const SvgWrapText = (
-	textElement: d3.Selection<SVGTextElement, any, null, undefined>,
-	width: number
-): void => {
+export const SvgWrapText = (textElement: any, width: number): void => {
 	const text = textElement
 	const words = text.text().split(/\s+/) // Split the text into words
 	let word

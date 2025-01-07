@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react"
 import * as d3 from "d3"
+import { SvgWrapText } from "@/utilities/SvgWrapText"
 
 type ClusteredBarChartProps = {
 	data: { category: string; [key: string]: number | string }[]
@@ -74,7 +75,10 @@ const ClusteredBarChart: React.FC<ClusteredBarChartProps> = ({
 			.selectAll("text")
 			.style("font-size", "12px")
 			.style("fill", "oklch(var(--bc))")
-			.style("text-anchor", "center")
+			.style("text-anchor", "middle")
+			.each(function () {
+				SvgWrapText(d3.select(this), 75)
+			})
 
 		// Add y-axis
 		chartGroup
