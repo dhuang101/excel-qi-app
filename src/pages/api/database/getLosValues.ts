@@ -4,6 +4,8 @@ interface DocumentType {
 	[key: string]: any // Allow dynamic indexing with string keys
 }
 
+// this api simply fetches the values of attributes in the attributes list and orders them
+
 async function GetLosValues() {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)

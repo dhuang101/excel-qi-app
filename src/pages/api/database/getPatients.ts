@@ -13,7 +13,7 @@ async function GetPatients(params: searchQuery) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
 
-	// Build the query dynamically
+	// Build the query dynamically checking if search params were included
 	let query = {}
 
 	query = {
