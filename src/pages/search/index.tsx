@@ -57,6 +57,8 @@ function SearchPage() {
 
 	// returns to query page
 	function handleBack() {
+		setShowingVis(false)
+		setSearchQuery({})
 		dispatch({ type: ACTION.RESET_RESULTS })
 	}
 
@@ -183,6 +185,30 @@ function SearchPage() {
 		window.scrollTo(0, 0)
 	}, [state])
 
+	// dynamically assigns width variable to create responsive d3 graphs
+	useEffect(() => {
+		if (!graphContainer.current || !showingVis) {
+			return
+		}
+
+		const resizeObserver = new ResizeObserver(() => {
+			if (
+				graphContainer.current?.offsetWidth !== width &&
+				graphContainer.current !== null
+			) {
+				setWidth(graphContainer.current!.offsetWidth)
+			}
+		})
+
+		if (graphContainer.current) {
+			resizeObserver.observe(graphContainer.current)
+		}
+
+		return () => {
+			resizeObserver.disconnect()
+		}
+	}, [showingVis, width])
+
 	return (
 		<div className="flex flex-col flex-grow w-full items-center">
 			<div className="w-2/3 h-full">
@@ -298,10 +324,15 @@ function SearchPage() {
 								<article className="font-semibold text-lg">
 									Outcomes for Primary Respiratory Diagnoses
 								</article>
-								<div className="flex justify-center w-[80vw]">
+								<div
+									ref={graphContainer}
+									className="flex justify-center w-[80vw]"
+								>
 									<ClusteredBarplot
 										data={state.graphDataResp}
 										keys={state.graphKeys}
+										width={width}
+										height={625}
 									/>
 								</div>
 								<article className="font-semibold text-lg mt-16">
@@ -311,6 +342,8 @@ function SearchPage() {
 									<ClusteredBarplot
 										data={state.graphDataCardiac}
 										keys={state.graphKeys}
+										width={width}
+										height={625}
 									/>
 								</div>
 							</div>
