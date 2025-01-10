@@ -57,8 +57,11 @@ function SearchPage() {
 
 	// returns to query page
 	function handleBack() {
+		// reset page state
+		setErrorMessage("")
 		setShowingVis(false)
 		setSearchQuery({})
+		// dispatch to reset search state
 		dispatch({ type: ACTION.RESET_RESULTS })
 	}
 
