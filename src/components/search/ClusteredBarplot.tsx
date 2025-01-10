@@ -147,7 +147,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("x", (d) => x1(d.key) || 0)
 			.attr("y", (d) => y(d.value))
 			.attr("width", x1.bandwidth())
-			.attr("height", (d) => chartHeight - y(d.value))
+			.attr("height", (d) => (y(d.value) ? chartHeight - y(d.value) : 0))
 			.attr("stroke", "oklch(var(--bc)")
 			.attr("stroke-width", "1")
 			.attr("fill", (d) => color(d.key) || "#000")
