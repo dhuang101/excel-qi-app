@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react"
 import * as d3 from "d3"
+import SvgImageDownload from "@/utilities/SvgImageDownload"
 
 type ClusteredBarplotProps = {
 	data: { category: string; [key: string]: number | string }[]
@@ -17,6 +18,10 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 	margin = { top: 50, right: 200, bottom: 100, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
+
+	function handleDownload() {
+		SvgImageDownload(svgRef, "clustered-barplot.jpg")
+	}
 
 	useEffect(() => {
 		const svg = d3.select(svgRef.current)
@@ -72,9 +77,9 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("transform", `translate(0,${chartHeight})`)
 			.call(xAxis)
 			.selectAll("text")
-			.style("font-size", "12px")
-			.style("fill", "oklch(var(--bc))")
-			.style("text-anchor", "middle")
+			.attr("font-size", "12px")
+			.attr("fill", "oklch(var(--bc))")
+			.attr("text-anchor", "middle")
 			.call(wrapText, 80)
 
 		// Function to wrap text
@@ -128,8 +133,8 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.append("g")
 			.call(yAxis)
 			.selectAll("text")
-			.style("font-size", "12px")
-			.style("fill", "oklch(var(--bc))")
+			.attr("font-size", "12px")
+			.attr("fill", "oklch(var(--bc))")
 
 		// Add bars
 		const bars = chartGroup
@@ -185,6 +190,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			const legendGroup = legend
 				.append("g")
 				.attr("transform", `translate(0, ${i * 20})`)
+
 			legendGroup
 				.append("rect")
 				.attr("x", 0)
@@ -197,13 +203,20 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 				.append("text")
 				.attr("x", 20)
 				.attr("y", 12)
-				.style("font-size", "12px")
-				.style("fill", "oklch(var(--bc)")
+				.attr("font-size", "12px")
+				.attr("fill", "oklch(var(--bc)")
 				.text(key)
 		})
 	}, [data, keys, width, height, margin])
 
-	return <svg ref={svgRef}></svg>
+	return (
+		<div className="flex flex-col items-center">
+			<svg ref={svgRef}></svg>
+			<button onClick={handleDownload} className="btn mt-4">
+				Download Plot
+			</button>
+		</div>
+	)
 }
 
 export default ClusteredBarplot
