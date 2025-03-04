@@ -49,19 +49,24 @@ function NavBar() {
 								Registry Search
 							</article>
 						</Link>
-						<Link href={"/models"}>
-							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								NLP Model
-							</article>
-						</Link>
 						<Link href={"/reporting"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								Reporting
 							</article>
 						</Link>
+						<Link href={"/models"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								NLP Model
+							</article>
+						</Link>
 						<Link href={"/ecmo-pal"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								ECMO Prediction
+							</article>
+						</Link>
+						<Link href={"/resources"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								ECMO Resources
 							</article>
 						</Link>
 					</div>
