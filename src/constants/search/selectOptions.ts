@@ -23,9 +23,9 @@ export const diagnosis_cardiac_options = [
 	"Congenital heart disease",
 	'Primary arrhythmia ("Channelopathy")',
 	"Chronic graft (heart) dysfunction",
-	"Chronic cardiomyopathy not covered above",
-	"Acute decompensated heart not covered above",
 	"Peri-operative support",
+	"Acute decompensated heart not covered above",
+	"Chronic cardiomyopathy not covered above",
 	"N/A",
 ]
 

@@ -391,21 +391,25 @@ function SearchPage() {
 								Find patients with...
 							</article>
 							<div className="flex flex-col w-full">
-								<DropdownInput
-									title={"Primary Respiratory Diagnosis"}
-									handleSelectChange={handleSelectChange}
-									queryAttribute={"diagnosis_resp"}
-								/>
-								<DropdownInput
-									title={"Primary Cardiac Diagnosis"}
-									handleSelectChange={handleSelectChange}
-									queryAttribute={"diagnosis_cardiac"}
-								/>
-								<DropdownInput
-									title={"Discharge Outcome"}
-									handleSelectChange={handleSelectChange}
-									queryAttribute={"outcm_hosp_discharge_loc"}
-								/>
+								<div className="flex justify-between">
+									<DropdownInput
+										title={"Primary Respiratory Diagnosis"}
+										handleSelectChange={handleSelectChange}
+										queryAttribute={"diagnosis_resp"}
+									/>
+									<DropdownInput
+										title={"Primary Cardiac Diagnosis"}
+										handleSelectChange={handleSelectChange}
+										queryAttribute={"diagnosis_cardiac"}
+									/>
+									<DropdownInput
+										title={"Discharge Outcome"}
+										handleSelectChange={handleSelectChange}
+										queryAttribute={
+											"outcm_hosp_discharge_loc"
+										}
+									/>
+								</div>
 								<article className="my-4 text-xl">
 									Narrow By...
 								</article>
