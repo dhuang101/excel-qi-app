@@ -6,7 +6,11 @@ import { CircularProgress } from "@mui/material"
 import { useEffect, useReducer, useRef, useState } from "react"
 
 function ReportingPage() {
-	const [state, dispatch] = useReducer(reportReducer, null)
+	const [state, dispatch] = useReducer(reportReducer, {
+		totalDocuments: 0,
+		counts: {},
+		losData: [],
+	})
 	const [width, setWidth] = useState(0)
 
 	const graphContainer = useRef<HTMLDivElement | null>(null)
@@ -61,7 +65,7 @@ function ReportingPage() {
 
 	return (
 		<div className="flex flex-col flex-grow w-full items-center">
-			{state !== null ? (
+			{state.totalDocuments > 0 ? (
 				<div className="flex flex-col w-2/3 h-full items-center">
 					<article className="my-4 text-xl font-semibold">
 						There are currently {state.totalDocuments} patients
