@@ -1,4 +1,4 @@
-import { createContext, useReducer } from "react"
+import { createContext, JSX, useReducer } from "react"
 
 export enum ACTION {
 	UPDATE_THEME,

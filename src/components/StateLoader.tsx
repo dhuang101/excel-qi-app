@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react"
+import { JSX, useContext, useEffect } from "react"
 import { ACTION, GlobalContext } from "../store/GlobalStore"
 
 function StateLoader({ children }: React.PropsWithChildren): JSX.Element {
