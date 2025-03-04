@@ -64,7 +64,7 @@ function ReportingPage() {
 	// }, [state])
 
 	return (
-		<div className="flex flex-col flex-grow w-full items-center">
+		<div className="flex flex-col grow w-full items-center">
 			{state.totalDocuments > 0 ? (
 				<div className="flex flex-col w-2/3 h-full items-center">
 					<article className="my-4 text-xl font-semibold">

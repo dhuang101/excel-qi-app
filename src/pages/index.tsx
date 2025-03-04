@@ -1,6 +1,6 @@
 function Home() {
 	return (
-		<div className="flex flex-col flex-grow w-full items-center justify-center">
+		<div className="flex flex-col grow w-full items-center justify-center">
 			<div className="flex flex-col h-full w-2/3 items-center justify-center bg-base-100">
 				<article className="text-5xl font-semibold mb-8">
 					NICE Data Project

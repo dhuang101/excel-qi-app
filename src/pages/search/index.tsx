@@ -213,7 +213,7 @@ function SearchPage() {
 	}, [showingVis, width])
 
 	return (
-		<div className="flex flex-col flex-grow w-full items-center">
+		<div className="flex flex-col grow w-full items-center">
 			<div className="w-2/3 h-full">
 				<article className="my-4 text-3xl font-semibold">
 					Cohort Construction

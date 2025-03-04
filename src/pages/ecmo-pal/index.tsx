@@ -46,7 +46,7 @@ function EcmoPalPage() {
 	}, [])
 
 	return (
-		<div className="flex flex-col flex-grow w-full items-center">
+		<div className="flex flex-col grow w-full items-center">
 			<div className="flex flex-col h-full w-full mt-8 items-center">
 				<article className="text-3xl font-semibold mb-4">
 					Phil Phillip
