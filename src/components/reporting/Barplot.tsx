@@ -96,8 +96,8 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					width={xScale(d.count)}
 					height={yScale.bandwidth()}
 					opacity={0.7}
-					stroke="oklch(var(--bc))"
-					fill="oklch(var(--p))"
+					stroke="var(--color-base-content)"
+					fill="var(--color-primary)"
 					fillOpacity={0.5}
 					strokeWidth={1}
 					rx={1}
@@ -107,7 +107,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					y={y + yScale.bandwidth() / 2}
 					textAnchor="end"
 					alignmentBaseline="central"
-					fill="oklch(var(--bc))"
+					fill="var(--color-base-content)"
 					fontSize={12}
 					opacity={xScale(d.count) > 90 ? 1 : 0} // hide label if bar is not wide enough
 				>
@@ -117,7 +117,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					x={xScale(0) - 8}
 					y={y + yScale.bandwidth() / 2}
 					textAnchor="end"
-					fill="oklch(var(--bc))"
+					fill="var(--color-base-content)"
 					alignmentBaseline="central"
 					fontSize={12}
 					ref={(node: SVGTextElement) => {
@@ -144,7 +144,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					x2={xScale(value)}
 					y1={0}
 					y2={boundsHeight}
-					stroke="oklch(var(--bc))"
+					stroke="var(--color-base-content)"
 					opacity={0.2}
 				/>
 				<text
@@ -153,7 +153,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					textAnchor="middle"
 					alignmentBaseline="central"
 					fontSize={12}
-					fill="oklch(var(--bc))"
+					fill="var(--color-base-content)"
 					opacity={0.8}
 				>
 					{value}

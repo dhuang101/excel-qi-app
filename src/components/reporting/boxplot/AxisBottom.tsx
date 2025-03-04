@@ -39,7 +39,7 @@ export const AxisBottom = ({
 					<line
 						y1={TICK_LENGTH}
 						y2={-height - TICK_LENGTH}
-						stroke="oklch(var(--bc))"
+						stroke="var(--color-base-content)"
 						strokeWidth={1}
 						opacity={0.25}
 					/>
@@ -49,7 +49,7 @@ export const AxisBottom = ({
 							fontSize: "12px",
 							textAnchor: "middle",
 							transform: "translateY(20px)",
-							fill: "oklch(var(--bc))",
+							fill: "var(--color-base-content)",
 						}}
 					>
 						{value}

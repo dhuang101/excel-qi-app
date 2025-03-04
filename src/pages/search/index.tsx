@@ -367,14 +367,14 @@ function SearchPage() {
 										}
 										sx={{
 											"& .MuiToolbar-root": {
-												color: "oklch(var(--bc))",
+												color: "var(--color-base-content)",
 											},
 											"& .MuiSelect-icon": {
-												color: "oklch(var(--bc))",
+												color: "var(--color-base-content)",
 											},
 											"& .MuiButtonBase-root": {
 												"&.Mui-disabled": {
-													color: "oklch(var(disabled))",
+													color: "var(disabled))",
 												},
 											},
 										}}

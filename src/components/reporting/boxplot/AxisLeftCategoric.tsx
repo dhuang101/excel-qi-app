@@ -44,7 +44,7 @@ export const AxisLeft = ({ yScale }: AxisLeftProps) => {
 								textAnchor: "end",
 								alignmentBaseline: "middle",
 								transform: "translateX(-20px)",
-								fill: "oklch(var(--bc))",
+								fill: "var(--color-base-content)",
 							}}
 						>
 							{valueMap[value]}

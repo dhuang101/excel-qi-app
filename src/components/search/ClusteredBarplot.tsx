@@ -78,7 +78,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.call(xAxis)
 			.selectAll("text")
 			.attr("font-size", "12px")
-			.attr("fill", "oklch(var(--bc))")
+			.attr("fill", "var(--color-base-content)")
 			.attr("text-anchor", "middle")
 			.call(wrapText, 80)
 
@@ -134,7 +134,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.call(yAxis)
 			.selectAll("text")
 			.attr("font-size", "12px")
-			.attr("fill", "oklch(var(--bc))")
+			.attr("fill", "var(--color-base-content)")
 
 		// Add bars
 		const bars = chartGroup
@@ -153,7 +153,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("y", (d) => y(d.value))
 			.attr("width", x1.bandwidth())
 			.attr("height", (d) => (y(d.value) ? chartHeight - y(d.value) : 0))
-			.attr("stroke", "oklch(var(--bc)")
+			.attr("stroke", "var(--color-base-content)")
 			.attr("stroke-width", "1")
 			.attr("fill", (d) => color(d.key) || "#000")
 			.attr("fill-opacity", "0.6")
@@ -164,7 +164,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("x", width / 2)
 			.attr("y", height - 5)
 			.attr("text-anchor", "middle")
-			.attr("fill", "oklch(var(--bc)")
+			.attr("fill", "var(--color-base-content)")
 			.text("Primary Diagnosis")
 
 		// Add labels for the y-axis
@@ -173,7 +173,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("x", -(height / 2))
 			.attr("y", 15)
 			.attr("transform", "rotate(-90)")
-			.attr("fill", "oklch(var(--bc)")
+			.attr("fill", "var(--color-base-content)")
 			.attr("text-anchor", "middle")
 			.text("Count")
 
@@ -204,7 +204,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 				.attr("x", 20)
 				.attr("y", 12)
 				.attr("font-size", "12px")
-				.attr("fill", "oklch(var(--bc)")
+				.attr("fill", "var(--color-base-content)")
 				.text(key)
 		})
 	}, [data, keys, width, height, margin])
