@@ -42,7 +42,7 @@ function StyledDateTimePicker({ onChange, label }: Props) {
 					root: {
 						color: "var(--color-base-content)",
 						"&.Mui-focused": {
-							color: "var(--color-neutral-content)",
+							color: "var(--color-base-content)",
 						},
 						"&.Mui-error": {
 							color: "var(--color-error)",

@@ -391,7 +391,7 @@ function SearchPage() {
 								Find patients with...
 							</article>
 							<div className="flex flex-col w-full">
-								<div className="flex justify-between">
+								<div className="flex w-full justify-between">
 									<DropdownInput
 										title={"Primary Respiratory Diagnosis"}
 										handleSelectChange={handleSelectChange}
@@ -413,7 +413,7 @@ function SearchPage() {
 								<article className="my-4 text-xl">
 									Narrow By...
 								</article>
-								<div className="flex flex-col gap-y-4">
+								<div className="flex flex-col gap-y-3">
 									<DateRangeInput
 										title={"Hospital Admission Time"}
 										handleDateChange={handleDateChange}
