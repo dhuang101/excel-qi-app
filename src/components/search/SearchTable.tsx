@@ -24,7 +24,7 @@ function SearchTable({ patientData }: Props) {
 			return (
 				<tr
 					key={i}
-					className="hover:text-accent-content hover:bg-accent cursor-pointer"
+					className="hover:text-accent-content hover:bg-accent"
 				>
 					<td>{obj.record_id}</td>
 					<td>{obj.diagnosis_resp}</td>
