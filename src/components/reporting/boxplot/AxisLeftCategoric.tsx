@@ -21,11 +21,11 @@ export const AxisLeft = ({ yScale }: AxisLeftProps) => {
 	return (
 		<>
 			{/* Main vertical line */}
-			<path
+			{/* <path
 				d={["M", 0, min, "L", 0, max].join(" ")}
 				fill="none"
 				stroke="currentColor"
-			/>
+			/> */}
 
 			{/* Ticks and labels */}
 			{ticks.map(({ value, yOffset }) => {
@@ -36,7 +36,8 @@ export const AxisLeft = ({ yScale }: AxisLeftProps) => {
 				}
 				return (
 					<g key={value} transform={`translate(0, ${yOffset})`}>
-						<line x2={-TICK_LENGTH} stroke="currentColor" />
+						{/* Ticks */}
+						{/* <line x2={-TICK_LENGTH} stroke="currentColor" /> */}
 						<text
 							key={value}
 							style={{
