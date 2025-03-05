@@ -30,14 +30,14 @@ function NavBar() {
 	return (
 		<div className="sticky top-0 bg-base-100 z-10">
 			<div className="navbar">
-				<div className="flex-1">
+				<div className="flex flex-1">
 					<Link href={"/"}>
 						<article className="btn btn-ghost normal-case rounded-xl text-xl text-base-content">
 							<Image
 								width={1672}
 								height={971}
 								src={ASSETS.logo}
-								className="max-h-11 max-w-20 w-auto h-auto"
+								className="max-h-10 max-w-17 w-auto h-auto"
 								alt="Logo"
 							/>
 							NICE Data Project
