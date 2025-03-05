@@ -1,47 +1,74 @@
+import ResourceCard from "@/components/resources/resourceCard"
+
+import ASSETS from "@/assets/assets"
+
 function ResourcesPage() {
 	return (
-		<div className="flex flex-col items-center">
-			<article className="my-4 text-3xl font-semibold">
-				ECMO Resources
-			</article>
+		<div className="flex flex-col items-center gap-y-8">
+			<article className="text-3xl font-semibold">ECMO Resources</article>
 			<div className="flex gap-x-20">
-				<div className="card bg-base-100 w-96 shadow-sm">
-					<div>
-						<img
-							src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-							alt="Shoes"
-						/>
-					</div>
-					<div className="card-body bg-base-300">
-						<h2 className="card-title">Card Title</h2>
-						<p>
-							A card component has a figure, a body part, and
-							inside body there are title and actions parts
-						</p>
-						<div className="card-actions justify-end">
-							<button className="btn btn-primary">Buy Now</button>
-						</div>
-					</div>
-				</div>
-				<div className="card bg-base-100 w-96 shadow-sm">
-					<figure>
-						<img
-							src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-							alt="Shoes"
-						/>
-					</figure>
-					<div className="card-body bg-base-300">
-						<h2 className="card-title">Card Title</h2>
-						<p>
-							A card component has a figure, a body part, and
-							inside body there are title and actions parts
-						</p>
-						<div className="card-actions justify-end">
-							<button className="btn btn-primary">Buy Now</button>
-						</div>
-					</div>
-				</div>
+				<ResourceCard
+					imageRes={[1042, 313]}
+					imageSrc={ASSETS.alfred}
+					cardTitle={"Alfred ECMO"}
+					cardBody={"PLACEHOLDER"}
+					link={"https://ecmo.icu/#menuRoot"}
+				/>
+				<ResourceCard
+					imageRes={[500, 152]}
+					imageSrc={ASSETS.ccm}
+					cardTitle={"Critical Care"}
+					cardBody={"PLACEHOLDER"}
+					link={"https://criticalcaretoronto.com/ecmo-101/"}
+				/>
 			</div>
+			<div className="flex gap-x-20">
+				<ResourceCard
+					imageRes={[1042, 313]}
+					imageSrc={ASSETS.elso}
+					cardTitle={"ELSO"}
+					cardBody={"PLACEHOLDER"}
+					link={"https://www.elso.org/ecmo-resources.aspx"}
+				/>
+				<ResourceCard
+					imageRes={[500, 152]}
+					imageSrc={ASSETS.em}
+					cardTitle={"ECMO Resource"}
+					cardBody={"PLACEHOLDER"}
+					link={"https://ecmoresource.com/"}
+				/>
+			</div>
+			<div className="flex gap-x-20">
+				<ResourceCard
+					imageRes={[1042, 313]}
+					imageSrc={ASSETS.jhm}
+					cardTitle={"John Hopkins Medicine"}
+					cardBody={"PLACEHOLDER"}
+					link={
+						"https://www.hopkinsmedicine.org/heart-vascular-institute/cardiac-surgery/ecmo-patient-family-resources"
+					}
+				/>
+				<ResourceCard
+					imageRes={[500, 152]}
+					imageSrc={ASSETS.litfl}
+					cardTitle={"Life In The Fastlane"}
+					cardBody={"PLACEHOLDER"}
+					link={"https://litfl.com/everything-ecmo/"}
+				/>
+			</div>
+			<div className="flex gap-x-20">
+				<ResourceCard
+					imageRes={[1042, 313]}
+					imageSrc={ASSETS.vecmos}
+					cardTitle={"VECMOS"}
+					cardBody={"PLACEHOLDER"}
+					link={
+						"https://www.vecmos.org.au/health-professionals/resources/"
+					}
+				/>
+			</div>
+			{/* footer */}
+			<div className="h-16" />
 		</div>
 	)
 }
