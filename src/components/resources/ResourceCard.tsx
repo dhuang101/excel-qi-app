@@ -18,7 +18,7 @@ function ResourceCard({
 }: Props) {
 	return (
 		<div className="card bg-base-100 w-96 shadow-sm h-fit">
-			<div className="flex justify-center bg-base-300">
+			<div className="flex justify-center bg-slate-300">
 				<Image
 					width={imageRes[0]}
 					height={imageRes[1]}

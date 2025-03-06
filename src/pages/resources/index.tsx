@@ -1,11 +1,13 @@
-import ResourceCard from "@/components/resources/resourceCard"
+import ResourceCard from "@/components/resources/ResourceCard"
 
 import ASSETS from "@/assets/assets"
 
 function ResourcesPage() {
 	return (
 		<div className="flex flex-col items-center gap-y-8">
-			<article className="text-3xl font-semibold">ECMO Resources</article>
+			<article className="text-3xl font-semibold mt-4">
+				ECMO Resources
+			</article>
 			<div className="flex gap-x-20">
 				<ResourceCard
 					imageRes={[1042, 313]}
