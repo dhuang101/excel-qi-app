@@ -1,20 +1,20 @@
-name: SSH into VM
+name: Deploy to VM
 
 on:
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:  # Manual trigger
   push:
     branches:
-      - main
+      - main  # Runs when main branch is updated
 
 jobs:
-  ssh-to-vm:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: SSH into VM and run commands
+      - name: SSH into VM and deploy app
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
@@ -22,7 +22,24 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "Connected to VM"
-            cd /path/to/project
+            echo "Connecting to VM..."
+
+            # Navigate to project directory
+            cd /home/ubuntu/nice-web-app/
+
+            # Kill existing process in screen session
+            screen -S web-server -X quit || echo "No existing screen session"
+
+            # Pull latest changes
             git pull origin main
-            ./deploy.sh  # Example deployment script
+
+            # Install dependencies (optional)
+            npm install
+
+            # Build the app
+            npm run build
+
+            # Start the app inside a new screen session
+            screen -dmS web-server bash -c 'npm start'
+
+            echo "Deployment completed successfully!"
