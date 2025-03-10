@@ -1,3 +1,8 @@
+// This gets called on every request
+export async function getServerSideProps() {
+	return { props: {} }
+}
+
 function Home() {
 	return (
 		<div className="flex flex-col grow w-full items-center justify-center">
