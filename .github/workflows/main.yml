@@ -4,8 +4,9 @@ on:
   workflow_dispatch:  # Manual trigger
   push:
     branches:
-      - main  # Runs when main branch is updated
-
+      - main
+      - develop
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
