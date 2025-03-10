@@ -1,0 +1,28 @@
+name: SSH into VM
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+  push:
+    branches:
+      - main
+
+jobs:
+  ssh-to-vm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: SSH into VM and run commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "Connected to VM"
+            cd /path/to/project
+            git pull origin main
+            ./deploy.sh  # Example deployment script
