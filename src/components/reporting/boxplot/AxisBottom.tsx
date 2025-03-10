@@ -25,6 +25,8 @@ export const AxisBottom = ({
 			value,
 			xOffset: xScale(value),
 		}))
+		// disabled as d3 does not correctly handle dependencies
+		// eslint-disable-next-line
 	}, [xScale])
 
 	return (

@@ -23,6 +23,8 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 			.domain(groups)
 			.range([0, boundsHeight])
 			.padding(BAR_PADDING)
+		// disabled as d3 does not correctly handle dependencies
+		// eslint-disable-next-line
 	}, [data, height])
 
 	// X axis
@@ -32,6 +34,8 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 			.scaleLinear()
 			.domain([0, max || 10])
 			.range([0, boundsWidth])
+		// disabled as d3 does not correctly handle dependencies
+		// eslint-disable-next-line
 	}, [data, width])
 
 	const SvgWrapText = (textElement: any, width: number): void => {
