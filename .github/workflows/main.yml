@@ -21,6 +21,13 @@ jobs:
                   script: |
                       echo "Connecting to VM..."
 
+                      # Ensure npm and node are available
+                      export NVM_DIR="$HOME/.nvm"
+                      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+                      source ~/.bashrc
+                      source ~/.profile
+
                       # Navigate to project directory
                       cd /home/ubuntu/nice-web-app/
 
