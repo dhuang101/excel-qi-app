@@ -30,7 +30,7 @@ function DropdownInput({ title, queryAttribute, handleSelectChange }: Props) {
 				<span className="label-text">{title}</span>
 			</div>
 			<select
-				className="select select-neutral w-full"
+				className="select w-full"
 				onChange={handleSelectChange(queryAttribute)}
 			>
 				{optionsMap[queryAttribute].map((value) => (

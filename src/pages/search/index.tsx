@@ -448,7 +448,10 @@ function SearchPage() {
 							</div>
 						</div>
 						<div className="flex items-center">
-							<button className="btn my-4" onClick={handleSearch}>
+							<button
+								className="btn btn-primary my-4"
+								onClick={handleSearch}
+							>
 								Search
 							</button>
 							<article className="ml-12 text-error font-semibold">
