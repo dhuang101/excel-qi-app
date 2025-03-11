@@ -1,12 +1,8 @@
-name: Deploy to VM
+name: Manual Deploy to VM
 
 on:
-  workflow_dispatch:  # Manual trigger
-  push:
-    branches:
-      - main
-      - develop
-      
+  workflow_dispatch:  # Only runs manually
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
