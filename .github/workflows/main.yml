@@ -32,7 +32,7 @@ jobs:
                       cd /home/ubuntu/nice-web-app/
 
                       # Kill existing process in screen session
-                      screen -S web-server -X quit || echo "No existing screen session"
+                      screen -S webserver -X quit || echo "No existing screen session"
 
                       # Pull latest changes securely using the PAT
                       git pull https://${{ secrets.PIPELINE_PAT }}@github.com/dhuang101/nice-web-app.git develop
@@ -44,6 +44,6 @@ jobs:
                       npm run build
 
                       # Start the app inside a new screen session
-                      screen -dmS web-server bash -c 'npm start'
+                      screen -dmS webserver bash -c 'npm start'
 
                       echo "Deployment completed successfully!"
