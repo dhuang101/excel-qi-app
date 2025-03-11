@@ -1,7 +1,7 @@
 // This gets called on every request
-export async function getServerSideProps() {
-	return { props: {} }
-}
+// export async function getServerSideProps() {
+// 	return { props: {} }
+// }
 
 function Home() {
 	return (

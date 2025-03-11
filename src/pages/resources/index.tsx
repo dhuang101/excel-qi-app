@@ -3,9 +3,9 @@ import ResourceCard from "@/components/resources/ResourceCard"
 import ASSETS from "@/assets/assets"
 
 // This gets called on every request
-export async function getServerSideProps() {
-	return { props: {} }
-}
+// export async function getServerSideProps() {
+// 	return { props: {} }
+// }
 
 function ResourcesPage() {
 	return (
