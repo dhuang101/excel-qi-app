@@ -28,7 +28,7 @@ jobs:
                       screen -S web-server -X quit || echo "No existing screen session"
 
                       # Pull latest changes
-                      git pull origin develop
+                      git pull origin main
 
                       # Install dependencies (optional)
                       npm install
