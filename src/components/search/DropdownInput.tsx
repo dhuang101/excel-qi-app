@@ -1,0 +1,44 @@
+import { diagnosis_resp_options } from "@/constants/search/selectOptions"
+import { diagnosis_cardiac_options } from "@/constants/search/selectOptions"
+import { outcm_hosp_discharge_loc_options } from "@/constants/search/selectOptions"
+import { ChangeEventHandler } from "react"
+
+interface Props {
+	title: string
+	queryAttribute:
+		| "diagnosis_resp"
+		| "diagnosis_cardiac"
+		| "outcm_hosp_discharge_loc"
+	handleSelectChange(
+		area:
+			| "diagnosis_resp"
+			| "diagnosis_cardiac"
+			| "outcm_hosp_discharge_loc"
+	): ChangeEventHandler<HTMLSelectElement> | undefined
+}
+
+function DropdownInput({ title, queryAttribute, handleSelectChange }: Props) {
+	const optionsMap = {
+		diagnosis_resp: diagnosis_resp_options,
+		diagnosis_cardiac: diagnosis_cardiac_options,
+		outcm_hosp_discharge_loc: outcm_hosp_discharge_loc_options,
+	}
+
+	return (
+		<label className="form-control w-1/4">
+			<div className="pb-2">
+				<span className="label-text">{title}</span>
+			</div>
+			<select
+				className="select select-neutral w-full"
+				onChange={handleSelectChange(queryAttribute)}
+			>
+				{optionsMap[queryAttribute].map((value) => (
+					<option key={value}>{value}</option>
+				))}
+			</select>
+		</label>
+	)
+}
+
+export default DropdownInput
