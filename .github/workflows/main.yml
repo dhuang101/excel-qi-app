@@ -1,0 +1,42 @@
+name: Manual Deploy to VM
+
+on:
+    workflow_dispatch: # Only runs manually
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: SSH into VM and deploy app
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.VM_HOST }}
+                  username: ${{ secrets.VM_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: 22
+                  script: |
+                      echo "Connecting to VM..."
+
+                      # Navigate to project directory
+                      cd /home/ubuntu/nice-web-app/
+
+                      # Kill existing process in screen session
+                      screen -S web-server -X quit || echo "No existing screen session"
+
+                      # Pull latest changes
+                      git pull origin develop
+
+                      # Install dependencies (optional)
+                      npm install
+
+                      # Build the app
+                      npm run build
+
+                      # Start the app inside a new screen session
+                      screen -dmS web-server bash -c 'npm start'
+
+                      echo "Deployment completed successfully!"
