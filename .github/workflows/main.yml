@@ -31,15 +31,11 @@ jobs:
                       # Navigate to project directory
                       cd /home/ubuntu/nice-web-app/
 
-                      # Set up Git to use the PAT for authentication
-                      git config --global credential.helper store
-                      echo "https://${{ secrets.PIPELINE_PAT }}@github.com" > ~/.git-credentials
-
                       # Kill existing process in screen session
                       screen -S web-server -X quit || echo "No existing screen session"
 
-                      # Pull latest changes
-                      git pull origin main
+                      # Pull latest changes securely using the PAT
+                      git pull https://${{ secrets.PIPELINE_PAT }}@github.com/dhuang101/nice-web-app.git develop
 
                       # Install dependencies
                       npm install
