@@ -284,7 +284,7 @@ function SearchPage() {
 											<textarea className="textarea textarea-bordered mt-2"></textarea>
 											<div>
 												<button
-													className="btn mt-2"
+													className="btn btn-primary mt-2"
 													onClick={() => {
 														setModalSubmitted(true)
 													}}
@@ -302,11 +302,14 @@ function SearchPage() {
 						</dialog>
 						{/* rest of the page */}
 						<div className="flex w-full justify-between">
-							<button className="btn mb-4" onClick={handleBack}>
+							<button
+								className="btn btn-primary mb-4"
+								onClick={handleBack}
+							>
 								New Search
 							</button>
 							<button
-								className="btn mb-4"
+								className="btn btn-primary mb-4"
 								onClick={handleToggleVis}
 							>
 								{showingVis
@@ -314,7 +317,7 @@ function SearchPage() {
 									: "Visualise Cohort"}
 							</button>
 							<button
-								className="btn mb-4"
+								className="btn btn-primary mb-4"
 								onClick={() => {
 									modalRef.current!.showModal()
 								}}
