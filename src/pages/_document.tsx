@@ -5,6 +5,7 @@ function Document() {
 	return (
 		<Html lang="en">
 			<Head />
+			<title>NICE Data Project</title>
 			<body>
 				<Main />
 				<NextScript />
