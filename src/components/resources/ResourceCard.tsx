@@ -17,13 +17,13 @@ function ResourceCard({
 	link,
 }: Props) {
 	return (
-		<div className="card bg-base-100 w-96 shadow-sm h-fit">
-			<div className="flex justify-center bg-slate-300">
+		<div className="card bg-base-100 w-96 shadow-md h-fit">
+			<div className="flex justify-center bg-slate-300 min-h-36">
 				<Image
 					width={imageRes[0]}
 					height={imageRes[1]}
 					src={imageSrc}
-					className="max-w-80 w-auto h-auto"
+					className="max-w-80 w-full h-auto object-contain"
 					alt={cardTitle}
 				/>
 			</div>
