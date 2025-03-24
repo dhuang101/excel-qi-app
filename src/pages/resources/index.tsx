@@ -18,14 +18,18 @@ function ResourcesPage() {
 					imageRes={[1042, 313]}
 					imageSrc={ASSETS.alfred}
 					cardTitle={"Alfred ECMO"}
-					cardBody={"PLACEHOLDER"}
+					cardBody={
+						"The Alfred Hospital's clinical ECMO guidelines with regards to the context of their experience and processes in place."
+					}
 					link={"https://ecmo.icu/#menuRoot"}
 				/>
 				<ResourceCard
 					imageRes={[500, 152]}
 					imageSrc={ASSETS.ccm}
 					cardTitle={"Critical Care"}
-					cardBody={"PLACEHOLDER"}
+					cardBody={
+						"Canada's Largest extracorporeal life-support program's educational resources."
+					}
 					link={"https://criticalcaretoronto.com/ecmo-101/"}
 				/>
 			</div>
@@ -34,14 +38,18 @@ function ResourcesPage() {
 					imageRes={[1042, 313]}
 					imageSrc={ASSETS.elso}
 					cardTitle={"ELSO"}
-					cardBody={"PLACEHOLDER"}
+					cardBody={
+						"Discussion board, presentations, job listings, newsletters, guidelines and articles to help ELSO centers. Plus, resources to help patients and caregivers understand ECMO."
+					}
 					link={"https://www.elso.org/ecmo-resources.aspx"}
 				/>
 				<ResourceCard
 					imageRes={[500, 152]}
 					imageSrc={ASSETS.em}
 					cardTitle={"ECMO Resource"}
-					cardBody={"PLACEHOLDER"}
+					cardBody={
+						"A space where ECMO Specialists, educators, directors and coordinators offer resources specifically designed for the Global ECMO Community."
+					}
 					link={"https://ecmoresource.com/"}
 				/>
 			</div>
@@ -50,7 +58,9 @@ function ResourcesPage() {
 					imageRes={[1042, 313]}
 					imageSrc={ASSETS.jhm}
 					cardTitle={"John Hopkins Medicine"}
-					cardBody={"PLACEHOLDER"}
+					cardBody={
+						"Information for ECMO patient's and their loved ones"
+					}
 					link={
 						"https://www.hopkinsmedicine.org/heart-vascular-institute/cardiac-surgery/ecmo-patient-family-resources"
 					}
@@ -59,7 +69,9 @@ function ResourcesPage() {
 					imageRes={[500, 152]}
 					imageSrc={ASSETS.litfl}
 					cardTitle={"Life In The Fastlane"}
-					cardBody={"PLACEHOLDER"}
+					cardBody={
+						"Blog posts are created by ICU Senior Registrars, Fellows, and Consultants and are peer-reviewed by one or more ECMO specialists from the Alfred ICU."
+					}
 					link={"https://litfl.com/everything-ecmo/"}
 				/>
 			</div>
@@ -68,7 +80,9 @@ function ResourcesPage() {
 					imageRes={[1042, 313]}
 					imageSrc={ASSETS.vecmos}
 					cardTitle={"VECMOS"}
-					cardBody={"PLACEHOLDER"}
+					cardBody={
+						"Resources and education for ECMO clinicians as well as information on upcoming VECMOS events"
+					}
 					link={
 						"https://www.vecmos.org.au/health-professionals/resources/"
 					}
