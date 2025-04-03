@@ -15,7 +15,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 	keys,
 	width = 1400,
 	height = 600,
-	margin = { top: 50, right: 200, bottom: 100, left: 50 },
+	margin = { top: 50, right: 208, bottom: 100, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
 

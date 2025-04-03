@@ -229,7 +229,14 @@ function SearchPage() {
 					// search completed
 					<React.Fragment>
 						{/* dialog overlay for modal */}
-						<dialog ref={modalRef} className="modal">
+						<dialog
+							ref={modalRef}
+							// TODO: modal state is reset whenever modal is closed instead of only when submitted
+							onClose={() => {
+								setModalSubmitted(false)
+							}}
+							className="modal"
+						>
 							<div className="modal-box max-w-3xl">
 								{modalSubmitted ? (
 									<div className="flex flex-col items-center justify-center h-20">
