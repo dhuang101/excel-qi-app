@@ -64,6 +64,11 @@ function NavBar() {
 								ECMO Resources
 							</article>
 						</Link>
+						<Link href={"/admin"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								Admin
+							</article>
+						</Link>
 					</div>
 				</div>
 				<div className="btn btn-ghost rounded-xl" onClick={toggleTheme}>
