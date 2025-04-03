@@ -54,11 +54,6 @@ function NavBar() {
 								Reporting
 							</article>
 						</Link>
-						<Link href={"/models"}>
-							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								NLP Model
-							</article>
-						</Link>
 						<Link href={"/ecmo-pal"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								ECMO Prediction
