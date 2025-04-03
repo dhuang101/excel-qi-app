@@ -97,8 +97,17 @@ function NavBar() {
 							</article>
 							<li>
 								<a
-									onClick={() => {
-										signOut()
+									onClick={async () => {
+										await signOut({ redirect: false })
+
+										window.location.href = `${
+											process.env.NEXT_PUBLIC_AUTH0_ISSUER
+										}/v2/logout?client_id=${
+											process.env
+												.NEXT_PUBLIC_AUTH0_CLIENT_ID
+										}&returnTo=${encodeURIComponent(
+											window.location.origin
+										)}`
 									}}
 								>
 									<LogoutIcon />
