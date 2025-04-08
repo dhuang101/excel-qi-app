@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb"
-import NextAuth from "next-auth"
+import NextAuth, { User } from "next-auth"
+import { JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
 
 const client = await MongoClient.connect(
@@ -18,17 +19,23 @@ export const authOptions = {
 		}),
 	],
 	callbacks: {
-		async jwt({ token, user }: any) {
-			if (user?.email) {
-				const userRole = await rolesCollection.findOne({
-					email: user.email,
-				})
-				token.role = userRole?.role || "guest"
+		async jwt({ token, user }: { token: JWT; user?: User }) {
+			// ensure we are fetching the email as user.email only exist on initial signin
+			const email = user?.email ?? token?.email
+			// attach permissions from database
+			if (email) {
+				const permissions = await rolesCollection.findOne({ email })
+				console.log(permissions)
+				if (permissions) {
+					token.role = permissions.role
+					token.sites = permissions.sites
+				}
 			}
 			return token
 		},
-		async session({ session, token }: any) {
+		session({ session, token }: any) {
 			session.user.role = token.role
+			session.user.sites = token.sites
 			return session
 		},
 	},
