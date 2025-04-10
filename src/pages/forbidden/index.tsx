@@ -1,3 +1,7 @@
+export async function getServerSideProps() {
+	return { props: {} }
+}
+
 function ForbiddenPage() {
 	return (
 		<div className="flex flex-col justify-center items-center h-[83vh]">
