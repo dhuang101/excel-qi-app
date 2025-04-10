@@ -25,7 +25,6 @@ export const authOptions = {
 			// attach permissions from database
 			if (email) {
 				const permissions = await rolesCollection.findOne({ email })
-				console.log(permissions)
 				if (permissions) {
 					token.role = permissions.role
 					token.sites = permissions.sites

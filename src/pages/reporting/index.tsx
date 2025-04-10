@@ -59,10 +59,6 @@ function ReportingPage() {
 		}
 	}, [state, width])
 
-	// useEffect(() => {
-	// 	console.log(state)
-	// }, [state])
-
 	return (
 		<div className="flex flex-col grow w-full items-center">
 			{state.totalDocuments > 0 ? (
