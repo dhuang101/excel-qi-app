@@ -12,7 +12,7 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.next()
 	}
 
-	// Admin-only route
+	// Admin-only routes
 	if (pathname.startsWith("/admin")) {
 		if (!token || token.role !== "admin") {
 			return NextResponse.redirect(new URL("/forbidden", req.url))
@@ -20,15 +20,14 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.next()
 	}
 
-	// Require auth for all other routes
+	// All other paths require authentication
 	if (!token) {
-		return NextResponse.redirect(new URL("/api/auth/signin", req.url))
+		return NextResponse.redirect(new URL("/forbidden", req.url))
 	}
 
 	return NextResponse.next()
 }
 
-// Don't apply middleware to these internal paths
 export const config = {
-	matcher: ["/((?!_next|favicon.ico|api/auth).*)"],
+	matcher: ["/((?!_next|favicon.ico|api/auth).*)"], // Apply middleware to all routes except Next.js internals & auth
 }
