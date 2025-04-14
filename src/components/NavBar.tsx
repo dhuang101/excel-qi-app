@@ -120,7 +120,7 @@ function NavBar() {
 					</div>
 				) : (
 					<Link href={"/api/auth/signin"}>
-						<div className="ml-4 mr-6 btn btn-ghost normal-case rounded-xl text-lg text-primary-content outline outline-1 outline-primary-content">
+						<div className="ml-4 mr-6 btn btn-ghost rounded-xl text-lg outline">
 							<LoginIcon />
 							Sign In
 						</div>
