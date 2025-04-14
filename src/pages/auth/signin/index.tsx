@@ -14,11 +14,11 @@ function SignInPage({
 
 	return (
 		<div className="flex h-full items-center justify-center">
-			<div className="flex flex-col bg-base-300 p-12 rounded-4xl">
+			<div className="flex flex-col bg-base-300 p-10 rounded-4xl">
 				{Object.values(providers).map((provider) => (
 					<div key={provider.name}>
 						<button
-							className="btn btn-primary btn-xl"
+							className="btn btn-primary btn-xl px-12"
 							onClick={() => signIn(provider.id)}
 						>
 							Sign in with {provider.name}

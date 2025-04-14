@@ -13,7 +13,10 @@ export async function middleware(req: NextRequest) {
 	}
 
 	// Admin-only routes
-	if (pathname.startsWith("/admin")) {
+	if (
+		pathname.startsWith("/admin") ||
+		pathname.startsWith("/api/database/permissions")
+	) {
 		if (!token || token.role !== "admin") {
 			return NextResponse.redirect(new URL("/forbidden", req.url))
 		}
