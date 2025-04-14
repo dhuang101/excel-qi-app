@@ -127,7 +127,7 @@ function NavBar() {
 					</Link>
 				)}
 			</div>
-			<div className="divider divider-base-200 m-0 h-0 "></div>
+			<div className="divider divider-base-200 m-0 h-0"></div>
 		</div>
 	)
 }
