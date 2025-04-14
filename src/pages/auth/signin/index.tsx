@@ -1,0 +1,58 @@
+import type {
+	GetServerSidePropsContext,
+	InferGetServerSidePropsType,
+} from "next"
+import { getProviders, signIn } from "next-auth/react"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../../api/auth/[...nextauth]"
+import { ReactElement } from "react"
+
+function SignInPage({
+	providers,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+	console.log(providers)
+
+	return (
+		<div className="flex h-full items-center justify-center">
+			<div className="flex flex-col bg-base-300 p-12 rounded-4xl">
+				{Object.values(providers).map((provider) => (
+					<div key={provider.name}>
+						<button
+							className="btn btn-primary btn-xl"
+							onClick={() => signIn(provider.id)}
+						>
+							Sign in with {provider.name}
+						</button>
+					</div>
+				))}
+			</div>
+		</div>
+	)
+}
+
+SignInPage.getLayout = function getLayout(page: ReactElement) {
+	return <div className="flex flex-col h-screen min-w-screen">{page}</div>
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+	const session = await getServerSession(
+		context.req,
+		context.res,
+		authOptions
+	)
+
+	// If the user is already logged in, redirect.
+	// Note: Make sure not to redirect to the same page
+	// To avoid an infinite loop!
+	if (session) {
+		return { redirect: { destination: "/" } }
+	}
+
+	const providers = await getProviders()
+
+	return {
+		props: { providers: providers ?? [] },
+	}
+}
+
+export default SignInPage

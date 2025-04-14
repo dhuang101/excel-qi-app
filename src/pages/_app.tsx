@@ -7,11 +7,21 @@ import GlobalStore from "@/store/GlobalStore"
 import "@/styles/globals.css"
 import type { AppProps } from "next/app"
 import { SessionProvider } from "next-auth/react"
+import { NextPage } from "next"
+import { ReactElement, ReactNode } from "react"
+
+type NextPageWithLayout = NextPage & {
+	getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+	Component: NextPageWithLayout
+}
 
 export default function App({
 	Component,
 	pageProps: { session, ...pageProps },
-}: AppProps) {
+}: AppPropsWithLayout) {
 	return (
 		<SessionProvider session={session}>
 			<LocalizationProvider
@@ -20,10 +30,14 @@ export default function App({
 			>
 				<GlobalStore>
 					<StateLoader>
-						<div className="flex flex-col h-fit min-h-screen min-w-screen">
-							<NavBar />
-							<Component {...pageProps} />
-						</div>
+						{Component.getLayout ? (
+							Component.getLayout(<Component {...pageProps} />)
+						) : (
+							<div className="flex flex-col h-fit min-h-screen min-w-screen">
+								<NavBar />
+								<Component {...pageProps} />
+							</div>
+						)}
 					</StateLoader>
 				</GlobalStore>
 			</LocalizationProvider>
