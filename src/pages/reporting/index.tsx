@@ -5,12 +5,20 @@ import reportReducer, { ACTION } from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
 import { useEffect, useReducer, useRef, useState } from "react"
 
+type GraphType =
+	| "Hospital Outcomes"
+	| "Primary Cardiac Diagnosis"
+	| "Primary Respiratory Diagnosis"
+	| "Length of Stay Distribution"
+
 function ReportingPage() {
 	const [state, dispatch] = useReducer(reportReducer, {
 		totalDocuments: 0,
 		counts: {},
 		losData: [],
 	})
+	const [displayedGraph, setDisplayedGraph] =
+		useState<GraphType>("Hospital Outcomes")
 	const [width, setWidth] = useState(0)
 
 	const graphContainer = useRef<HTMLDivElement | null>(null)
@@ -59,6 +67,63 @@ function ReportingPage() {
 		}
 	}, [state, width])
 
+	function renderGraph() {
+		switch (displayedGraph) {
+			case "Hospital Outcomes":
+				return (
+					<div className="flex items-center flex-col">
+						<article className="font-semibold">
+							Hospital Outcomes
+						</article>
+						<Barplot
+							width={width}
+							height={650}
+							data={state.counts.outcm_hosp_discharge_loc}
+						/>
+					</div>
+				)
+			case "Primary Cardiac Diagnosis":
+				return (
+					<div className="flex items-center flex-col">
+						<article className="font-semibold">
+							Primary Cardiac Diagnosis
+						</article>
+						<Barplot
+							width={width}
+							height={650}
+							data={state.counts.diagnosis_cardiac}
+						/>
+					</div>
+				)
+			case "Primary Respiratory Diagnosis":
+				return (
+					<div className="flex items-center flex-col">
+						<article className="font-semibold">
+							Primary Respiratory Diagnosis
+						</article>
+						<Barplot
+							width={width}
+							height={650}
+							data={state.counts.diagnosis_resp}
+						/>
+					</div>
+				)
+			case "Length of Stay Distribution":
+				return (
+					<div className="flex items-center flex-col">
+						<article className="font-semibold">
+							Length of Stay Distribution
+						</article>
+						<Boxplot
+							width={width}
+							height={650}
+							data={state.losData}
+						/>
+					</div>
+				)
+		}
+	}
+
 	return (
 		<div className="flex flex-col grow w-full items-center">
 			{state.totalDocuments > 0 ? (
@@ -67,61 +132,30 @@ function ReportingPage() {
 						There are currently {state.totalDocuments} patients
 						enrolled in the NICE Data Project.
 					</article>
-					<div ref={graphContainer} className="flex flex-col w-full">
-						<div className="flex mt-4 h-fit">
-							<div className="flex items-center flex-col">
-								<article className="font-semibold">
-									Hospital Outcomes
-								</article>
-								<Barplot
-									width={width / 3}
-									height={650}
-									data={state.counts.outcm_hosp_discharge_loc}
-								/>
-							</div>
-							<div className="flex items-center flex-col">
-								<article className="font-semibold">
-									Primary Cardiac Diagnosis
-								</article>
-								<Barplot
-									width={width / 3}
-									height={650}
-									data={state.counts.diagnosis_cardiac}
-								/>
-								<article className="mt-4">
-									These figures display the number of patients
-									for each unique value of the titled
-									attribute
-								</article>
-							</div>
-							<div className="flex items-center flex-col">
-								<article className="font-semibold">
-									Primary Respiratory Diagnosis
-								</article>
-								<Barplot
-									width={width / 3}
-									height={650}
-									data={state.counts.diagnosis_resp}
-								/>
-							</div>
-						</div>
-						<div className="flex items-center flex-col mt-16">
-							<article className="font-semibold">
-								Length of Stay Distribution
-							</article>
-							<Boxplot
-								width={width / 1.5}
-								height={500}
-								data={state.losData}
-							/>
-							<article className="mt-4 w-1/3">
-								Boxplot detailing the distribution of length of
-								stays in vital hospital locations
-							</article>
-						</div>
+					<div className="w-full">
+						<fieldset className="fieldset">
+							<legend className="fieldset-legend">
+								Change Displayed Graph
+							</legend>
+							<select
+								defaultValue="Hospital Outcomes"
+								className="select"
+								onChange={(event) => {
+									setDisplayedGraph(
+										event.target.value as GraphType
+									)
+								}}
+							>
+								<option>Hospital Outcomes</option>
+								<option>Primary Cardiac Diagnosis</option>
+								<option>Primary Respiratory Diagnosis</option>
+								<option>Length of Stay Distribution</option>
+							</select>
+						</fieldset>
 					</div>
-					{/* footer */}
-					<div className="h-16" />
+					<div ref={graphContainer} className="flex flex-col w-full">
+						{renderGraph()}
+					</div>
 				</div>
 			) : (
 				<div className="flex flex-col justify-center items-center h-[83vh]">
