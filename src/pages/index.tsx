@@ -1,5 +1,3 @@
-import PublicXFeed from "@/components/landing/PublicXFeed"
-
 export async function getServerSideProps() {
 	return { props: {} }
 }
