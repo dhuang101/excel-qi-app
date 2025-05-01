@@ -21,10 +21,12 @@ export const AxisBottom = ({
 		const width = range[1] - range[0]
 		const numberOfTicksTarget = Math.floor(width / pixelsPerTick)
 
-		return xScale.ticks(numberOfTicksTarget).map((value) => ({
-			value,
-			xOffset: xScale(value),
-		}))
+		return [{ value: 0, xOffset: 0 }].concat(
+			xScale.ticks(numberOfTicksTarget).map((value) => ({
+				value,
+				xOffset: xScale(value),
+			}))
+		)
 		// disabled as d3 does not correctly handle dependencies
 		// eslint-disable-next-line
 	}, [xScale])
