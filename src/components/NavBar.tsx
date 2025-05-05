@@ -67,7 +67,7 @@ function NavBar() {
 						{session?.user.role === "admin" && (
 							<Link href={"/admin"}>
 								<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-									Admin
+									Admin Panel
 								</article>
 							</Link>
 						)}
