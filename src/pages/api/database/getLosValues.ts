@@ -1,12 +1,18 @@
 import { MongoClient } from "mongodb"
+import qs from "qs"
 
 interface DocumentType {
 	[key: string]: any // Allow dynamic indexing with string keys
 }
 
+type paramsType = {
+	role: string
+	sites: string[]
+}
+
 // this api simply fetches the values of attributes in the attributes list and orders them
 
-async function GetLosValues() {
+async function GetLosValues(params: paramsType) {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection<DocumentType>("collection")
@@ -25,8 +31,18 @@ async function GetLosValues() {
 		{ _id: 0 }
 	) // Exclude _id
 
-	// Fetch all relevant fields
-	const results = await collection.find({}, { projection }).toArray()
+	// Build the query dynamically
+	const query: DocumentType = {}
+
+	// Add redcap_data_access_group conditionally
+	if (params.role === "site-viewer" && params.sites.length > 0) {
+		query.redcap_data_access_group = { $in: params.sites }
+	}
+
+	console.log("Query:", query) // Log the query for debugging
+
+	// Fetch all relevant fields with query + projection
+	const results = await collection.find(query, { projection }).toArray()
 
 	// Transform results into the desired format
 	const valuesAsObjects = results.flatMap(
@@ -41,8 +57,10 @@ async function GetLosValues() {
 
 // handler for any calls to this endpoint
 export default async function handler(req: any, res: any) {
+	const params = qs.parse(req.query) as paramsType
+
 	try {
-		const results = await GetLosValues()
+		const results = await GetLosValues(params)
 		res.status(200).json(results)
 	} catch (err) {
 		res.status(500).json(err)

@@ -49,7 +49,16 @@ function ReportingPage() {
 				payload = result.data
 			})
 			.then(() => {
-				return Promise.resolve(axios.get("/api/database/getLosValues"))
+				return Promise.resolve(
+					axios.get("/api/database/getLosValues", {
+						params: {
+							role: session?.user.role,
+							sites: session?.user.sites,
+						},
+						paramsSerializer: (params) =>
+							qs.stringify(params, { arrayFormat: "brackets" }),
+					})
+				)
 			})
 			.then((result) => {
 				payload = { ...payload, losData: result.data }
