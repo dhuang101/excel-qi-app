@@ -107,13 +107,17 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					rx={1}
 				/>
 				<text
-					x={xScale(d.count) - 7}
+					x={
+						xScale(d.count) > 30
+							? xScale(d.count) - 7
+							: xScale(d.count) + 12
+					}
 					y={y + yScale.bandwidth() / 2}
 					textAnchor="end"
 					alignmentBaseline="central"
 					fill="var(--color-base-content)"
 					fontSize={12}
-					opacity={xScale(d.count) > 90 ? 1 : 0} // hide label if bar is not wide enough
+					opacity={1}
 				>
 					{d.count}
 				</text>
