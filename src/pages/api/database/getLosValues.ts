@@ -39,8 +39,6 @@ async function GetLosValues(params: paramsType) {
 		query.redcap_data_access_group = { $in: params.sites }
 	}
 
-	console.log("Query:", query) // Log the query for debugging
-
 	// Fetch all relevant fields with query + projection
 	const results = await collection.find(query, { projection }).toArray()
 
