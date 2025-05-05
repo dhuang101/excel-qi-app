@@ -39,17 +39,6 @@ async function GetPatients(params: searchQuery) {
 				$ne: "N/A", // Exclude "N/A"
 			},
 		}),
-		...((params.hospadm_date_time_before ||
-			params.hospadm_date_time_after) && {
-			hospadm_date_time: {
-				...(params.hospadm_date_time_before && {
-					$lte: new Date(params.hospadm_date_time_before),
-				}),
-				...(params.hospadm_date_time_after && {
-					$gte: new Date(params.hospadm_date_time_after),
-				}),
-			},
-		}),
 	}
 
 	// Remove undefined or null fields from the query

@@ -30,13 +30,6 @@ function SearchTable({ patientData }: Props) {
 					<td>{obj.diagnosis_resp}</td>
 					<td>{obj.diagnosis_cardiac}</td>
 					<td>{obj.outcm_hosp_discharge_loc}</td>
-					<td>
-						{obj.hospadm_date_time
-							? obj.hospadm_date_time
-									.replace("T", " ")
-									.slice(0, 16)
-							: ""}
-					</td>
 				</tr>
 			)
 		})
@@ -58,9 +51,6 @@ function SearchTable({ patientData }: Props) {
 								</th>
 								<th className="bg-base-300">
 									Hospital Discharge Outcome
-								</th>
-								<th className="bg-base-300">
-									Hospital Admission Time
 								</th>
 							</tr>
 						</thead>
