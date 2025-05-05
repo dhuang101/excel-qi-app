@@ -4,6 +4,8 @@ import { Boxplot } from "@/components/reporting/boxplot/Boxplot"
 import reportReducer, { ACTION } from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
 import { useEffect, useReducer, useRef, useState } from "react"
+import { useSession } from "next-auth/react"
+import qs from "qs"
 
 type GraphType =
 	| "Hospital Outcomes"
@@ -12,6 +14,9 @@ type GraphType =
 	| "Length of Stay Distribution"
 
 function ReportingPage() {
+	// auth session
+	const { data: session, status } = useSession()
+	// state
 	const [state, dispatch] = useReducer(reportReducer, {
 		totalDocuments: 0,
 		counts: {},
@@ -26,9 +31,20 @@ function ReportingPage() {
 	// sequentially fetch the data
 	// TODO: fetch them in parallel?
 	useEffect(() => {
+		if (status !== "authenticated") {
+			return
+		}
+
 		let payload = {}
 		axios
-			.get("/api/database/getCounts")
+			.get("/api/database/getCounts", {
+				params: {
+					role: session?.user.role,
+					sites: session?.user.sites,
+				},
+				paramsSerializer: (params) =>
+					qs.stringify(params, { arrayFormat: "brackets" }),
+			})
 			.then((result) => {
 				payload = result.data
 			})
@@ -41,7 +57,7 @@ function ReportingPage() {
 			.then(() => {
 				dispatch({ type: ACTION.SET_SUMMARY, payload: payload })
 			})
-	}, [])
+	}, [status])
 
 	// dynamically assigns width variable to create responsive d3 graphs
 	useEffect(() => {

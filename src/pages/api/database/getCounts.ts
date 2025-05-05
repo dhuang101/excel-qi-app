@@ -1,13 +1,19 @@
 import { MongoClient } from "mongodb"
+import qs from "qs"
 
 interface ValueCount {
 	_id: string
 	count: number
 }
 
+type paramsType = {
+	role: string
+	sites: string[]
+}
+
 // this api fetches each each the count of unique value of each attribute in the attributes list
 
-async function GetCounts() {
+async function GetCounts(params: paramsType) {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
@@ -30,14 +36,20 @@ async function GetCounts() {
 
 	// create query for db fetch
 	for (const attribute of attributes) {
-		const pipeline: any[] = [
-			{
-				$match: {
-					[attribute]: {
-						$nin: [null, "N/A"],
-					},
-				},
+		const matchStage: any = {
+			[attribute]: {
+				$nin: [null, "N/A"],
 			},
+		}
+
+		if (params.role === "site-viewer") {
+			matchStage.redcap_data_access_group = { $in: params.sites }
+		} else if (!["global-viewer", "admin"].includes(params.role)) {
+			throw new Error("Invalid role")
+		}
+
+		const pipeline: any[] = [
+			{ $match: matchStage },
 			{ $group: { _id: `$${attribute}`, count: { $sum: 1 } } },
 			{ $sort: { count: -1 } },
 		]
@@ -69,8 +81,10 @@ async function GetCounts() {
 
 // handler for any calls to this endpoint
 export default async function handler(req: any, res: any) {
+	const params = qs.parse(req.query) as paramsType
+
 	try {
-		const results = await GetCounts()
+		const results = await GetCounts(params)
 		res.status(200).json(results)
 	} catch (err) {
 		res.status(500).json(err)
