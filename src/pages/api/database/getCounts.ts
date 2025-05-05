@@ -23,14 +23,12 @@ async function GetCounts(params: paramsType) {
 		"diagnosis_resp",
 	]
 
-	// first, get the total number of documents in the collection
-	const totalDocuments = await collection.countDocuments()
 	// explicitly type the results object
 	const results: {
 		totalDocuments: number
 		counts: Record<string, { _id: string; count: number }[]>
 	} = {
-		totalDocuments,
+		totalDocuments: 0,
 		counts: {},
 	}
 
@@ -42,10 +40,10 @@ async function GetCounts(params: paramsType) {
 			},
 		}
 
-		if (params.role === "site-viewer") {
+		if (params.role === "site-viewer" && params.sites.length > 0) {
 			matchStage.redcap_data_access_group = { $in: params.sites }
 		} else if (!["global-viewer", "admin"].includes(params.role)) {
-			throw new Error("Invalid role")
+			throw new Error("Server Error: in GetCounts")
 		}
 
 		const pipeline: any[] = [
@@ -73,6 +71,10 @@ async function GetCounts(params: paramsType) {
 			.aggregate<ValueCount>(pipeline)
 			.toArray()
 
+		results.totalDocuments += values.reduce(
+			(sum, entry) => sum + entry.count,
+			0
+		)
 		results.counts[attribute] = values
 	}
 
