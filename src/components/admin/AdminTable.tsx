@@ -1,4 +1,4 @@
-import React from "react"
+import Table from "../Table"
 
 interface Props {
 	// patientData is the object returned by the API
@@ -11,70 +11,45 @@ interface user {
 	sites: string[]
 }
 
-function AdminTable({ users }: Props) {
-	// inner component to map over the users and display them in a table
-	function TableRows() {
-		function formatString(input: string): string {
-			return input
-				.replace(/[-_]/g, " ") // Replace - and _ with spaces
-				.split(" ") // Split into words
-				.map(
-					(word) =>
-						word.charAt(0).toUpperCase() +
-						word.slice(1).toLowerCase()
-				) // Capitalize each word
-				.join(" ") // Join back into a string
-		}
+function formatString(input: string): string {
+	return input
+		.replace(/[-_]/g, " ")
+		.split(" ")
+		.map(
+			(word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+		)
+		.join(" ")
+}
 
-		return users.map((obj: user, i: number) => {
-			return (
+const headers = ["Email", "Role", "Sites"]
+
+function AdminTable({ users }: Props) {
+	return (
+		<Table
+			data={users}
+			headers={headers}
+			emptyMessage="Error fetching data"
+			renderRow={(user, i) => (
 				<tr
 					key={i}
-					className="hover:text-accent-content hover:bg-accent"
+					className="cursor-pointer hover:text-accent-content hover:bg-accent"
 				>
-					<td>{obj.email}</td>
-					<td>{formatString(obj.role)}</td>
+					<td>{user.email}</td>
+					<td>{formatString(user.role)}</td>
 					<td className="flex flex-col">
-						{["admin", "global-viewer"].includes(obj.role) ? (
+						{["admin", "global-viewer"].includes(user.role) ? (
 							<div>All</div>
-						) : obj.sites.length === 0 ? (
+						) : user.sites.length === 0 ? (
 							<div>None</div>
 						) : (
-							obj.sites.map((site) => {
-								return <div>{formatString(site)}</div>
-							})
+							user.sites.map((site, idx) => (
+								<div key={idx}>{formatString(site)}</div>
+							))
 						)}
 					</td>
 				</tr>
-			)
-		})
-	}
-
-	return (
-		<React.Fragment>
-			{users.length > 0 ? (
-				<div className="overflow-x-auto">
-					<table className="table table-lg w-full">
-						<thead>
-							<tr>
-								<th className="bg-base-300">Email</th>
-								<th className="bg-base-300">Role</th>
-								<th className="bg-base-300">Sites</th>
-							</tr>
-						</thead>
-						<tbody>
-							<TableRows />
-						</tbody>
-					</table>
-				</div>
-			) : (
-				<div className="flex flex-col justify-center items-center h-[89%]">
-					<article className="text-3xl font-semibold pt-4">
-						Error fetching data
-					</article>
-				</div>
 			)}
-		</React.Fragment>
+		/>
 	)
 }
 

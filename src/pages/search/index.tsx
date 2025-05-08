@@ -231,7 +231,6 @@ function SearchPage() {
 						{/* dialog overlay for modal */}
 						<dialog
 							ref={modalRef}
-							// TODO: modal state is reset whenever modal is closed instead of only when submitted
 							onClose={() => {
 								setModalSubmitted(false)
 							}}
