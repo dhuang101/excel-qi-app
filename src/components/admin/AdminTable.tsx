@@ -12,7 +12,20 @@ interface user {
 }
 
 function AdminTable({ users }: Props) {
+	// inner component to map over the users and display them in a table
 	function TableRows() {
+		function formatString(input: string): string {
+			return input
+				.replace(/[-_]/g, " ") // Replace - and _ with spaces
+				.split(" ") // Split into words
+				.map(
+					(word) =>
+						word.charAt(0).toUpperCase() +
+						word.slice(1).toLowerCase()
+				) // Capitalize each word
+				.join(" ") // Join back into a string
+		}
+
 		return users.map((obj: user, i: number) => {
 			return (
 				<tr
@@ -20,8 +33,18 @@ function AdminTable({ users }: Props) {
 					className="hover:text-accent-content hover:bg-accent"
 				>
 					<td>{obj.email}</td>
-					<td>{obj.role}</td>
-					<td>{obj.sites}</td>
+					<td>{formatString(obj.role)}</td>
+					<td className="flex flex-col">
+						{["admin", "global-viewer"].includes(obj.role) ? (
+							<div>All</div>
+						) : obj.sites.length === 0 ? (
+							<div>None</div>
+						) : (
+							obj.sites.map((site) => {
+								return <div>{formatString(site)}</div>
+							})
+						)}
+					</td>
 				</tr>
 			)
 		})
