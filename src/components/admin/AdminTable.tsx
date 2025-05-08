@@ -3,6 +3,7 @@ import Table from "../baseComponents/Table"
 interface Props {
 	// patientData is the object returned by the API
 	users: user[]
+	onClick?: () => void
 }
 
 interface user {
@@ -23,7 +24,7 @@ function formatString(input: string): string {
 
 const headers = ["Email", "Role", "Sites"]
 
-function AdminTable({ users }: Props) {
+function AdminTable({ users, onClick }: Props) {
 	return (
 		<Table
 			data={users}
@@ -33,6 +34,9 @@ function AdminTable({ users }: Props) {
 				<tr
 					key={i}
 					className="cursor-pointer hover:text-accent-content hover:bg-accent"
+					onClick={() => {
+						if (onClick) onClick()
+					}}
 				>
 					<td>{user.email}</td>
 					<td>{formatString(user.role)}</td>
