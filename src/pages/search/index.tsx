@@ -469,8 +469,6 @@ function SearchPage() {
 						</div>
 					</React.Fragment>
 				)}
-				{/* footer */}
-				<div className="h-16" />
 			</div>
 		</div>
 	)
