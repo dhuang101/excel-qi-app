@@ -1,4 +1,4 @@
-import Table from "../Table"
+import Table from "../baseComponents/Table"
 
 const headers = [
 	"Record ID",

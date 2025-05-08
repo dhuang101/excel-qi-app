@@ -1,4 +1,4 @@
-import Table from "../Table"
+import Table from "../baseComponents/Table"
 
 interface Props {
 	// patientData is the object returned by the API

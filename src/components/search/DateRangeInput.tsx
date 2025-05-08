@@ -1,4 +1,4 @@
-import StyledDateTimePicker from "../StyledDateTimePicker"
+import StyledDateTimePicker from "./StyledDateTimePicker"
 
 interface Props {
 	title: string
