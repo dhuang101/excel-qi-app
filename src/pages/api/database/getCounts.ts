@@ -77,7 +77,7 @@ async function GetCounts(params: paramsType) {
 		)
 		results.counts[attribute] = values
 	}
-
+	client.close()
 	return results
 }
 

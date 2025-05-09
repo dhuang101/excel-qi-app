@@ -49,7 +49,7 @@ async function GetLosValues(params: paramsType) {
 				.filter((attr) => doc[attr] !== undefined) // Exclude undefined attributes
 				.map((attr) => ({ name: attr, value: doc[attr] })) // Create the desired objects
 	)
-
+	client.close()
 	return valuesAsObjects
 }
 

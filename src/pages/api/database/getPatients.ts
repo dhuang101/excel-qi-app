@@ -69,6 +69,7 @@ async function GetPatients(params: searchQuery) {
 
 	// run find
 	const results = await collection.find(query, options).toArray()
+	client.close()
 	return results
 }
 
