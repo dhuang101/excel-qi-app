@@ -10,9 +10,13 @@ function AdminPage() {
 
 	useEffect(() => {
 		axios.get("/api/database/permissions/getAllPerms").then((result) => {
-			console.log("result", result.data)
 			setUsers(result.data)
 		})
+
+		// axios.post("/api/database/permissions/updatePerms", {
+		// 	email: "niceuser-sv@email.com",
+		// 	sites: ["prince_charles_hospital"],
+		// })
 	}, [])
 
 	return (
