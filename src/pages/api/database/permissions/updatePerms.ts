@@ -1,4 +1,3 @@
-import { error } from "console"
 import { MongoClient } from "mongodb"
 
 // this api will update any users attributes in the permissions collection effectively
