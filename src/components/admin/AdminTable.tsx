@@ -33,7 +33,9 @@ function AdminTable({ users, onClick }: Props) {
 			renderRow={(user, i) => (
 				<tr
 					key={i}
-					className="cursor-pointer hover:text-accent-content hover:bg-accent"
+					className={`hover:text-accent-content hover:bg-accent ${
+						onClick ? "cursor-pointer" : ""
+					}`}
 					onClick={() => {
 						if (onClick) onClick()
 					}}

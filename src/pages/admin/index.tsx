@@ -1,9 +1,13 @@
 import AdminTable from "@/components/admin/AdminTable"
 import axios from "axios"
+import { useSession } from "next-auth/react"
 import React from "react"
 import { useEffect, useRef, useState } from "react"
 
 function AdminPage() {
+	// auth session
+	const { data: session, status } = useSession()
+	// state
 	const [users, setUsers] = useState([])
 	const [modalSubmitted, setModalSubmitted] = useState(false)
 	const modalRef = useRef<HTMLDialogElement>(null)
@@ -22,15 +26,26 @@ function AdminPage() {
 	return (
 		<div className="flex flex-col grow w-full items-center">
 			<div className="w-2/3 h-full">
-				<article className="my-4 text-3xl font-semibold">
-					View and Edit User Permissions
-				</article>
-				<AdminTable
-					users={users}
-					onClick={() => {
-						modalRef.current!.showModal()
-					}}
-				/>
+				{session?.user.role === "admin" ? (
+					<React.Fragment>
+						<article className="my-4 text-3xl font-semibold">
+							View and Edit User Permissions
+						</article>
+						<AdminTable
+							users={users}
+							onClick={() => {
+								modalRef.current!.showModal()
+							}}
+						/>
+					</React.Fragment>
+				) : (
+					<React.Fragment>
+						<article className="my-4 text-3xl font-semibold">
+							View User Permissions
+						</article>
+						<AdminTable users={users} />
+					</React.Fragment>
+				)}
 			</div>
 			<dialog
 				ref={modalRef}
@@ -49,7 +64,7 @@ function AdminPage() {
 					) : (
 						<React.Fragment>
 							<article className="font-bold text-xl">
-								Request Cohort Export
+								Edit Permissions
 							</article>
 							<div className="flex flex-col mt-4">
 								<article className="font-semibold text-lg">
