@@ -11,6 +11,8 @@ interface User {
 	sites: string[]
 }
 
+type ModalStatus = "selecting" | "confirming" | "submitted"
+
 const SITES = [
 	"alfred_hospital",
 	"auckland_city_hospital",
@@ -31,8 +33,9 @@ function AdminPage() {
 	const [users, setUsers] = useState<User[]>([])
 	const [selectedUser, setSelectedUser] = useState<User | null>(null)
 	const additionalSites = useRef<string[]>([])
+	const removeSites = useRef<string[]>([])
 	// modal state
-	const [modalSubmitted, setModalSubmitted] = useState(false)
+	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const modalRef = useRef<HTMLDialogElement>(null)
 
 	// on attach grabs on user in permissions db
@@ -44,14 +47,36 @@ function AdminPage() {
 
 	// fires api on format submit
 	function handleUpdatePerms() {
-		axios.post("/api/database/permissions/updatePerms", {
-			email: selectedUser!.email,
-			sites: additionalSites.current,
-		})
+		axios
+			.post("/api/database/permissions/updatePerms", {
+				email: selectedUser!.email,
+				addSites: additionalSites.current,
+				removeSites: removeSites.current,
+			})
+			.then(() => {
+				axios
+					.get("/api/database/permissions/getAllPerms")
+					.then((result) => {
+						setUsers(result.data)
+					})
+				setModalStatus("submitted")
+			})
 	}
 
-	// handles adding or removing new sites on checkbox usage
-	function handleCheckboxChange(site: string) {
+	// handles the checkboxes for removing current sites' access
+	function handleRemoveCheckbox(site: string) {
+		const selected = removeSites.current
+		const index = selected.indexOf(site)
+
+		if (index === -1) {
+			selected.push(site)
+		} else {
+			selected.splice(index, 1)
+		}
+	}
+
+	// handles the checkboxes for adding access to new sites
+	function handleAddCheckbox(site: string) {
 		const selected = additionalSites.current
 		const index = selected.indexOf(site)
 
@@ -96,33 +121,38 @@ function AdminPage() {
 			<dialog
 				ref={modalRef}
 				onClose={() => {
-					setModalSubmitted(false)
+					setModalStatus("selecting")
 				}}
 				className="modal"
 			>
 				<div className="modal-box max-w-3xl">
-					{modalSubmitted ? (
-						<div className="flex flex-col items-center justify-center h-20">
-							<article className="font-semibold text-2xl">
-								Permissions Updated
-							</article>
-						</div>
-					) : (
+					{modalStatus === "selecting" ? (
 						<React.Fragment>
 							<article className="font-bold text-xl">
 								Edit Permissions for {selectedUser?.email}
 							</article>
 							<div className="flex flex-col mt-4">
 								<article className="font-semibold text-lg">
-									Current Access
+									Update Current Access
 								</article>
 								{selectedUser?.role !== "site-viewer" ? (
 									<article>All</article>
 								) : (
 									selectedUser?.sites.map((site) => (
-										<article>
-											{FormatSiteName(site)}
-										</article>
+										<div key={site} className="flex">
+											<input
+												type="checkbox"
+												defaultChecked
+												className="checkbox checkbox-primary mr-2 mb-1"
+												value={site}
+												onChange={() =>
+													handleRemoveCheckbox(site)
+												}
+											/>
+											<article>
+												{FormatSiteName(site)}
+											</article>
+										</div>
 									))
 								)}
 								<article className="font-semibold text-lg mt-4">
@@ -138,7 +168,7 @@ function AdminPage() {
 											className="checkbox checkbox-primary mr-2 mb-1"
 											value={site}
 											onChange={() =>
-												handleCheckboxChange(site)
+												handleAddCheckbox(site)
 											}
 										/>
 										<article>
@@ -150,7 +180,7 @@ function AdminPage() {
 									<button
 										className="btn btn-primary mt-8"
 										onClick={() => {
-											handleUpdatePerms()
+											setModalStatus("confirming")
 										}}
 									>
 										Update Permissions
@@ -158,6 +188,26 @@ function AdminPage() {
 								</div>
 							</div>
 						</React.Fragment>
+					) : modalStatus === "confirming" ? (
+						<div className="flex flex-col items-center justify-center h-20">
+							<article className="font-semibold text-2xl">
+								You have selected to
+							</article>
+							<button
+								className="btn btn-primary mt-8"
+								onClick={handleUpdatePerms}
+							>
+								Update Permissions
+							</button>
+						</div>
+					) : modalStatus === "submitted" ? (
+						<div className="flex flex-col items-center justify-center h-20">
+							<article className="font-semibold text-2xl">
+								Permissions Updated
+							</article>
+						</div>
+					) : (
+						<div>Error: You Should Not Be Seeing This</div>
 					)}
 				</div>
 				<form method="dialog" className="modal-backdrop">

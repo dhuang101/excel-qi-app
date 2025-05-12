@@ -33,20 +33,29 @@ async function UpdatePerms({ email, addSites, removeSites }: ParamsType) {
 	const permissions = client.db("main").collection<Permission>("permissions")
 
 	// validate input
-	if (!addSites.every((site) => VALID_SITES.includes(site))) {
+	if (
+		!addSites.every((site) => VALID_SITES.includes(site)) &&
+		!removeSites.every((site) => VALID_SITES.includes(site))
+	) {
 		throw new Error("Invalid sites in parameters")
 	}
 
-	const result = await permissions.updateOne(
+	await permissions.updateOne(
 		{ email: email },
 		{
 			$addToSet: { sites: { $each: addSites } },
+		}
+	)
+
+	await permissions.updateOne(
+		{ email: email },
+		{
 			$pull: { sites: { $in: removeSites } },
 		}
 	)
 
 	client.close()
-	return result
+	return { message: "Sites updated successfully." }
 }
 
 // handler for any calls to this endpoint
@@ -57,6 +66,7 @@ export default async function handler(req: any, res: any) {
 		const results = await UpdatePerms(params)
 		res.status(200).json(results)
 	} catch (err) {
+		console.log(err)
 		res.status(500).json(err)
 	}
 }
