@@ -4,7 +4,7 @@ import * as d3 from "d3"
 const MARGIN = { top: 30, right: 30, bottom: 30, left: 140 }
 const BAR_PADDING = 0.3
 
-type BarplotProps = {
+interface BarplotProps {
 	width: number
 	height: number
 	data: { _id: string; count: number }[]

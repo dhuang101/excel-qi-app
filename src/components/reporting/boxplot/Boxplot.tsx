@@ -8,7 +8,7 @@ import { AxisBottom } from "./AxisBottom"
 
 const MARGIN = { top: 30, right: 30, bottom: 30, left: 120 }
 
-type BoxplotProps = {
+interface BoxplotProps {
 	width: number
 	height: number
 	data: { name: string; value: number }[]

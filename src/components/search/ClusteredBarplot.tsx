@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react"
 import * as d3 from "d3"
 import SvgImageDownload from "@/utilities/SvgImageDownload"
 
-type ClusteredBarplotProps = {
+interface ClusteredBarplotProps {
 	data: { category: string; [key: string]: number | string }[]
 	keys: any[]
 	width?: number

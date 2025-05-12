@@ -5,7 +5,11 @@ import { useSession } from "next-auth/react"
 import React from "react"
 import { useEffect, useRef, useState } from "react"
 
-type User = { email: string; role: string; sites: string[] }
+interface User {
+	email: string
+	role: string
+	sites: string[]
+}
 
 const SITES = [
 	"alfred_hospital",

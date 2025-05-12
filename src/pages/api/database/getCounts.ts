@@ -6,14 +6,14 @@ interface ValueCount {
 	count: number
 }
 
-type paramsType = {
+type ParamsType = {
 	role: string
 	sites: string[]
 }
 
 // this api fetches each each the count of unique value of each attribute in the attributes list
 
-async function GetCounts(params: paramsType) {
+async function GetCounts(params: ParamsType) {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
@@ -83,7 +83,7 @@ async function GetCounts(params: paramsType) {
 
 // handler for any calls to this endpoint
 export default async function handler(req: any, res: any) {
-	const params = qs.parse(req.query) as paramsType
+	const params = qs.parse(req.query) as ParamsType
 
 	try {
 		const results = await GetCounts(params)

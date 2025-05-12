@@ -3,9 +3,15 @@ import { MongoClient } from "mongodb"
 // this api will update any users attributes in the permissions collection effectively
 // adjusting their access to the application
 
-type paramsType = {
+interface Permission {
 	email: string
 	sites: string[]
+}
+
+interface ParamsType {
+	email: string
+	addSites: string[]
+	removeSites: string[]
 }
 
 const VALID_SITES = [
@@ -21,19 +27,22 @@ const VALID_SITES = [
 	"townsville_hospital",
 ]
 
-async function UpdatePerms({ email, sites }: paramsType) {
+async function UpdatePerms({ email, addSites, removeSites }: ParamsType) {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
-	const permissions = client.db("main").collection("permissions")
+	const permissions = client.db("main").collection<Permission>("permissions")
 
 	// validate input
-	if (!sites.every((site) => VALID_SITES.includes(site))) {
+	if (!addSites.every((site) => VALID_SITES.includes(site))) {
 		throw new Error("Invalid sites in parameters")
 	}
 
 	const result = await permissions.updateOne(
 		{ email: email },
-		{ $addToSet: { sites: { $each: sites } } }
+		{
+			$addToSet: { sites: { $each: addSites } },
+			$pull: { sites: { $in: removeSites } },
+		}
 	)
 
 	client.close()

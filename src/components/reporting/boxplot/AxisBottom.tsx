@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { ScaleLinear } from "d3"
 
-type AxisBottomProps = {
+interface AxisBottomProps {
 	xScale: ScaleLinear<number, number>
 	pixelsPerTick: number
 	height: number

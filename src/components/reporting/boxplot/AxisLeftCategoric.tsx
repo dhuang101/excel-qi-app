@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { ScaleBand } from "d3"
 
-type AxisLeftProps = {
+interface AxisLeftProps {
 	yScale: ScaleBand<string>
 }
 
