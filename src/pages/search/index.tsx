@@ -6,7 +6,7 @@ import DateRangeInput from "@/components/search/DateRangeInput"
 import DropdownInput from "@/components/search/DropdownInput"
 import { keyToTitle } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
-import { DateStringFormatter } from "@/utilities/DateStringFormatter"
+import { FormatDate } from "@/utilities/FormatDate"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
 import ClusteredBarplot from "@/components/search/ClusteredBarplot"
 
@@ -258,7 +258,7 @@ function SearchPage() {
 														searchQuery[
 															key as keyof searchQuery
 														] instanceof Date
-															? DateStringFormatter(
+															? FormatDate(
 																	searchQuery[
 																		key as keyof searchQuery
 																	] as Date
