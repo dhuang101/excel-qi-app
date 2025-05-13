@@ -135,7 +135,14 @@ function AdminPage() {
 				className="modal"
 			>
 				<div className="modal-box max-w-3xl">
-					{modalStatus === "selecting" ? (
+					{selectedUser?.role !== "site-viewer" ? (
+						<div className="flex flex-col items-center justify-center h-18">
+							<article className="font-bold text-xl">
+								Cannot Edit Permissions for user's with this
+								role
+							</article>
+						</div>
+					) : modalStatus === "selecting" ? (
 						<React.Fragment>
 							<article className="font-bold text-xl">
 								Edit Permissions for {selectedUser?.email}
@@ -144,26 +151,22 @@ function AdminPage() {
 								<article className="font-semibold text-lg">
 									Update Current Access
 								</article>
-								{selectedUser?.role !== "site-viewer" ? (
-									<article>All</article>
-								) : (
-									selectedUser?.sites.map((site) => (
-										<div key={site} className="flex">
-											<input
-												type="checkbox"
-												defaultChecked
-												className="checkbox checkbox-primary mr-2 mb-1"
-												value={site}
-												onChange={() =>
-													handleRemoveCheckbox(site)
-												}
-											/>
-											<article>
-												{FormatSiteName(site)}
-											</article>
-										</div>
-									))
-								)}
+								{selectedUser?.sites.map((site) => (
+									<div key={site} className="flex">
+										<input
+											type="checkbox"
+											defaultChecked
+											className="checkbox checkbox-primary mr-2 mb-1"
+											value={site}
+											onChange={() =>
+												handleRemoveCheckbox(site)
+											}
+										/>
+										<article>
+											{FormatSiteName(site)}
+										</article>
+									</div>
+								))}
 								<article className="font-semibold text-lg mt-4">
 									Choose Sites to Give Access To
 								</article>
