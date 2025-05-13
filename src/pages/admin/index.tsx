@@ -36,6 +36,7 @@ function AdminPage() {
 	const removeSites = useRef<string[]>([])
 	// modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
+	const [error, setError] = useState(false)
 	const modalRef = useRef<HTMLDialogElement>(null)
 
 	// on attach grabs on user in permissions db
@@ -120,8 +121,16 @@ function AdminPage() {
 			</div>
 			<dialog
 				ref={modalRef}
-				onClose={() => {
-					setModalStatus("selecting")
+				onTransitionEnd={(event: React.TransitionEvent) => {
+					if (
+						!modalRef.current?.open &&
+						event.propertyName === "visibility"
+					) {
+						additionalSites.current = []
+						removeSites.current = []
+						setError(false)
+						setModalStatus("selecting")
+					}
 				}}
 				className="modal"
 			>
@@ -176,28 +185,68 @@ function AdminPage() {
 										</article>
 									</div>
 								))}
-								<div>
+								<div className="flex items-center mt-8">
 									<button
-										className="btn btn-primary mt-8"
+										className="btn btn-primary"
 										onClick={() => {
-											setModalStatus("confirming")
+											if (
+												additionalSites.current.length >
+													0 ||
+												removeSites.current.length > 0
+											) {
+												setModalStatus("confirming")
+											} else {
+												setError(true)
+											}
 										}}
 									>
 										Update Permissions
 									</button>
+									{error && (
+										<article className="ml-8 text-error font-semibold">
+											Error: No Changes Were Made
+										</article>
+									)}
 								</div>
 							</div>
 						</React.Fragment>
 					) : modalStatus === "confirming" ? (
-						<div className="flex flex-col items-center justify-center h-20">
+						<div className="flex flex-col items-center justify-center">
 							<article className="font-semibold text-2xl">
-								You have selected to
+								Confirm changes for:
 							</article>
+							<article className="font-semibold text-2xl">
+								{selectedUser?.email}
+							</article>
+							{additionalSites.current.length > 0 && (
+								<React.Fragment>
+									<article className="font-semibold text-lg mt-4">
+										Adding Access to:
+									</article>
+									{additionalSites.current.map((site) => (
+										<article key={site}>
+											{FormatSiteName(site)}
+										</article>
+									))}
+								</React.Fragment>
+							)}
+							{removeSites.current.length > 0 && (
+								<React.Fragment>
+									<article className="font-semibold text-lg mt-4">
+										Removing Access to:
+									</article>
+									{removeSites.current.map((site) => (
+										<article key={site}>
+											{FormatSiteName(site)}
+										</article>
+									))}
+								</React.Fragment>
+							)}
 							<button
 								className="btn btn-primary mt-8"
 								onClick={handleUpdatePerms}
 							>
-								Update Permissions
+								Confirm
 							</button>
 						</div>
 					) : modalStatus === "submitted" ? (
