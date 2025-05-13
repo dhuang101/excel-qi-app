@@ -214,7 +214,7 @@ function AdminPage() {
 							</div>
 						</React.Fragment>
 					) : modalStatus === "confirming" ? (
-						<div className="flex flex-col items-center justify-center">
+						<div className="flex flex-col">
 							<article className="font-semibold text-2xl">
 								Confirm changes for:
 							</article>
@@ -246,7 +246,7 @@ function AdminPage() {
 								</React.Fragment>
 							)}
 							<button
-								className="btn btn-primary mt-8"
+								className="btn btn-primary mt-8 min-w-24 w-1/5"
 								onClick={handleUpdatePerms}
 							>
 								Confirm
