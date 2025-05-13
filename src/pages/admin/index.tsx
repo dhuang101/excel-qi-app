@@ -170,7 +170,7 @@ function AdminPage() {
 									</div>
 								))}
 								<article className="font-semibold text-lg mt-4">
-									Choose Sites to Give Access To
+									Choose Sites to Give Access to
 								</article>
 								{SITES.filter(
 									(site) =>
@@ -218,7 +218,7 @@ function AdminPage() {
 					) : modalStatus === "confirming" ? (
 						<div className="flex flex-col">
 							<article className="font-semibold text-2xl">
-								Confirm changes for:
+								Confirm Changes for:
 							</article>
 							<article className="font-semibold text-2xl">
 								{selectedUser?.email}
