@@ -1,5 +1,6 @@
 import AdminTable from "@/components/admin/AdminTable"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
+import { CircularProgress } from "@mui/material"
 import axios from "axios"
 import { useSession } from "next-auth/react"
 import React from "react"
@@ -11,7 +12,7 @@ interface User {
 	sites: string[]
 }
 
-type ModalStatus = "selecting" | "confirming" | "submitted"
+type ModalStatus = "selecting" | "confirming" | "updating" | "submitted"
 
 const SITES = [
 	"alfred_hospital",
@@ -48,6 +49,7 @@ function AdminPage() {
 
 	// fires api on format submit
 	function handleUpdatePerms() {
+		setModalStatus("updating")
 		axios
 			.post("/api/database/permissions/updatePerms", {
 				email: selectedUser!.email,
@@ -251,6 +253,13 @@ function AdminPage() {
 							>
 								Confirm
 							</button>
+						</div>
+					) : modalStatus === "updating" ? (
+						<div className="flex flex-col items-center justify-center h-40">
+							<CircularProgress size={80} />
+							<article className="text-lg font-semibold pt-4">
+								Updating Permissions...
+							</article>
 						</div>
 					) : modalStatus === "submitted" ? (
 						<div className="flex flex-col items-center justify-center h-20">
