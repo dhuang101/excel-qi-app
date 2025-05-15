@@ -48,12 +48,9 @@ function AdminPage() {
 	useEffect(() => {
 		axios.get("/api/database/permissions/getAllPerms").then((result) => {
 			users.current = result.data
+			setSlicedUsers(result.data)
 		})
 	}, [])
-
-	useEffect(() => {
-		setSlicedUsers(users.current)
-	}, [users])
 
 	function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 		if (event.key === "Enter") {
