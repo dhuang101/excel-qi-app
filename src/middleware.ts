@@ -12,11 +12,19 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.next()
 	}
 
-	// Admin-only routes
-	if (
-		pathname.startsWith("/admin") ||
-		pathname.startsWith("/api/database/permissions")
-	) {
+	// Access to /admin
+	if (pathname.startsWith("/admin")) {
+		if (
+			!token ||
+			!["admin", "global-viewer"].includes(token.role as string)
+		) {
+			return NextResponse.redirect(new URL("/forbidden", req.url))
+		}
+		return NextResponse.next()
+	}
+
+	// Access to /api/database/permissions — admin only
+	if (pathname.startsWith("/api/database/permissions/updatePerms")) {
 		if (!token || token.role !== "admin") {
 			return NextResponse.redirect(new URL("/forbidden", req.url))
 		}
