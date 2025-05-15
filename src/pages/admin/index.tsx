@@ -112,69 +112,72 @@ function AdminPage() {
 	}
 
 	return (
-		<div className="flex flex-col grow w-full items-center">
-			<div className="w-2/3 h-full">
-				{session?.user.role === "admin" ? (
-					<React.Fragment>
-						<article className="my-4 text-3xl font-semibold">
-							View and Edit User Permissions
-						</article>
-						<div className="flex items-center mb-4">
-							<input
-								type="text"
-								className="input mr-4"
-								placeholder="Search by email"
-								onKeyDown={handleKeyDown}
-								onChange={(event) => {
-									searchQuery.current = event.target.value
+		<React.Fragment>
+			<div className="flex flex-col grow w-full items-center bg-base-100">
+				<div className="w-2/3 h-full">
+					{session?.user.role === "admin" ? (
+						<React.Fragment>
+							<article className="my-4 text-3xl font-semibold">
+								View and Edit User Permissions
+							</article>
+							<div className="flex items-center mb-4">
+								<input
+									type="text"
+									className="input mr-4"
+									placeholder="Search by email"
+									onKeyDown={handleKeyDown}
+									onChange={(event) => {
+										searchQuery.current = event.target.value
+									}}
+								/>
+								<button
+									className="btn btn-primary"
+									onClick={handleEmailSearch}
+								>
+									Search
+								</button>
+							</div>
+							<AdminTable
+								users={slicedUsers}
+								onClick={(event) => {
+									modalRef.current!.showModal()
+									setSelectedUser(
+										slicedUsers[
+											Number(
+												event.currentTarget.dataset
+													.index
+											)
+										]
+									)
 								}}
 							/>
-							<button
-								className="btn btn-primary"
-								onClick={handleEmailSearch}
-							>
-								Search
-							</button>
-						</div>
-						<AdminTable
-							users={slicedUsers}
-							onClick={(event) => {
-								modalRef.current!.showModal()
-								setSelectedUser(
-									slicedUsers[
-										Number(
-											event.currentTarget.dataset.index
-										)
-									]
-								)
-							}}
-						/>
-					</React.Fragment>
-				) : (
-					<React.Fragment>
-						<article className="my-4 text-3xl font-semibold">
-							View User Permissions
-						</article>
-						<div className="flex items-center mb-4">
-							<input
-								type="text"
-								className="input mr-4"
-								placeholder="Search by email"
-								onKeyDown={handleKeyDown}
-								onChange={(event) => {
-									searchQuery.current = event.target.value
-								}}
-							/>
-							<button
-								className="btn btn-primary"
-								onClick={handleEmailSearch}
-							>
-								Search
-							</button>
-						</div>
-						<AdminTable users={slicedUsers} />
-					</React.Fragment>
-				)}
+						</React.Fragment>
+					) : (
+						<React.Fragment>
+							<article className="my-4 text-3xl font-semibold">
+								View User Permissions
+							</article>
+							<div className="flex items-center mb-4">
+								<input
+									type="text"
+									className="input mr-4"
+									placeholder="Search by email"
+									onKeyDown={handleKeyDown}
+									onChange={(event) => {
+										searchQuery.current = event.target.value
+									}}
+								/>
+								<button
+									className="btn btn-primary"
+									onClick={handleEmailSearch}
+								>
+									Search
+								</button>
+							</div>
+							<AdminTable users={slicedUsers} />
+						</React.Fragment>
+					)}
+				</div>
 			</div>
 			<dialog
 				ref={modalRef}
@@ -330,7 +333,7 @@ function AdminPage() {
 					<button>close</button>
 				</form>
 			</dialog>
-		</div>
+		</React.Fragment>
 	)
 }
 
