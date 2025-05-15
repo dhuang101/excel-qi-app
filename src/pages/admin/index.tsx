@@ -113,6 +113,7 @@ function AdminPage() {
 
 	return (
 		<React.Fragment>
+			{/* Main Page */}
 			<div className="flex flex-col grow w-full items-center bg-base-100">
 				<div className="w-2/3 h-full">
 					{session?.user.role === "admin" ? (
@@ -179,6 +180,7 @@ function AdminPage() {
 					)}
 				</div>
 			</div>
+			{/* Modal */}
 			<dialog
 				ref={modalRef}
 				onTransitionEnd={(event: React.TransitionEvent) => {
