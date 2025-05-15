@@ -1,4 +1,9 @@
+import EcmoPalTable from "@/components/ecmo-pal/EcmoPalTable"
+import { useRouter } from "next/navigation"
+
 function EcmoPalSearch() {
+	const router = useRouter()
+
 	return (
 		<div className="flex flex-col grow w-full items-center">
 			<div className="w-2/3 h-full">
@@ -24,6 +29,16 @@ function EcmoPalSearch() {
 							Search
 						</button>
 					</div>
+					<EcmoPalTable
+						patientData={[
+							{ record_id: "17fcd7ecc2ade010dc499366734d456e" },
+						]}
+						onClick={(event) => {
+							router.push(
+								"/ecmo-pal/17fcd7ecc2ade010dc499366734d456e"
+							)
+						}}
+					/>
 				</div>
 			</div>
 		</div>
