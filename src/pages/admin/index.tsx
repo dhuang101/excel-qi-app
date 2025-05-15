@@ -31,7 +31,11 @@ function AdminPage() {
 	// auth session
 	const { data: session, status } = useSession()
 	// state
-	const [users, setUsers] = useState<User[]>([])
+	const users = useRef<User[]>([])
+	const [slicedUsers, setSlicedUsers] = useState<User[]>([])
+	// search state
+	const searchQuery = useRef("")
+	// selected user state
 	const [selectedUser, setSelectedUser] = useState<User | null>(null)
 	const additionalSites = useRef<string[]>([])
 	const removeSites = useRef<string[]>([])
@@ -43,9 +47,29 @@ function AdminPage() {
 	// on attach grabs on user in permissions db
 	useEffect(() => {
 		axios.get("/api/database/permissions/getAllPerms").then((result) => {
-			setUsers(result.data)
+			users.current = result.data
 		})
 	}, [])
+
+	useEffect(() => {
+		setSlicedUsers(users.current)
+	}, [users])
+
+	function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+		if (event.key === "Enter") {
+			handleEmailSearch()
+		}
+	}
+
+	function handleEmailSearch() {
+		setSlicedUsers(
+			users.current.filter((user) => {
+				return user.email
+					.toLowerCase()
+					.includes(searchQuery.current.toLowerCase())
+			})
+		)
+	}
 
 	// fires api on format submit
 	function handleUpdatePerms() {
@@ -60,7 +84,7 @@ function AdminPage() {
 				axios
 					.get("/api/database/permissions/getAllPerms")
 					.then((result) => {
-						setUsers(result.data)
+						users.current = result.data
 					})
 				setModalStatus("submitted")
 			})
@@ -98,12 +122,29 @@ function AdminPage() {
 						<article className="my-4 text-3xl font-semibold">
 							View and Edit User Permissions
 						</article>
+						<div className="flex items-center mb-4">
+							<input
+								type="text"
+								className="input mr-4"
+								placeholder="Search by email"
+								onKeyDown={handleKeyDown}
+								onChange={(event) => {
+									searchQuery.current = event.target.value
+								}}
+							/>
+							<button
+								className="btn btn-primary"
+								onClick={handleEmailSearch}
+							>
+								Search
+							</button>
+						</div>
 						<AdminTable
-							users={users}
+							users={slicedUsers}
 							onClick={(event) => {
 								modalRef.current!.showModal()
 								setSelectedUser(
-									users[
+									slicedUsers[
 										Number(
 											event.currentTarget.dataset.index
 										)
@@ -117,7 +158,24 @@ function AdminPage() {
 						<article className="my-4 text-3xl font-semibold">
 							View User Permissions
 						</article>
-						<AdminTable users={users} />
+						<div className="flex items-center mb-4">
+							<input
+								type="text"
+								className="input mr-4"
+								placeholder="Search by email"
+								onKeyDown={handleKeyDown}
+								onChange={(event) => {
+									searchQuery.current = event.target.value
+								}}
+							/>
+							<button
+								className="btn btn-primary"
+								onClick={handleEmailSearch}
+							>
+								Search
+							</button>
+						</div>
+						<AdminTable users={slicedUsers} />
 					</React.Fragment>
 				)}
 			</div>
