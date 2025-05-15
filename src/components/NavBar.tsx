@@ -64,13 +64,14 @@ function NavBar() {
 								ECMO Resources
 							</article>
 						</Link>
-						{session?.user.role === "admin" && (
-							<Link href={"/admin"}>
-								<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-									Admin Panel
-								</article>
-							</Link>
-						)}
+						{session?.user.role === "admin" ||
+							(session?.user.role === "global-viewer" && (
+								<Link href={"/admin"}>
+									<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+										Admin Panel
+									</article>
+								</Link>
+							))}
 					</div>
 				</div>
 				<div className="btn btn-ghost rounded-xl" onClick={toggleTheme}>
