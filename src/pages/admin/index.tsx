@@ -198,8 +198,8 @@ function AdminPage() {
 					{selectedUser?.role !== "site-viewer" ? (
 						<div className="flex flex-col items-center justify-center h-18">
 							<article className="font-bold text-xl">
-								Cannot edit permissions for user's with this
-								role!
+								Cannot edit permissions for user&apos;s with
+								this role!
 							</article>
 						</div>
 					) : modalStatus === "selecting" ? (
