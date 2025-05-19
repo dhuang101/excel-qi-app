@@ -19,6 +19,7 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   port: 22
                   script: |
+                      set -e
                       echo "Connecting to VM..."
 
                       # Ensure npm and node are available
