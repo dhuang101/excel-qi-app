@@ -1,11 +1,13 @@
 import { testEcmo } from "@/test-data/ecmo"
 import axios from "axios"
 import React, { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import { CircularProgress } from "@mui/material"
 
 function EcmoPalPage() {
 	const testVars = testEcmo
+	const id = usePathname().split("/").pop()
 
 	const [modelDetails, setModelDetails]: any = useState({})
 	const [prediction, setPrediction] = useState({
@@ -48,9 +50,7 @@ function EcmoPalPage() {
 	return (
 		<div className="flex flex-col grow w-full items-center">
 			<div className="flex flex-col h-full w-full mt-8 items-center">
-				<article className="text-3xl font-semibold mb-4">
-					17fcd7ecc2ade010dc499366734d456e
-				</article>
+				<article className="text-3xl font-semibold mb-4">{id}</article>
 				{loading ? (
 					<div className="flex flex-col justify-center items-center h-[83vh]">
 						<CircularProgress size={80} />
@@ -151,13 +151,24 @@ function EcmoPalPage() {
 																{innerObj.label}
 															</article>
 														</div>
+														{/* TODO: correct logic instead of assuming other fields cannot be 1s and 0s */}
 														<article>
-															{testVars.variables[
+															{testVars[
+																id as string
+															].variables[
 																innerObj.name
 															] === 0
 																? "False"
-																: testVars
-																		.variables[
+																: testVars[
+																		id as string
+																  ].variables[
+																		innerObj
+																			.name
+																  ] === 1
+																? "True"
+																: testVars[
+																		id as string
+																  ].variables[
 																		innerObj
 																			.name
 																  ]}

@@ -21,6 +21,7 @@ function EcmoPalTable({ patientData, onClick }: Props) {
 			renderRow={(obj, i) => (
 				<tr
 					key={i}
+					data-record-id={obj.record_id}
 					className={`hover:text-accent-content hover:bg-accent ${
 						onClick ? "cursor-pointer" : ""
 					}`}
