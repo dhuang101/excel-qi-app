@@ -180,7 +180,7 @@ function ReportingPage() {
 							</select>
 						</fieldset>
 					</div>
-					<article className="w-full my-2 text-md">
+					<article className="w-full my-2 text-md font-semibold">
 						{`You are currently viewing patients from: ${
 							session?.user.sites
 								? session.user.sites

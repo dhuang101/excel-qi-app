@@ -9,6 +9,8 @@ import { CircularProgress, TablePagination } from "@mui/material"
 import { FormatDate } from "@/utilities/FormatDate"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
 import ClusteredBarplot from "@/components/search/ClusteredBarplot"
+import { useSession } from "next-auth/react"
+import { FormatSiteName } from "@/utilities/FormatSiteName"
 
 // type for the search query passed to mongo
 interface searchQuery {
@@ -31,6 +33,9 @@ interface searchQuery {
 
 // component
 function SearchPage() {
+	// auth session
+	const { data: session, status } = useSession()
+	// global store access
 	const [state, dispatch] = useReducer(searchReducer, {
 		searchResults: null,
 		slicedResults: [],
@@ -331,6 +336,15 @@ function SearchPage() {
 								Export Cohort
 							</button>
 						</div>
+						<article className="w-full mb-2 text-md font-semibold">
+							{`You are currently viewing patients from: ${
+								session?.user.sites
+									? session.user.sites
+											.map((site) => FormatSiteName(site))
+											.join(", ")
+									: ""
+							}`}
+						</article>
 						{showingVis ? (
 							<div className="flex flex-col items-center mt-4">
 								<article className="font-semibold text-lg">
@@ -358,6 +372,8 @@ function SearchPage() {
 										height={625}
 									/>
 								</div>
+								{/* footer */}
+								<div className="h-8" />
 							</div>
 						) : (
 							<React.Fragment>
