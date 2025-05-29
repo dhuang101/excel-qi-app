@@ -6,6 +6,7 @@ import { CircularProgress } from "@mui/material"
 import { useEffect, useReducer, useRef, useState } from "react"
 import { useSession } from "next-auth/react"
 import qs from "qs"
+import { FormatSiteName } from "@/utilities/FormatSiteName"
 
 type GraphType =
 	| "Hospital Outcomes"
@@ -153,10 +154,11 @@ function ReportingPage() {
 		<div className="flex flex-col grow w-full items-center">
 			{state.totalDocuments > 0 ? (
 				<div className="flex flex-col w-2/3 h-full items-center">
-					<article className="my-4 text-xl font-semibold">
+					<article className="mt-4 xl:text-xl md:text-md font-semibold">
 						There are currently {state.totalDocuments} patients
-						enrolled in the NICE Data Project.
+						enrolled in the NICE Data Project at your site(s).
 					</article>
+
 					<div className="w-full">
 						<fieldset className="fieldset">
 							<legend className="fieldset-legend">
@@ -178,6 +180,15 @@ function ReportingPage() {
 							</select>
 						</fieldset>
 					</div>
+					<article className="w-full my-2 text-md">
+						{`You are currently viewing patients from: ${
+							session?.user.sites
+								? session.user.sites
+										.map((site) => FormatSiteName(site))
+										.join(", ")
+								: ""
+						}`}
+					</article>
 					<div ref={graphContainer} className="flex flex-col w-full">
 						{renderGraph()}
 					</div>
