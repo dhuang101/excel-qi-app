@@ -182,7 +182,10 @@ function ReportingPage() {
 					</div>
 					<article className="w-full my-2 text-md font-semibold">
 						{`You are currently viewing patients from: ${
-							session?.user.sites
+							session?.user?.role === "admin" ||
+							session?.user?.role === "global-viewer"
+								? "All Sites"
+								: session?.user?.sites
 								? session.user.sites
 										.map((site) => FormatSiteName(site))
 										.join(", ")
