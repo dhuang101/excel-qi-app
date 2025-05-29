@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import { CircularProgress } from "@mui/material"
+import test from "node:test"
 
 function EcmoPalPage() {
 	const testVars = testEcmo
@@ -20,7 +21,9 @@ function EcmoPalPage() {
 	function handleClick() {
 		setLoading(true)
 		axios
-			.post("/api/ecmo-pal/evaluate", { variables: testEcmo })
+			.post("/api/ecmo-pal/evaluate", {
+				variables: testVars[id as string],
+			})
 			.then((result: any) => {
 				setPrediction(result.data)
 			})
