@@ -220,7 +220,7 @@ function SearchPage() {
 	return (
 		<div className="flex flex-col grow w-full items-center">
 			<div className="w-2/3 h-full">
-				<article className="my-4 text-3xl font-semibold">
+				<article className="mt-2 mb-4 text-3xl font-semibold">
 					Cohort Construction
 				</article>
 				{loading === true ? (
@@ -358,7 +358,7 @@ function SearchPage() {
 										data={state.graphDataResp}
 										keys={state.graphKeys}
 										width={width}
-										height={625}
+										height={600}
 									/>
 								</div>
 								<article className="font-semibold text-lg mt-16">
@@ -369,7 +369,7 @@ function SearchPage() {
 										data={state.graphDataCardiac}
 										keys={state.graphKeys}
 										width={width}
-										height={625}
+										height={600}
 									/>
 								</div>
 								{/* footer */}
@@ -380,7 +380,7 @@ function SearchPage() {
 								<SearchTable
 									patientData={state.slicedResults}
 								/>
-								<div className="flex flex-col items-center mt-8">
+								<div className="flex flex-col items-center">
 									<TablePagination
 										component="div"
 										count={state.searchResults.length}

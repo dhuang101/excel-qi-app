@@ -162,7 +162,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 		svg.append("text")
 			.attr("class", "x-axis-label")
 			.attr("x", width / 2)
-			.attr("y", height - 5)
+			.attr("y", height - 25)
 			.attr("text-anchor", "middle")
 			.attr("fill", "var(--color-base-content)")
 			.text("Primary Diagnosis")
@@ -212,7 +212,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 	return (
 		<div className="flex flex-col items-center">
 			<svg ref={svgRef}></svg>
-			<button onClick={handleDownload} className="btn btn-primary mt-4">
+			<button onClick={handleDownload} className="btn btn-primary">
 				Download Plot
 			</button>
 		</div>
