@@ -32,7 +32,7 @@ function NavBar() {
 			<div className="navbar">
 				<div className="flex flex-1">
 					<Link href={"/"}>
-						<article className="btn btn-ghost normal-case rounded-xl text-xl text-base-content">
+						<article className="btn btn-ghost rounded-xl ">
 							<Image
 								width={1672}
 								height={971}
@@ -40,7 +40,9 @@ function NavBar() {
 								className="max-h-10 max-w-17 w-auto h-auto"
 								alt="Logo"
 							/>
-							NICE Data Project
+							<article className="sm:text-sm xl:text-xl text-base-content normal-case ml-2 ">
+								NICE Data Project
+							</article>
 						</article>
 					</Link>
 					<div className="flex ml-36 gap-x-2">
