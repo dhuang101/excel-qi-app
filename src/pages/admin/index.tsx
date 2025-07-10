@@ -43,6 +43,7 @@ function AdminPage() {
 	const removeSites = useRef<string[]>([])
 	// modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
+	const [modalKey, setModalKey] = useState(0)
 	const [error, setError] = useState(false)
 	const modalRef = useRef<HTMLDialogElement>(null)
 
@@ -206,11 +207,12 @@ function AdminPage() {
 						removeSites.current = []
 						setError(false)
 						setModalStatus("selecting")
+						setModalKey((prev) => prev + 1)
 					}
 				}}
 				className="modal"
 			>
-				<div className="modal-box max-w-3xl">
+				<div className="modal-box max-w-3xl" key={modalKey}>
 					{selectedUser?.role !== "site-viewer" ? (
 						<div className="flex flex-col items-center justify-center h-18">
 							<article className="font-bold text-xl">
