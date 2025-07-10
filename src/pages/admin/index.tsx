@@ -3,6 +3,7 @@ import { FormatSiteName } from "@/utilities/FormatSiteName"
 import { CircularProgress } from "@mui/material"
 import axios from "axios"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import React from "react"
 import { useEffect, useRef, useState } from "react"
 
@@ -28,8 +29,9 @@ const SITES = [
 ]
 
 function AdminPage() {
-	// auth session
+	// hooks
 	const { data: session, status } = useSession()
+	const router = useRouter()
 	// state
 	const users = useRef<User[]>([])
 	const [slicedUsers, setSlicedUsers] = useState<User[]>([])
@@ -121,21 +123,33 @@ function AdminPage() {
 							<article className="my-4 text-3xl font-semibold">
 								View and Edit User Permissions
 							</article>
-							<div className="flex items-center mb-4">
-								<input
-									type="text"
-									className="input mr-4"
-									placeholder="Search by email"
-									onKeyDown={handleKeyDown}
-									onChange={(event) => {
-										searchQuery.current = event.target.value
-									}}
-								/>
+							<div className="flex items-center justify-between mb-4">
+								<div className="flex">
+									<input
+										type="text"
+										className="input w-80 mr-4"
+										placeholder="Search by email"
+										onKeyDown={handleKeyDown}
+										onChange={(event) => {
+											searchQuery.current =
+												event.target.value
+										}}
+									/>
+									<button
+										className="btn btn-primary"
+										onClick={handleEmailSearch}
+									>
+										Search
+									</button>
+								</div>
+
 								<button
 									className="btn btn-primary"
-									onClick={handleEmailSearch}
+									onClick={() => {
+										router.push("/admin/import")
+									}}
 								>
-									Search
+									Import
 								</button>
 							</div>
 							<AdminTable
