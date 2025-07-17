@@ -4,7 +4,7 @@ import React from "react"
 
 function ImportPage() {
 	const [file, setFile] = useState<File | null>(null)
-	const [users, setUsers] = useState<any>([])
+	const [rows, setRows] = useState<any>([])
 
 	function handlePreview() {
 		if (!file) {
@@ -16,7 +16,7 @@ function ImportPage() {
 			skipEmptyLines: true,
 			complete: function (results) {
 				// merge rows with the same record_id
-				setUsers(
+				setRows(
 					Object.values(
 						results.data.reduce(
 							(mergedRows: any, currentRow: any) => {
@@ -51,13 +51,13 @@ function ImportPage() {
 	function handleImport() {}
 
 	useEffect(() => {
-		console.log(users)
-	}, [users])
+		console.log(rows)
+	}, [rows])
 
 	return (
 		<div className="flex flex-col grow w-full items-center bg-base-100">
 			<div className="flex flex-col items-center w-2/3 h-full">
-				{users.length > 0 ? (
+				{rows.length > 0 ? (
 					<React.Fragment></React.Fragment>
 				) : (
 					<React.Fragment>
