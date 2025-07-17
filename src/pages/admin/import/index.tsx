@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import Papa from "papaparse"
 import React from "react"
+import ImportPreviewTable from "@/components/admin/ImportPreviewTable"
 
 function ImportPage() {
 	const [file, setFile] = useState<File | null>(null)
@@ -56,43 +57,43 @@ function ImportPage() {
 
 	return (
 		<div className="flex flex-col grow w-full items-center bg-base-100">
-			<div className="flex flex-col items-center w-2/3 h-full">
-				{rows.length > 0 ? (
-					<React.Fragment></React.Fragment>
-				) : (
-					<React.Fragment>
-						<article className="text-2xl font-semibold my-4">
-							Import Cohort
-						</article>
-						<div>
-							<fieldset className="fieldset">
-								<legend className="fieldset-legend">
-									.csv file only
-								</legend>
-								<input
-									type="file"
-									accept=".csv"
-									onChange={(e) =>
-										setFile(
-											e.target.files
-												? e.target.files[0]
-												: null
-										)
-									}
-									className="file-input"
-								/>
-								<label className="label">Max size 1MB</label>
-							</fieldset>
-							<button
-								className="btn mt-2"
-								onClick={handlePreview}
-							>
-								Preview
-							</button>
-						</div>
-					</React.Fragment>
-				)}
-			</div>
+			{rows.length > 0 ? (
+				<div className="flex flex-col items-center w-4/5 h-full">
+					<article className="text-2xl font-semibold my-4">
+						Import Preview
+					</article>
+					<ImportPreviewTable records={rows} />
+				</div>
+			) : (
+				<div className="flex flex-col items-center w-2/3 h-full">
+					<article className="text-2xl font-semibold my-4">
+						Import Cohort
+					</article>
+					<div>
+						<fieldset className="fieldset">
+							<legend className="fieldset-legend">
+								.csv file only
+							</legend>
+							<input
+								type="file"
+								accept=".csv"
+								onChange={(e) =>
+									setFile(
+										e.target.files
+											? e.target.files[0]
+											: null
+									)
+								}
+								className="file-input"
+							/>
+							<label className="label">Max size 1MB</label>
+						</fieldset>
+						<button className="btn mt-2" onClick={handlePreview}>
+							Preview
+						</button>
+					</div>
+				</div>
+			)}
 		</div>
 	)
 }

@@ -10,7 +10,7 @@ interface record {
 	record_id: string
 }
 
-const headers = ["Record ID", "Role", "Sites"]
+const headers = ["Record ID"]
 
 function ImportPreviewTable({ records }: Props) {
 	return (
