@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Papa from "papaparse"
 import React from "react"
 import ImportPreviewTable from "@/components/admin/ImportPreviewTable"
 import { TranslateExcel } from "@/utilities/TranslateExcel"
+import { excelImportRow } from "@/types/excelImportTypes"
+import axios from "axios"
 
 function ImportPage() {
 	const [file, setFile] = useState<File | null>(null)
-	const [rows, setRows] = useState<any>([])
+	const [rows, setRows] = useState<excelImportRow[]>([])
 
 	function handlePreview() {
 		if (!file) {
@@ -52,11 +54,21 @@ function ImportPage() {
 		})
 	}
 
-	function handleImport() {}
+	function handleGoBack() {
+		setRows([])
+		setFile(null)
+	}
 
-	useEffect(() => {
-		console.log(rows)
-	}, [rows])
+	function handleImport() {
+		axios
+			.post("/api/database/import/postCsv", {
+				records: rows,
+			})
+			.then((response) => {
+				alert(response.data.message)
+				handleGoBack()
+			})
+	}
 
 	return (
 		<div className="flex flex-col grow w-full items-center bg-base-100">
@@ -65,6 +77,20 @@ function ImportPage() {
 					<article className="text-2xl font-semibold my-4">
 						Import Preview
 					</article>
+					<div className="w-4/5 flex justify-between">
+						<button
+							className="btn btn-primary mb-4"
+							onClick={handleGoBack}
+						>
+							Go Back
+						</button>
+						<button
+							className="btn btn-primary mb-4"
+							onClick={handleImport}
+						>
+							Import
+						</button>
+					</div>
 					<ImportPreviewTable records={rows} />
 				</div>
 			) : (
@@ -87,11 +113,14 @@ function ImportPage() {
 											: null
 									)
 								}
-								className="file-input"
+								className="file-input file-input-primary"
 							/>
 							<label className="label">Max size 1MB</label>
 						</fieldset>
-						<button className="btn mt-2" onClick={handlePreview}>
+						<button
+							className="btn btn-primary mt-2"
+							onClick={handlePreview}
+						>
 							Preview
 						</button>
 					</div>
