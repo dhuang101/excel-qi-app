@@ -10,8 +10,6 @@ import { ReactElement } from "react"
 function SignInPage({
 	providers,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-	console.log(providers)
-
 	return (
 		<div className="flex h-full items-center justify-center">
 			<div className="flex flex-col bg-base-300 p-10 rounded-4xl">

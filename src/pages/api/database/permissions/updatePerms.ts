@@ -66,7 +66,6 @@ export default async function handler(req: any, res: any) {
 		const results = await UpdatePerms(params)
 		res.status(200).json(results)
 	} catch (err) {
-		console.log(err)
 		res.status(500).json(err)
 	}
 }
