@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import Papa from "papaparse"
 import React from "react"
 import ImportPreviewTable from "@/components/admin/ImportPreviewTable"
+import { TranslateExcel } from "@/utilities/TranslateExcel"
 
 function ImportPage() {
 	const [file, setFile] = useState<File | null>(null)
@@ -30,6 +31,8 @@ function ImportPage() {
 										if (currentRow[key] === "") {
 											continue
 										} else {
+											// translate fields from EXCEL dictionary where applicable
+											TranslateExcel(currentRow, key)
 											mergedRows[currentRow.record_id][
 												key
 											] = currentRow[key]

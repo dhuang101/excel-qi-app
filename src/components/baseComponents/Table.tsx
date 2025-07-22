@@ -11,12 +11,17 @@ function Table<T>({ data, headers, renderRow, emptyMessage }: TableProps<T>) {
 	return (
 		<React.Fragment>
 			{data.length > 0 ? (
-				<div className="overflow-x-auto">
+				<div className="overflow-x-auto w-full">
 					<table className="table table-lg w-full">
 						<thead>
 							<tr>
 								{headers.map((header, i) => (
-									<th key={i} className="bg-base-300">
+									<th
+										key={i}
+										className={`bg-base-300 ${
+											i === 0 ? "sticky left-0" : ""
+										}`}
+									>
 										{header}
 									</th>
 								))}
