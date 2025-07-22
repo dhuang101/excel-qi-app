@@ -1,49 +1,9 @@
 import Table from "../baseComponents/Table"
+import { excelImportRow } from "@/types/excelImportTypes"
 
 interface Props {
 	// patientData is the object returned by the API
-	records: record[]
-}
-
-interface record {
-	record_id: string
-	redcap_data_access_group: string
-	redcap_event_name: string
-	birthdate: string
-	sex: string
-	height: string
-	weight: string
-	charlson_stroke: string
-	charlson_dementia: string
-	charlson_myocardial: string
-	charlson_heartfailure: string
-	charlson_peripheral_vd: string
-	charlson_copd: string
-	charlson_tissue: string
-	charlson_peptic: string
-	charlson_liver: string
-	charlson_diabetes: string
-	charlson_hemiplegia: string
-	charlson_ckd: string
-	charlson_malignancy: string
-	charlson_leukaemia: string
-	charlson_lymphoma: string
-	charlson_aids: string
-	charlson_score: string
-	icuadm_cfs: string
-	apache_score_c: string
-	hospadm_date_time: Date
-	icuadm_date_time: Date
-	diagnosis_resp: string
-	diagnosis_cardiac: string
-	ecmo_start_date_time: Date
-	decan_date_time: Date
-	outcm_icu_discharge: Date
-	outcm_hosp_discharge: Date
-	outcm_hosp_discharge_loc: string
-	outcm_ecmo_days_2: string
-	outcm_icu_days: string
-	outcm_hosp_days: string
+	records: excelImportRow[]
 }
 
 const headers = [
