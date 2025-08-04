@@ -1,12 +1,8 @@
+import { Permission } from "@/types/dbPermissionTypes"
 import { MongoClient } from "mongodb"
 
 // this api will update any users attributes in the permissions collection effectively
 // adjusting their access to the application
-
-interface Permission {
-	email: string
-	sites: string[]
-}
 
 interface ParamsType {
 	email: string
