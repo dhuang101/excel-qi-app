@@ -7,7 +7,7 @@ declare module "next-auth" {
 		user: {
 			name?: string | null
 			email?: string | null
-			image?: string | null
+			picture?: string | null
 			role?: "admin" | "global-viewer" | "site-viewer"
 			sites?: string[]
 		}
@@ -18,5 +18,6 @@ declare module "next-auth/jwt" {
 	interface JWT {
 		role?: string
 		email?: string
+		sites: string[]
 	}
 }
