@@ -12,8 +12,6 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.next()
 	}
 
-	console.log(token)
-
 	// Access to /admin
 	if (pathname.startsWith("/admin")) {
 		if (
