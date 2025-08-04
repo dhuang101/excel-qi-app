@@ -11,12 +11,21 @@ interface user {
 	email: string
 	role: string
 	sites: string[]
-	loginDate: string // Optional, as it may not be present in all user objects
+	loginDate?: string
 }
 
-const headers = ["Email", "Role", "Sites", "Last Login Time"]
+const headers = ["Email", "Role", "Sites", "Last Login Date"]
 
 function AdminTable({ users, onClick }: Props) {
+	function formatLoginDate(date?: string): string {
+		if (!date) {
+			return "N/A"
+		} else {
+			const splitDate = date.split("T")[0].split("-")
+			return splitDate[2] + "/" + splitDate[1] + "/" + splitDate[0]
+		}
+	}
+
 	return (
 		<Table
 			data={users}
@@ -48,7 +57,7 @@ function AdminTable({ users, onClick }: Props) {
 							))
 						)}
 					</td>
-					<td></td>
+					<td>{formatLoginDate(user.loginDate)}</td>
 				</tr>
 			)}
 		/>
