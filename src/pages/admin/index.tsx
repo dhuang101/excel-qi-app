@@ -201,6 +201,12 @@ function AdminPage() {
 				onTransitionEnd={(event: React.TransitionEvent) => {
 					if (
 						!modalRef.current?.open &&
+						event.propertyName === "visibility" &&
+						modalStatus === "submitted"
+					) {
+						window.location.reload()
+					} else if (
+						!modalRef.current?.open &&
 						event.propertyName === "visibility"
 					) {
 						additionalSites.current = []
