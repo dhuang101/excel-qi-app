@@ -9,8 +9,16 @@ type ParamsType = {
 async function postLoginDate(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const permissions = client.db("main").collection<Permission>("permissions")
-	// Ensure loginTime is a Date object
-	const loginDate = new Date(params.loginDate)
+	// ensure the date is in the correct timezone
+	// no need for dayjs here, we can use native Date methods
+	const splitDate = params.loginDate.split("T")[0].split("-")
+	const loginDate = new Date(
+		Date.UTC(
+			parseInt(splitDate[0]),
+			parseInt(splitDate[1]) - 1,
+			parseInt(splitDate[2])
+		)
+	)
 	await permissions.updateOne(
 		{ email: params.email },
 		{ $set: { loginDate: loginDate } },
