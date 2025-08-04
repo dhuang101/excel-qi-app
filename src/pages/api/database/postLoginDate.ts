@@ -3,17 +3,17 @@ import { Permission } from "@/types/dbPermissionTypes"
 
 type ParamsType = {
 	email: string
-	loginTime: string
+	loginDate: string
 }
 
 async function postLoginDate(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const permissions = client.db("main").collection<Permission>("permissions")
 	// Ensure loginTime is a Date object
-	const loginTimeDate = new Date(params.loginTime)
+	const loginDate = new Date(params.loginDate)
 	await permissions.updateOne(
 		{ email: params.email },
-		{ $set: { loginTime: loginTimeDate } },
+		{ $set: { loginDate: loginDate } },
 		{ upsert: false }
 	)
 	await client.close()

@@ -11,9 +11,10 @@ interface user {
 	email: string
 	role: string
 	sites: string[]
+	loginDate: string // Optional, as it may not be present in all user objects
 }
 
-const headers = ["Email", "Role", "Sites"]
+const headers = ["Email", "Role", "Sites", "Last Login Time"]
 
 function AdminTable({ users, onClick }: Props) {
 	return (
@@ -47,6 +48,7 @@ function AdminTable({ users, onClick }: Props) {
 							))
 						)}
 					</td>
+					<td></td>
 				</tr>
 			)}
 		/>

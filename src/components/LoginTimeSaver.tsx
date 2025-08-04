@@ -10,10 +10,10 @@ function LoginTimeSaver() {
 
 	useEffect(() => {
 		if (session && status === "authenticated") {
-			const currentTime = new Date()
+			const currentDate = new Date()
 			axios.post("/api/database/postLoginDate", {
 				email: session.user.email,
-				loginTime: currentTime,
+				loginDate: currentDate,
 			})
 		}
 	}, [status])
