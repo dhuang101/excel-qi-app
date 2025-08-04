@@ -9,6 +9,7 @@ import type { AppProps } from "next/app"
 import { SessionProvider } from "next-auth/react"
 import { NextPage } from "next"
 import { ReactElement, ReactNode } from "react"
+import LoginTimeSaver from "@/components/LoginTimeSaver"
 
 type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode
@@ -38,6 +39,7 @@ export default function App({
 								<Component {...pageProps} />
 							</div>
 						)}
+						<LoginTimeSaver />
 					</StateLoader>
 				</GlobalStore>
 			</LocalizationProvider>
