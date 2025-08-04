@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import * as d3 from "d3"
 
-const MARGIN = { top: 30, right: 30, bottom: 30, left: 140 }
+const MARGIN = { top: 30, right: 30, bottom: 70, left: 140 }
 const BAR_PADDING = 0.3
 
 interface BarplotProps {
@@ -181,6 +181,17 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 				>
 					{grid}
 					{allShapes}
+					{/* X-axis title */}
+					<text
+						x={boundsWidth / 2}
+						y={boundsHeight + 50}
+						textAnchor="middle"
+						fontSize={14}
+						fill="var(--color-base-content)"
+						fontWeight="bold"
+					>
+						Patient Count
+					</text>
 				</g>
 			</svg>
 		</div>

@@ -6,7 +6,7 @@ import { AxisLeft } from "./AxisLeftCategoric"
 import { HorizontalBox } from "./HorizontalBox"
 import { AxisBottom } from "./AxisBottom"
 
-const MARGIN = { top: 30, right: 30, bottom: 30, left: 120 }
+const MARGIN = { top: 30, right: 30, bottom: 70, left: 120 }
 
 interface BoxplotProps {
 	width: number
@@ -93,6 +93,16 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 							pixelsPerTick={80}
 						/>
 					</g>
+					<text
+						x={boundsWidth / 2}
+						y={boundsHeight + 50}
+						textAnchor="middle"
+						fontSize={14}
+						fill="var(--color-base-content)"
+						fontWeight="bold"
+					>
+						Days
+					</text>
 				</g>
 			</svg>
 		</div>
