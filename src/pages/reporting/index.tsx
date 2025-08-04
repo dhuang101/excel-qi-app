@@ -156,7 +156,7 @@ function ReportingPage() {
 				<div className="flex flex-col w-2/3 h-full items-center">
 					<article className="mt-4 xl:text-xl md:text-md font-semibold">
 						There are currently {state.totalDocuments} patients
-						enrolled in the NICE Data Project at your site(s).
+						enrolled in the EXCEL QI Project at your site(s).
 					</article>
 
 					<div className="w-full">

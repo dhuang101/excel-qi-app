@@ -41,7 +41,7 @@ function NavBar() {
 								alt="Logo"
 							/>
 							<article className="sm:text-sm xl:text-xl text-base-content normal-case ml-2 ">
-								NICE Data Project
+								EXCEL QI
 							</article>
 						</article>
 					</Link>

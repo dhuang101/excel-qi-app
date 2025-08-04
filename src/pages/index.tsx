@@ -7,12 +7,12 @@ function Home() {
 		<div className="flex flex-col grow w-full items-center justify-center">
 			<div className="flex flex-col h-full w-2/3 items-center justify-center bg-base-100">
 				<article className="text-5xl font-semibold mb-8">
-					NICE Data Project
+					EXCEL QI Project
 				</article>
 				<article className="w-2/3">
-					The NICE Data Project is an innovative in development
-					project to provide an intelligent platform for users of the
-					EXCEL Registry by allowing them to efficiently explore and
+					The EXCEL QI Project is an innovative in development project
+					to provide an intelligent platform for users of the EXCEL
+					Registry by allowing them to efficiently explore and
 					visualize data. The project aims to enhance the
 					accessibility and usability of the data, making it easier
 					for researchers and healthcare professionals to derive
