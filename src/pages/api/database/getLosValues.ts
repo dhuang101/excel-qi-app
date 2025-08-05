@@ -20,6 +20,7 @@ type SummaryStats = {
 	max: number
 }
 
+// Computes summary statistics for a given set of values
 function computeSummaryStats(values: number[], name: string): SummaryStats {
 	if (values.length === 0) {
 		return {
@@ -53,6 +54,7 @@ function quantile(sortedArr: number[], q: number): number {
 	}
 }
 
+// this api fetches the length of stay values for each site
 async function GetLosValues(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection<DocumentType>("collection")
@@ -70,11 +72,9 @@ async function GetLosValues(params: ParamsType) {
 		{ _id: 0, redcap_data_access_group: 1 }
 	)
 
-	// Always fetch all data
 	const results = await collection.find({}, { projection }).toArray()
 	client.close()
 
-	// Determine user-visible sites
 	let sites: string[] = params.sites
 	if (
 		(!sites || sites.length === 0) &&
@@ -85,6 +85,7 @@ async function GetLosValues(params: ParamsType) {
 
 	const siteStats: Record<string, SummaryStats[]> = {}
 
+	// Compute stats for each site
 	for (const site of sites) {
 		const siteResults = results.filter(
 			(doc) => doc.redcap_data_access_group === site
@@ -92,15 +93,16 @@ async function GetLosValues(params: ParamsType) {
 		siteStats[site] = attributes.map((attr) => {
 			const values = siteResults
 				.map((doc) => doc[attr])
-				.filter((v) => typeof v === "number" && !isNaN(v)) as number[]
+				.filter((i) => typeof i === "number" && !isNaN(i)) as number[]
 			return computeSummaryStats(values, attr)
 		})
 	}
 
+	// Compute stats for all sites combined
 	siteStats["all_sites"] = attributes.map((attr) => {
 		const values = results
 			.map((doc) => doc[attr])
-			.filter((v) => typeof v === "number" && !isNaN(v)) as number[]
+			.filter((i) => typeof i === "number" && !isNaN(i)) as number[]
 		return computeSummaryStats(values, attr)
 	})
 
