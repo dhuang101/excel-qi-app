@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb"
 import qs from "qs"
 
 interface ValueCount {
-	_id: string
+	value: string
 	count: number
 }
 
@@ -11,7 +11,7 @@ type ParamsType = {
 	sites: string[]
 }
 
-// this api fetches each each the count of unique value of each attribute in the attributes list
+// this api fetches each the count of unique value of each attribute in the attributes list
 async function GetCounts(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
@@ -56,7 +56,7 @@ async function GetCounts(params: ParamsType) {
 		const projectStage = {
 			$project: {
 				site: "$_id.site",
-				_id: "$_id.value",
+				value: "$_id.value",
 				count: 1,
 			},
 		}
@@ -71,11 +71,11 @@ async function GetCounts(params: ParamsType) {
 		if (attribute === "outcm_hosp_discharge_loc") {
 			pipeline.splice(3, 0, {
 				$addFields: {
-					_id: {
+					value: {
 						$cond: {
-							if: { $eq: ["$_id", "Dead"] },
+							if: { $eq: ["$value", "Dead"] },
 							then: "Deceased",
-							else: "$_id",
+							else: "$value",
 						},
 					},
 				},
@@ -84,7 +84,7 @@ async function GetCounts(params: ParamsType) {
 
 		const rawValues = await collection.aggregate(pipeline).toArray()
 
-		for (const { site, _id, count } of rawValues) {
+		for (const { site, value, count } of rawValues) {
 			if (!siteResultsMap[site]) {
 				siteResultsMap[site] = {
 					totalDocuments: 0,
@@ -94,13 +94,13 @@ async function GetCounts(params: ParamsType) {
 			if (!siteResultsMap[site].counts[attribute]) {
 				siteResultsMap[site].counts[attribute] = []
 			}
-			siteResultsMap[site].counts[attribute].push({ _id, count })
+			siteResultsMap[site].counts[attribute].push({ value, count })
 
 			if (!allSitesCounts.counts[attribute]) {
 				allSitesCounts.counts[attribute] = {}
 			}
-			allSitesCounts.counts[attribute][_id] =
-				(allSitesCounts.counts[attribute][_id] || 0) + count
+			allSitesCounts.counts[attribute][value] =
+				(allSitesCounts.counts[attribute][value] || 0) + count
 		}
 	}
 
@@ -150,7 +150,7 @@ async function GetCounts(params: ParamsType) {
 				([attribute, valueCounts]) => [
 					attribute,
 					Object.entries(valueCounts).map(([value, count]) => ({
-						_id: value,
+						value,
 						count,
 					})),
 				]
