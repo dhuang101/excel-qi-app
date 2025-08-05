@@ -2,29 +2,29 @@ export interface excelImportRow {
 	record_id: string
 	redcap_data_access_group: string
 	redcap_event_name: string
-	birthdate: string
-	sex: string
-	height: string
-	weight: string
-	charlson_stroke: string
-	charlson_dementia: string
-	charlson_myocardial: string
-	charlson_heartfailure: string
-	charlson_peripheral_vd: string
-	charlson_copd: string
-	charlson_tissue: string
-	charlson_peptic: string
-	charlson_liver: string
-	charlson_diabetes: string
-	charlson_hemiplegia: string
-	charlson_ckd: string
-	charlson_malignancy: string
-	charlson_leukaemia: string
-	charlson_lymphoma: string
-	charlson_aids: string
-	charlson_score: string
+	birthdate: number
+	sex: number
+	height: number
+	weight: number
+	charlson_stroke: number
+	charlson_dementia: number
+	charlson_myocardial: number
+	charlson_heartfailure: number
+	charlson_peripheral_vd: number
+	charlson_copd: number
+	charlson_tissue: number
+	charlson_peptic: number
+	charlson_liver: number
+	charlson_diabetes: number
+	charlson_hemiplegia: number
+	charlson_ckd: number
+	charlson_malignancy: number
+	charlson_leukaemia: number
+	charlson_lymphoma: number
+	charlson_aids: number
+	charlson_score: number
 	icuadm_cfs: string
-	apache_score_c: string
+	apache_score_c: number
 	hospadm_date_time: Date
 	icuadm_date_time: Date
 	diagnosis_resp: string
@@ -34,7 +34,7 @@ export interface excelImportRow {
 	outcm_icu_discharge: Date
 	outcm_hosp_discharge: Date
 	outcm_hosp_discharge_loc: string
-	outcm_ecmo_days_2: string
-	outcm_icu_days: string
-	outcm_hosp_days: string
+	outcm_ecmo_days_2: number
+	outcm_icu_days: number
+	outcm_hosp_days: number
 }
