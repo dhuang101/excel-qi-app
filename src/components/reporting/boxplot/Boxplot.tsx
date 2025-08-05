@@ -15,7 +15,6 @@ interface BoxplotProps {
 }
 
 export const Boxplot = ({ width, height, data }: BoxplotProps) => {
-	console.log(data)
 	// The bounds (= area inside the axis) is calculated by substracting the margins from total width / height
 	const boundsWidth = width - MARGIN.right - MARGIN.left
 	const boundsHeight = height - MARGIN.top - MARGIN.bottom
