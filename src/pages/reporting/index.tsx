@@ -1,7 +1,11 @@
 import axios from "axios"
 import Barplot from "@/components/reporting/Barplot"
 import { Boxplot } from "@/components/reporting/boxplot/Boxplot"
-import reportReducer, { ACTION } from "@/reducers/reportReducer"
+import reportReducer, {
+	ACTION,
+	CountEntry,
+	LosStats,
+} from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
 import { useEffect, useReducer, useRef, useState } from "react"
 import { useSession } from "next-auth/react"
@@ -19,10 +23,10 @@ function ReportingPage() {
 	const { data: session, status } = useSession()
 	// state
 	const [state, dispatch] = useReducer(reportReducer, {
-		totalDocuments: 0,
-		counts: {},
+		countData: [],
 		losData: [],
 	})
+	const [displayedSite, setDisplayedSite] = useState<string>("all_sites")
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
 	const [width, setWidth] = useState(0)
@@ -47,7 +51,7 @@ function ReportingPage() {
 					qs.stringify(params, { arrayFormat: "brackets" }),
 			})
 			.then((result) => {
-				payload = result.data
+				payload = { countData: result.data }
 			})
 			.then(() => {
 				return Promise.resolve(
@@ -65,6 +69,7 @@ function ReportingPage() {
 				payload = { ...payload, losData: result.data }
 			})
 			.then(() => {
+				console.log(payload)
 				dispatch({ type: ACTION.SET_SUMMARY, payload: payload })
 			})
 	}, [status])
@@ -103,8 +108,13 @@ function ReportingPage() {
 						</article>
 						<Barplot
 							width={width}
-							height={650}
-							data={state.counts.outcm_hosp_discharge_loc}
+							height={600}
+							data={
+								state.countData.find(
+									(site) => site.site === displayedSite
+								)?.counts
+									.outcm_hosp_discharge_loc as CountEntry[]
+							}
 						/>
 					</div>
 				)
@@ -116,8 +126,12 @@ function ReportingPage() {
 						</article>
 						<Barplot
 							width={width}
-							height={650}
-							data={state.counts.diagnosis_cardiac}
+							height={600}
+							data={
+								state.countData.find(
+									(site) => site.site === displayedSite
+								)?.counts.diagnosis_cardiac as CountEntry[]
+							}
 						/>
 					</div>
 				)
@@ -129,8 +143,12 @@ function ReportingPage() {
 						</article>
 						<Barplot
 							width={width}
-							height={650}
-							data={state.counts.diagnosis_resp}
+							height={600}
+							data={
+								state.countData.find(
+									(site) => site.site === displayedSite
+								)?.counts.diagnosis_resp as CountEntry[]
+							}
 						/>
 					</div>
 				)
@@ -142,8 +160,12 @@ function ReportingPage() {
 						</article>
 						<Boxplot
 							width={width}
-							height={650}
-							data={state.losData}
+							height={600}
+							data={
+								state.losData.find(
+									(site) => site.site === displayedSite
+								)?.stats as LosStats[]
+							}
 						/>
 					</div>
 				)
@@ -152,13 +174,33 @@ function ReportingPage() {
 
 	return (
 		<div className="flex flex-col grow w-full items-center">
-			{state.totalDocuments > 0 ? (
+			{state.countData[0]?.totalDocuments > 0 ? (
 				<div className="flex flex-col w-2/3 h-full items-center">
-					<article className="mt-4 xl:text-xl md:text-md font-semibold">
-						There are currently {state.totalDocuments} patients
-						enrolled in the EXCEL QI Project at your site(s).
+					<div className="w-full my-4">
+						<fieldset className="fieldset">
+							<legend className="fieldset-legend">
+								Select Site to Display
+							</legend>
+							<select
+								defaultValue="All Sites"
+								className="select"
+								onChange={(event) => {
+									setDisplayedSite(event.target.value)
+								}}
+							>
+								{state.countData.map((site) => (
+									<option key={site.site} value={site.site}>
+										{FormatSiteName(site.site)}
+									</option>
+								))}
+							</select>
+						</fieldset>
+					</div>
+					<article className="xl:text-xl md:text-md mt-4 font-semibold">
+						There are currently {state.countData[0]?.totalDocuments}{" "}
+						patients enrolled in the EXCEL QI Project at your
+						site(s).
 					</article>
-
 					<div className="w-full">
 						<fieldset className="fieldset">
 							<legend className="fieldset-legend">
@@ -180,18 +222,6 @@ function ReportingPage() {
 							</select>
 						</fieldset>
 					</div>
-					<article className="w-full my-2 text-md font-semibold">
-						{`You are currently viewing patients from: ${
-							session?.user?.role === "admin" ||
-							session?.user?.role === "global-viewer"
-								? "All Sites"
-								: session?.user?.sites
-								? session.user.sites
-										.map((site) => FormatSiteName(site))
-										.join(", ")
-								: ""
-						}`}
-					</article>
 					<div ref={graphContainer} className="flex flex-col w-full">
 						{renderGraph()}
 					</div>
