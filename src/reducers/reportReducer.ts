@@ -19,7 +19,7 @@ export interface CountDataItem {
 	counts: Counts
 }
 
-export interface LosStat {
+export interface LosStats {
 	name: string
 	count: number
 	min: number
@@ -29,9 +29,14 @@ export interface LosStat {
 	max: number
 }
 
+export interface LosEntry {
+	site: string
+	stats: LosStats[]
+}
+
 interface State {
 	countData: CountDataItem[]
-	losData: LosStat[]
+	losData: LosEntry[]
 }
 
 export enum ACTION {

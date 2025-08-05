@@ -7,7 +7,7 @@ const BAR_PADDING = 0.3
 interface BarplotProps {
 	width: number
 	height: number
-	data: { _id: string; count: number }[]
+	data: { value: string; count: number }[]
 }
 
 export const Barplot = ({ width, height, data }: BarplotProps) => {
@@ -16,7 +16,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 	const boundsHeight = height - MARGIN.top - MARGIN.bottom
 
 	// Y axis is for groups since the barplot is horizontal
-	const groups = data.sort((a, b) => b.count - a.count).map((d) => d._id)
+	const groups = data.sort((a, b) => b.count - a.count).map((d) => d.value)
 	const yScale = useMemo(() => {
 		return d3
 			.scaleBand()
@@ -87,7 +87,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 
 	// Build the shapes
 	const allShapes = data.map((d, i) => {
-		const y = yScale(d._id)
+		const y = yScale(d.value)
 		if (y === undefined) {
 			return null
 		}
@@ -96,7 +96,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 			<g key={i}>
 				<rect
 					x={xScale(0)}
-					y={yScale(d._id)}
+					y={yScale(d.value)}
 					width={xScale(d.count)}
 					height={yScale.bandwidth()}
 					opacity={0.7}
@@ -136,7 +136,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 						}
 					}}
 				>
-					{d._id}
+					{d.value}
 				</text>
 			</g>
 		)
