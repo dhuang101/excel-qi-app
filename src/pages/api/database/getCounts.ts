@@ -21,7 +21,7 @@ async function GetCounts(params: ParamsType) {
 		"diagnosis_resp",
 	]
 
-	// set consts for each site and all sites
+	// Initialize objects to hold results
 	const siteResultsMap: Record<
 		string,
 		{
@@ -38,7 +38,7 @@ async function GetCounts(params: ParamsType) {
 		counts: {},
 	}
 
-	// Loop through each attribute and get the counts
+	// Aggregate attribute counts grouped by site and attribute value
 	for (const attribute of attributes) {
 		const matchStage = {
 			[attribute]: { $nin: [null, "N/A"] },
@@ -68,7 +68,6 @@ async function GetCounts(params: ParamsType) {
 			{ $sort: { count: -1 } },
 		]
 
-		// rename dead to deceased
 		if (attribute === "outcm_hosp_discharge_loc") {
 			pipeline.splice(3, 0, {
 				$addFields: {
@@ -85,7 +84,6 @@ async function GetCounts(params: ParamsType) {
 
 		const rawValues = await collection.aggregate(pipeline).toArray()
 
-		// Process the results for each site and all sites
 		for (const { site, _id, count } of rawValues) {
 			if (!siteResultsMap[site]) {
 				siteResultsMap[site] = {
@@ -97,16 +95,42 @@ async function GetCounts(params: ParamsType) {
 				siteResultsMap[site].counts[attribute] = []
 			}
 			siteResultsMap[site].counts[attribute].push({ _id, count })
-			siteResultsMap[site].totalDocuments += count
 
 			if (!allSitesCounts.counts[attribute]) {
 				allSitesCounts.counts[attribute] = {}
 			}
 			allSitesCounts.counts[attribute][_id] =
 				(allSitesCounts.counts[attribute][_id] || 0) + count
-			allSitesCounts.totalDocuments += count
 		}
 	}
+
+	// Calculate total documents per site
+	const siteDocCounts = await collection
+		.aggregate([
+			{
+				$match: {
+					redcap_data_access_group: { $nin: [null, ""] },
+				},
+			},
+			{
+				$group: {
+					_id: "$redcap_data_access_group",
+					count: { $sum: 1 },
+				},
+			},
+		])
+		.toArray()
+
+	for (const { _id: site, count } of siteDocCounts) {
+		if (siteResultsMap[site]) {
+			siteResultsMap[site].totalDocuments = count
+		}
+	}
+
+	allSitesCounts.totalDocuments = siteDocCounts.reduce(
+		(sum, s) => sum + s.count,
+		0
+	)
 
 	client.close()
 
@@ -117,6 +141,7 @@ async function GetCounts(params: ParamsType) {
 		})
 	)
 
+	// Build the all_sites entry
 	const allSitesEntry = {
 		site: "all_sites",
 		totalDocuments: allSitesCounts.totalDocuments,
