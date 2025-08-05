@@ -70,8 +70,12 @@ async function GetLosValues(params: ParamsType) {
 		{ _id: 0, redcap_data_access_group: 1 }
 	)
 
-	let sites: string[] = params.sites
+	// Always fetch all data
+	const results = await collection.find({}, { projection }).toArray()
+	client.close()
 
+	// Determine user-visible sites
+	let sites: string[] = params.sites
 	if (
 		(!sites || sites.length === 0) &&
 		(params.role === "admin" || params.role === "global-viewer")
@@ -79,15 +83,8 @@ async function GetLosValues(params: ParamsType) {
 		sites = await collection.distinct("redcap_data_access_group")
 	}
 
-	const query: DocumentType = {}
-	if (params.role === "site-viewer" && params.sites.length > 0) {
-		query.redcap_data_access_group = { $in: params.sites }
-	}
-
-	const results = await collection.find(query, { projection }).toArray()
-	client.close()
-
 	const siteStats: Record<string, SummaryStats[]> = {}
+
 	for (const site of sites) {
 		const siteResults = results.filter(
 			(doc) => doc.redcap_data_access_group === site
@@ -100,6 +97,14 @@ async function GetLosValues(params: ParamsType) {
 		})
 	}
 
+	siteStats["all_sites"] = attributes.map((attr) => {
+		const values = results
+			.map((doc) => doc[attr])
+			.filter((v) => typeof v === "number" && !isNaN(v)) as number[]
+		return computeSummaryStats(values, attr)
+	})
+
+	// Convert to array form
 	const siteStatsArray = Object.entries(siteStats).map(([site, stats]) => ({
 		site,
 		stats,
