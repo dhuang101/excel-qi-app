@@ -10,10 +10,50 @@ type ParamsType = {
 	sites: string[]
 }
 
-// this api simply fetches the values of attributes in the attributes list and orders them
+type SummaryStats = {
+	name: string
+	count: number
+	min: number
+	q1: number
+	median: number
+	q3: number
+	max: number
+}
+
+function computeSummaryStats(values: number[], name: string): SummaryStats {
+	if (values.length === 0) {
+		return {
+			name,
+			count: 0,
+			min: NaN,
+			q1: NaN,
+			median: NaN,
+			q3: NaN,
+			max: NaN,
+		}
+	}
+	const sorted = [...values].sort((a, b) => a - b)
+	const count = sorted.length
+	const min = sorted[0]
+	const max = sorted[count - 1]
+	const q1 = quantile(sorted, 0.25)
+	const median = quantile(sorted, 0.5)
+	const q3 = quantile(sorted, 0.75)
+	return { name, count, min, q1, median, q3, max }
+}
+
+function quantile(sortedArr: number[], q: number): number {
+	const pos = (sortedArr.length - 1) * q
+	const base = Math.floor(pos)
+	const rest = pos - base
+	if (sortedArr[base + 1] !== undefined) {
+		return sortedArr[base] + rest * (sortedArr[base + 1] - sortedArr[base])
+	} else {
+		return sortedArr[base]
+	}
+}
 
 async function GetLosValues(params: ParamsType) {
-	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection<DocumentType>("collection")
 	const attributes = [
@@ -22,35 +62,50 @@ async function GetLosValues(params: ParamsType) {
 		"outcm_hosp_days",
 	]
 
-	// Build the projection dynamically
 	const projection = attributes.reduce(
 		(proj: DocumentType, attr) => {
-			proj[attr] = 1 // Include the attribute in the projection
+			proj[attr] = 1
 			return proj
 		},
-		{ _id: 0 }
-	) // Exclude _id
+		{ _id: 0, redcap_data_access_group: 1 }
+	)
 
-	// Build the query dynamically
+	let sites: string[] = params.sites
+
+	if (
+		(!sites || sites.length === 0) &&
+		(params.role === "admin" || params.role === "global-viewer")
+	) {
+		sites = await collection.distinct("redcap_data_access_group")
+	}
+
 	const query: DocumentType = {}
-
-	// Add redcap_data_access_group conditionally
 	if (params.role === "site-viewer" && params.sites.length > 0) {
 		query.redcap_data_access_group = { $in: params.sites }
 	}
 
-	// Fetch all relevant fields with query + projection
 	const results = await collection.find(query, { projection }).toArray()
-
-	// Transform results into the desired format
-	const valuesAsObjects = results.flatMap(
-		(doc) =>
-			attributes
-				.filter((attr) => doc[attr] !== undefined) // Exclude undefined attributes
-				.map((attr) => ({ name: attr, value: doc[attr] })) // Create the desired objects
-	)
 	client.close()
-	return valuesAsObjects
+
+	const siteStats: Record<string, SummaryStats[]> = {}
+	for (const site of sites) {
+		const siteResults = results.filter(
+			(doc) => doc.redcap_data_access_group === site
+		)
+		siteStats[site] = attributes.map((attr) => {
+			const values = siteResults
+				.map((doc) => doc[attr])
+				.filter((v) => typeof v === "number" && !isNaN(v)) as number[]
+			return computeSummaryStats(values, attr)
+		})
+	}
+
+	const siteStatsArray = Object.entries(siteStats).map(([site, stats]) => ({
+		site,
+		stats,
+	}))
+
+	return siteStatsArray
 }
 
 // handler for any calls to this endpoint
