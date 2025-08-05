@@ -44,15 +44,13 @@ async function postCsv(params: excelImportRow[]) {
 	const collection = client
 		.db("main")
 		.collection<excelImportRow>("collection")
-	const normalizedParams: excelImportRow[] = params.map(preprocessRow)
-	console.log(normalizedParams)
-	await collection.insertMany(normalizedParams)
+	const processedRows: excelImportRow[] = params.map(preprocessRow)
+	await collection.insertMany(processedRows)
 }
 
 // handler for any calls to this endpoint
 export default async function handler(req: any, res: any) {
 	const params = req.body.records
-	console.log(params)
 
 	try {
 		const results = await postCsv(params)

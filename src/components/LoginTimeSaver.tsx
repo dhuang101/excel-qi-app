@@ -17,7 +17,6 @@ function LoginTimeSaver() {
 		if (session && status === "authenticated") {
 			// we use dayjs here to ensure the date is in the correct timezone
 			const currentDate = dayjs().tz("Australia/Sydney").format()
-			console.log(currentDate)
 			axios.post("/api/database/postLoginDate", {
 				email: session.user.email,
 				loginDate: currentDate,
