@@ -86,7 +86,7 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 						<AxisBottom
 							xScale={xScale}
 							height={boundsHeight}
-							pixelsPerTick={80}
+							pixelsPerTick={40}
 						/>
 					</g>
 					<text
