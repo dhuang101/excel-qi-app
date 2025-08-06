@@ -11,8 +11,9 @@ type PropType = { state: ReportReducer }
 function ComparisonView({ state }: PropType) {
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
-	const [leftDisplayedSite, setLeftDisplayedSite] =
-		useState<string>("all_sites")
+	const [leftDisplayedSite, setLeftDisplayedSite] = useState<string>(
+		state.countData.map((item) => item.site)[1]
+	)
 	const [rightDisplayedSite, setRightDisplayedSite] =
 		useState<string>("all_sites")
 	const [width, setWidth] = useState(0)
@@ -74,7 +75,9 @@ function ComparisonView({ state }: PropType) {
 							Select Site to Display
 						</legend>
 						<select
-							defaultValue="All Sites"
+							defaultValue={
+								state.countData.map((item) => item.site)[1]
+							}
 							className="select"
 							onChange={(event) => {
 								setLeftDisplayedSite(event.target.value)

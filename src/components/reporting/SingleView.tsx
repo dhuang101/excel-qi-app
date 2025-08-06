@@ -11,7 +11,9 @@ type PropType = {
 function SingleView({ state }: PropType) {
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
-	const [displayedSite, setDisplayedSite] = useState<string>("all_sites")
+	const [displayedSite, setDisplayedSite] = useState<string>(
+		state.countData.map((item) => item.site)[1]
+	)
 	const [width, setWidth] = useState(0)
 
 	const graphContainer = useRef<HTMLDivElement | null>(null)
@@ -65,7 +67,9 @@ function SingleView({ state }: PropType) {
 						Select Site to Display
 					</legend>
 					<select
-						defaultValue="All Sites"
+						defaultValue={
+							state.countData.map((item) => item.site)[1]
+						}
 						className="select"
 						onChange={(event) => {
 							setDisplayedSite(event.target.value)
