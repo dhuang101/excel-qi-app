@@ -72,7 +72,7 @@ function ReportingPage() {
 		<div className="flex flex-col grow w-full items-center">
 			{state.countData[0]?.totalDocuments > 0 ? (
 				<div className="flex flex-col w-2/3 h-full items-center">
-					<div className="flex justify-between items-center w-full my-4">
+					<div className="flex justify-between items-center w-full mt-4">
 						<button
 							className="btn btn-primary"
 							onClick={switchView}

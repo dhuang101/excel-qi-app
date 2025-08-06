@@ -4,14 +4,17 @@ import React, { useEffect, useRef, useState } from "react"
 import Barplot from "./Barplot"
 import { Boxplot } from "./boxplot/Boxplot"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
+import GraphRenderer from "./GraphRenderer"
 
 type PropType = { state: ReportReducer }
 
 function ComparisonView({ state }: PropType) {
-	const [displayedSite, setDisplayedSite] = useState<string>("all_sites")
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
-
+	const [leftDisplayedSite, setLeftDisplayedSite] =
+		useState<string>("all_sites")
+	const [rightDisplayedSite, setRightDisplayedSite] =
+		useState<string>("all_sites")
 	const [width, setWidth] = useState(0)
 
 	const graphContainer = useRef<HTMLDivElement | null>(null)
@@ -40,83 +43,9 @@ function ComparisonView({ state }: PropType) {
 		}
 	}, [state, width])
 
-	function renderGraph() {
-		switch (displayedGraph) {
-			case "Hospital Outcomes":
-				return (
-					<div className="flex items-center flex-col">
-						<article className="font-semibold">
-							Hospital Outcomes
-						</article>
-						<Barplot
-							width={width / 2}
-							height={600}
-							data={
-								state.countData.find(
-									(site) => site.site === displayedSite
-								)?.counts
-									.outcm_hosp_discharge_loc as CountEntry[]
-							}
-						/>
-					</div>
-				)
-			case "Primary Cardiac Diagnosis":
-				return (
-					<div className="flex items-center flex-col">
-						<article className="font-semibold">
-							Primary Cardiac Diagnosis
-						</article>
-						<Barplot
-							width={width / 2}
-							height={600}
-							data={
-								state.countData.find(
-									(site) => site.site === displayedSite
-								)?.counts.diagnosis_cardiac as CountEntry[]
-							}
-						/>
-					</div>
-				)
-			case "Primary Respiratory Diagnosis":
-				return (
-					<div className="flex items-center flex-col">
-						<article className="font-semibold">
-							Primary Respiratory Diagnosis
-						</article>
-						<Barplot
-							width={width / 2}
-							height={600}
-							data={
-								state.countData.find(
-									(site) => site.site === displayedSite
-								)?.counts.diagnosis_resp as CountEntry[]
-							}
-						/>
-					</div>
-				)
-			case "Length of Stay Distribution":
-				return (
-					<div className="flex items-center flex-col">
-						<article className="font-semibold">
-							Length of Stay Distribution
-						</article>
-						<Boxplot
-							width={width / 2}
-							height={600}
-							data={
-								state.losData.find(
-									(site) => site.site === displayedSite
-								)?.stats as LosStats[]
-							}
-						/>
-					</div>
-				)
-		}
-	}
-
 	return (
 		<React.Fragment>
-			<div className="w-full">
+			<div className="w-full mt-2">
 				<fieldset className="fieldset  w-1/3">
 					<legend className="fieldset-legend">
 						Change Displayed Graph
@@ -135,9 +64,12 @@ function ComparisonView({ state }: PropType) {
 					</select>
 				</fieldset>
 			</div>
-			<div ref={graphContainer} className="flex mt-2 w-full">
+			<div
+				ref={graphContainer}
+				className="flex justify-between mt-2 w-full"
+			>
 				<div className="flex flex-col items-center">
-					<fieldset className="fieldset w-1/2">
+					<fieldset className="fieldset w-1/2 mb-2">
 						<legend className="fieldset-legend">
 							Select Site to Display
 						</legend>
@@ -145,7 +77,7 @@ function ComparisonView({ state }: PropType) {
 							defaultValue="All Sites"
 							className="select"
 							onChange={(event) => {
-								setDisplayedSite(event.target.value)
+								setLeftDisplayedSite(event.target.value)
 							}}
 						>
 							{state.countData.map((site) => (
@@ -155,10 +87,16 @@ function ComparisonView({ state }: PropType) {
 							))}
 						</select>
 					</fieldset>
-					{renderGraph()}
+					<GraphRenderer
+						state={state}
+						displayedGraph={displayedGraph}
+						displayedSite={leftDisplayedSite}
+						width={width / 2.2}
+						height={600}
+					/>
 				</div>
 				<div className="flex flex-col items-center">
-					<fieldset className="fieldset w-1/2">
+					<fieldset className="fieldset w-1/2 mb-2">
 						<legend className="fieldset-legend">
 							Select Site to Display
 						</legend>
@@ -166,7 +104,7 @@ function ComparisonView({ state }: PropType) {
 							defaultValue="All Sites"
 							className="select"
 							onChange={(event) => {
-								setDisplayedSite(event.target.value)
+								setRightDisplayedSite(event.target.value)
 							}}
 						>
 							{state.countData.map((site) => (
@@ -176,7 +114,13 @@ function ComparisonView({ state }: PropType) {
 							))}
 						</select>
 					</fieldset>
-					{renderGraph()}
+					<GraphRenderer
+						state={state}
+						displayedGraph={displayedGraph}
+						displayedSite={rightDisplayedSite}
+						width={width / 2.2}
+						height={600}
+					/>
 				</div>
 			</div>
 		</React.Fragment>

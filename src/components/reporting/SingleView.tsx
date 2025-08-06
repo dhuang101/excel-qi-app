@@ -1,19 +1,17 @@
-import { CountEntry, LosStats, ReportReducer } from "@/reducers/reportReducer"
+import { ReportReducer } from "@/reducers/reportReducer"
 import React, { useEffect, useRef, useState } from "react"
-import Barplot from "./Barplot"
-import { Boxplot } from "./boxplot/Boxplot"
 import { GraphType } from "@/types/reportingTypes"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
+import GraphRenderer from "./GraphRenderer"
 
 type PropType = {
 	state: ReportReducer
 }
 
 function SingleView({ state }: PropType) {
-	const [displayedSite, setDisplayedSite] = useState<string>("all_sites")
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
-
+	const [displayedSite, setDisplayedSite] = useState<string>("all_sites")
 	const [width, setWidth] = useState(0)
 
 	const graphContainer = useRef<HTMLDivElement | null>(null)
@@ -42,92 +40,10 @@ function SingleView({ state }: PropType) {
 		}
 	}, [state, width])
 
-	function renderGraph() {
-		switch (displayedGraph) {
-			case "Hospital Outcomes":
-				return (
-					<div className="flex items-center flex-col">
-						<article className="font-semibold">
-							Hospital Outcomes
-						</article>
-						<Barplot
-							width={width}
-							height={650}
-							data={
-								state.countData.find(
-									(site) => site.site === displayedSite
-								)?.counts
-									.outcm_hosp_discharge_loc as CountEntry[]
-							}
-						/>
-					</div>
-				)
-			case "Primary Cardiac Diagnosis":
-				return (
-					<div className="flex items-center flex-col">
-						<article className="font-semibold">
-							Primary Cardiac Diagnosis
-						</article>
-						<Barplot
-							width={width}
-							height={650}
-							data={
-								state.countData.find(
-									(site) => site.site === displayedSite
-								)?.counts.diagnosis_cardiac as CountEntry[]
-							}
-						/>
-					</div>
-				)
-			case "Primary Respiratory Diagnosis":
-				return (
-					<div className="flex items-center flex-col">
-						<article className="font-semibold">
-							Primary Respiratory Diagnosis
-						</article>
-						<Barplot
-							width={width}
-							height={650}
-							data={
-								state.countData.find(
-									(site) => site.site === displayedSite
-								)?.counts.diagnosis_resp as CountEntry[]
-							}
-						/>
-					</div>
-				)
-			case "Length of Stay Distribution":
-				return (
-					<div className="flex items-center flex-col">
-						<article className="font-semibold">
-							Length of Stay Distribution
-						</article>
-						<Boxplot
-							width={width}
-							height={650}
-							data={
-								state.losData.find(
-									(site) => site.site === displayedSite
-								)?.stats as LosStats[]
-							}
-						/>
-					</div>
-				)
-		}
-	}
-
 	return (
 		<React.Fragment>
-			<article className="xl:text-xl md:text-md font-semibold">
-				There are currently{" "}
-				{
-					state.countData.find((site) => site.site === displayedSite)
-						?.totalDocuments
-				}{" "}
-				patients enrolled in the EXCEL QI Project at your site(s).
-			</article>
-			<div className="flex justify-between w-full">
-				<fieldset className="fieldset  w-1/3">
+			<div className="flex justify-between w-full mt-2">
+				<fieldset className="fieldset w-1/3">
 					<legend className="fieldset-legend">
 						Change Displayed Graph
 					</legend>
@@ -163,8 +79,22 @@ function SingleView({ state }: PropType) {
 					</select>
 				</fieldset>
 			</div>
+			<article className="xl:text-xl md:text-md font-semibold my-4">
+				There are currently{" "}
+				{
+					state.countData.find((site) => site.site === displayedSite)
+						?.totalDocuments
+				}{" "}
+				patients enrolled in the EXCEL QI Project at your site(s).
+			</article>
 			<div ref={graphContainer} className="flex flex-col w-full">
-				{renderGraph()}
+				<GraphRenderer
+					state={state}
+					displayedGraph={displayedGraph}
+					displayedSite={displayedSite}
+					width={width}
+					height={625}
+				/>
 			</div>
 		</React.Fragment>
 	)
