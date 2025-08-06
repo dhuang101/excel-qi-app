@@ -57,7 +57,6 @@ function ReportingPage() {
 				payload = { ...payload, losData: result.data }
 			})
 			.then(() => {
-				console.log(payload)
 				dispatch({ type: ACTION.SET_SUMMARY, payload: payload })
 			})
 	}, [status])

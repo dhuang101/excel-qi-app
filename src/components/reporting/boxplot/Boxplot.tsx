@@ -46,15 +46,6 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 
 	// Build the box shapes
 	const allShapes = groups.map((group, i) => {
-		// const groupData = data
-		// 	.filter((d) => d.name === group)
-		// 	.map((d) => d.value)
-		// const sumStats = getSummaryStats(groupData)
-
-		// if (!sumStats) {
-		// 	return null
-		// }
-
 		const { min, q1, median, q3, max } = data.find(
 			(d) => d.name === group
 		) as LosStats
