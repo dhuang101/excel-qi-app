@@ -73,7 +73,6 @@ async function GetLosValues(params: ParamsType) {
 	)
 
 	const results = await collection.find({}, { projection }).toArray()
-	client.close()
 
 	let sites: string[] = params.sites
 	if (
@@ -82,6 +81,7 @@ async function GetLosValues(params: ParamsType) {
 	) {
 		sites = await collection.distinct("redcap_data_access_group")
 	}
+	client.close()
 
 	const siteStats: Record<string, SummaryStats[]> = {}
 
@@ -123,6 +123,7 @@ export default async function handler(req: any, res: any) {
 		const results = await GetLosValues(params)
 		res.status(200).json(results)
 	} catch (err) {
+		console.log(err)
 		res.status(500).json(err)
 	}
 }
