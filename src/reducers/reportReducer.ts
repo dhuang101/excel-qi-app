@@ -34,7 +34,7 @@ export interface LosEntry {
 	stats: LosStats[]
 }
 
-interface State {
+export interface ReportReducer {
 	countData: CountDataItem[]
 	losData: LosEntry[]
 }
@@ -43,7 +43,7 @@ export enum ACTION {
 	SET_SUMMARY,
 }
 
-export default function reportReducer(state: State, action: Action) {
+export default function reportReducer(state: ReportReducer, action: Action) {
 	switch (action.type) {
 		case ACTION.SET_SUMMARY:
 			return action.payload
