@@ -20,7 +20,6 @@ function ReportingPage() {
 		losData: [],
 	})
 	const [currentView, setCurrentView] = useState<displayViews>("Single")
-	const [displayedSite, setDisplayedSite] = useState<string>("all_sites")
 
 	// sequentially fetch the data
 	// TODO: fetch them in parallel?
@@ -74,42 +73,19 @@ function ReportingPage() {
 			{state.countData[0]?.totalDocuments > 0 ? (
 				<div className="flex flex-col w-2/3 h-full items-center">
 					<div className="flex justify-between items-center w-full my-4">
-						<fieldset className="fieldset w-1/3">
-							<legend className="fieldset-legend">
-								Select Site to Display
-							</legend>
-							<select
-								defaultValue="All Sites"
-								className="select"
-								onChange={(event) => {
-									setDisplayedSite(event.target.value)
-								}}
-							>
-								{state.countData.map((site) => (
-									<option key={site.site} value={site.site}>
-										{FormatSiteName(site.site)}
-									</option>
-								))}
-							</select>
-						</fieldset>
 						<button
 							className="btn btn-primary"
 							onClick={switchView}
 						>
-							{currentView} View
+							Change to{" "}
+							{currentView === "Single" ? "Comparison" : "Single"}{" "}
+							View
 						</button>
 					</div>
-
 					{currentView === "Single" ? (
-						<SingleView
-							state={state}
-							displayedSite={displayedSite}
-						/>
+						<SingleView state={state} />
 					) : (
-						<ComparisonView
-							state={state}
-							displayedSite={displayedSite}
-						/>
+						<ComparisonView state={state} />
 					)}
 				</div>
 			) : (

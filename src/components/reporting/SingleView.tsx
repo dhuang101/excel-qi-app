@@ -3,10 +3,14 @@ import React, { useEffect, useRef, useState } from "react"
 import Barplot from "./Barplot"
 import { Boxplot } from "./boxplot/Boxplot"
 import { GraphType } from "@/types/reportingTypes"
+import { FormatSiteName } from "@/utilities/FormatSiteName"
 
-type PropType = { state: ReportReducer; displayedSite: string }
+type PropType = {
+	state: ReportReducer
+}
 
-function SingleView({ state, displayedSite }: PropType) {
+function SingleView({ state }: PropType) {
+	const [displayedSite, setDisplayedSite] = useState<string>("all_sites")
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
 
@@ -48,7 +52,7 @@ function SingleView({ state, displayedSite }: PropType) {
 						</article>
 						<Barplot
 							width={width}
-							height={600}
+							height={650}
 							data={
 								state.countData.find(
 									(site) => site.site === displayedSite
@@ -66,7 +70,7 @@ function SingleView({ state, displayedSite }: PropType) {
 						</article>
 						<Barplot
 							width={width}
-							height={600}
+							height={650}
 							data={
 								state.countData.find(
 									(site) => site.site === displayedSite
@@ -83,7 +87,7 @@ function SingleView({ state, displayedSite }: PropType) {
 						</article>
 						<Barplot
 							width={width}
-							height={600}
+							height={650}
 							data={
 								state.countData.find(
 									(site) => site.site === displayedSite
@@ -100,7 +104,7 @@ function SingleView({ state, displayedSite }: PropType) {
 						</article>
 						<Boxplot
 							width={width}
-							height={600}
+							height={650}
 							data={
 								state.losData.find(
 									(site) => site.site === displayedSite
@@ -114,7 +118,7 @@ function SingleView({ state, displayedSite }: PropType) {
 
 	return (
 		<React.Fragment>
-			<article className="xl:text-xl md:text-md mt-4 font-semibold">
+			<article className="xl:text-xl md:text-md font-semibold">
 				There are currently{" "}
 				{
 					state.countData.find((site) => site.site === displayedSite)
@@ -122,7 +126,7 @@ function SingleView({ state, displayedSite }: PropType) {
 				}{" "}
 				patients enrolled in the EXCEL QI Project at your site(s).
 			</article>
-			<div className="w-full">
+			<div className="flex justify-between w-full">
 				<fieldset className="fieldset  w-1/3">
 					<legend className="fieldset-legend">
 						Change Displayed Graph
@@ -138,6 +142,24 @@ function SingleView({ state, displayedSite }: PropType) {
 						<option>Primary Cardiac Diagnosis</option>
 						<option>Primary Respiratory Diagnosis</option>
 						<option>Length of Stay Distribution</option>
+					</select>
+				</fieldset>
+				<fieldset className="fieldset w-1/3">
+					<legend className="fieldset-legend">
+						Select Site to Display
+					</legend>
+					<select
+						defaultValue="All Sites"
+						className="select"
+						onChange={(event) => {
+							setDisplayedSite(event.target.value)
+						}}
+					>
+						{state.countData.map((site) => (
+							<option key={site.site} value={site.site}>
+								{FormatSiteName(site.site)}
+							</option>
+						))}
 					</select>
 				</fieldset>
 			</div>
