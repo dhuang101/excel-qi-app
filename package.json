@@ -14,16 +14,16 @@
     "@mui/icons-material": "^6.4.6",
     "@mui/material": "^6.4.6",
     "@mui/x-date-pickers": "^7.22.2",
-    "axios": "^1.7.1",
+    "axios": "^1.11.0",
     "d3": "^7.9.0",
     "dayjs": "^1.11.13",
-    "mongodb": "^6.9.0",
-    "next": "^15.0.3",
+    "mongodb": "^6.18.0",
+    "next": "^15.4.5",
     "next-auth": "^4.24.10",
     "papaparse": "^5.5.3",
     "qs": "^6.14.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.9",
@@ -33,11 +33,11 @@
     "@types/qs": "^6.9.17",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
-    "daisyui": "^5.0.0",
+    "daisyui": "^5.0.50",
     "eslint": "^9.21.0",
     "eslint-config-next": "^15.0.3",
-    "postcss": "^8",
-    "tailwindcss": "^4.0.9",
-    "typescript": "^5.8.2"
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.9.2"
   }
 }
