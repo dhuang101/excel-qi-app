@@ -3,16 +3,22 @@ import React, { useEffect, useRef, useState } from "react"
 import { GraphType } from "@/types/reportingTypes"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
 import GraphRenderer from "./GraphRenderer"
+import { useSession } from "next-auth/react"
 
 type PropType = {
 	state: ReportReducer
 }
 
 function SingleView({ state }: PropType) {
+	// auth session
+	const { status } = useSession()
+
+	console.log(status)
+
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
 	const [displayedSite, setDisplayedSite] = useState<string>(
-		state.countData.map((item) => item.site)[1]
+		state.countData.length > 1 ? state.countData[1].site : "all_sites"
 	)
 	const [width, setWidth] = useState(0)
 
@@ -62,26 +68,28 @@ function SingleView({ state }: PropType) {
 						<option>Length of Stay Distribution</option>
 					</select>
 				</fieldset>
-				<fieldset className="fieldset w-1/3">
-					<legend className="fieldset-legend">
-						Select Site to Display
-					</legend>
-					<select
-						defaultValue={
-							state.countData.map((item) => item.site)[1]
-						}
-						className="select"
-						onChange={(event) => {
-							setDisplayedSite(event.target.value)
-						}}
-					>
-						{state.countData.map((site) => (
-							<option key={site.site} value={site.site}>
-								{FormatSiteName(site.site)}
-							</option>
-						))}
-					</select>
-				</fieldset>
+				{status === "authenticated" && (
+					<fieldset className="fieldset w-1/3">
+						<legend className="fieldset-legend">
+							Select Site to Display
+						</legend>
+						<select
+							defaultValue={
+								state.countData.map((item) => item.site)[1]
+							}
+							className="select"
+							onChange={(event) => {
+								setDisplayedSite(event.target.value)
+							}}
+						>
+							{state.countData.map((site) => (
+								<option key={site.site} value={site.site}>
+									{FormatSiteName(site.site)}
+								</option>
+							))}
+						</select>
+					</fieldset>
+				)}
 			</div>
 			<article className="xl:text-xl md:text-md font-semibold my-4">
 				There are currently{" "}

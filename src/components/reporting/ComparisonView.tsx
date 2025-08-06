@@ -1,8 +1,6 @@
-import { CountEntry, LosStats, ReportReducer } from "@/reducers/reportReducer"
+import { ReportReducer } from "@/reducers/reportReducer"
 import { GraphType } from "@/types/reportingTypes"
 import React, { useEffect, useRef, useState } from "react"
-import Barplot from "./Barplot"
-import { Boxplot } from "./boxplot/Boxplot"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
 import GraphRenderer from "./GraphRenderer"
 

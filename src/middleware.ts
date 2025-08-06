@@ -7,7 +7,15 @@ export async function middleware(req: NextRequest) {
 	const { pathname } = req.nextUrl
 
 	// Public paths
-	const publicPaths = ["/", "/forbidden", "/auth/signin", "/resources"]
+	const publicPaths = [
+		"/",
+		"/forbidden",
+		"/auth/signin",
+		"/resources",
+		"/reporting",
+		"/api/database/getCounts",
+		"/api/database/getLosValues",
+	]
 	if (publicPaths.includes(pathname)) {
 		return NextResponse.next()
 	}

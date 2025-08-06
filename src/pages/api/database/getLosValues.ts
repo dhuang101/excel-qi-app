@@ -86,16 +86,20 @@ async function GetLosValues(params: ParamsType) {
 	const siteStats: Record<string, SummaryStats[]> = {}
 
 	// Compute stats for each site
-	for (const site of sites) {
-		const siteResults = results.filter(
-			(doc) => doc.redcap_data_access_group === site
-		)
-		siteStats[site] = attributes.map((attr) => {
-			const values = siteResults
-				.map((doc) => doc[attr])
-				.filter((i) => typeof i === "number" && !isNaN(i)) as number[]
-			return computeSummaryStats(values, attr)
-		})
+	if (params.role !== "public") {
+		for (const site of sites) {
+			const siteResults = results.filter(
+				(doc) => doc.redcap_data_access_group === site
+			)
+			siteStats[site] = attributes.map((attr) => {
+				const values = siteResults
+					.map((doc) => doc[attr])
+					.filter(
+						(i) => typeof i === "number" && !isNaN(i)
+					) as number[]
+				return computeSummaryStats(values, attr)
+			})
+		}
 	}
 
 	// Compute stats for all sites combined
@@ -111,6 +115,11 @@ async function GetLosValues(params: ParamsType) {
 		site,
 		stats,
 	}))
+
+	// If role is public, return only all_sites
+	if (params.role === "public") {
+		return siteStatsArray.filter((entry) => entry.site === "all_sites")
+	}
 
 	return siteStatsArray
 }

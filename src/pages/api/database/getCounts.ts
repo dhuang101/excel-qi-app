@@ -158,6 +158,11 @@ async function GetCounts(params: ParamsType) {
 		),
 	}
 
+	// If role is public, return only all_sites
+	if (params.role === "public") {
+		return [allSitesEntry]
+	}
+
 	// Filter results based on user role and sites
 	let filteredSites = siteResultsArray
 	if (params.role === "site-viewer" && params.sites.length > 0) {
