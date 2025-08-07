@@ -5,7 +5,6 @@ async function PostPatients(params: SearchQuery) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
 
-	console.log(params)
 	// Build text-based filters
 	let query: any = {
 		...(params.userEnteredQuery.diagnosis_resp && {

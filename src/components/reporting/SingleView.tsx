@@ -13,8 +13,6 @@ function SingleView({ state }: PropType) {
 	// auth session
 	const { status } = useSession()
 
-	console.log(status)
-
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
 	const [displayedSite, setDisplayedSite] = useState<string>(
