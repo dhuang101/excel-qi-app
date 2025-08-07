@@ -5,7 +5,7 @@ async function PostPatients(params: SearchQuery) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("collection")
 
-	console.log(params.userEnteredQuery)
+	console.log(params)
 	// Build text-based filters
 	let query: any = {
 		...(params.userEnteredQuery.diagnosis_resp && {
@@ -86,16 +86,6 @@ async function PostPatients(params: SearchQuery) {
 						},
 				  ]
 				: []),
-			// Exclude fields that are null or "N/A"
-			{
-				$nor: [
-					{ diagnosis_resp: "N/A" },
-					{ diagnosis_resp: null },
-					{ diagnosis_cardiac: "N/A" },
-					{ diagnosis_cardiac: null },
-					{ outcm_hosp_discharge_loc: null },
-				],
-			},
 		],
 	}
 

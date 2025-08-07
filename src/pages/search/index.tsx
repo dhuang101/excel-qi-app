@@ -324,26 +324,18 @@ function SearchPage() {
 								Export Cohort
 							</button>
 						</div>
-						<fieldset className="fieldset w-1/3">
-							<legend className="fieldset-legend">
-								Select Site to Display
-							</legend>
-							<select
-								// defaultValue={
-								// 	session?.user.sites[0]
-								// }
-								className="select"
-								// onChange={(event) => {
-								// 	setDisplayedSite(event.target.value)
-								// }}
-							>
-								{session?.user.sites?.map((value) => (
-									<option key={value} value={value}>
-										{FormatSiteName(value)}
-									</option>
-								))}
-							</select>
-						</fieldset>
+						<article className="w-full mb-2 text-md font-semibold">
+							{`You are currently viewing patients from: ${
+								session?.user?.role === "admin" ||
+								session?.user?.role === "global-viewer"
+									? "All Sites"
+									: session?.user?.sites
+									? session.user.sites
+											.map((site) => FormatSiteName(site))
+											.join(", ")
+									: ""
+							}`}
+						</article>
 						{showingVis ? (
 							<div className="flex flex-col items-center mt-4">
 								<article className="font-semibold text-lg">
