@@ -94,6 +94,11 @@ function ReportingPage() {
 					</article>
 				</div>
 			)}
+			<div className="flex justify-center items-center h-24">
+				<article>
+					Any queries or suggestions can be sent to contact@email.com
+				</article>
+			</div>
 		</div>
 	)
 }
