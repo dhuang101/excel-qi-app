@@ -7,6 +7,7 @@ interface Action {
 interface State {
 	searchResults: any[] | null
 	slicedResults: any[]
+	site: string
 	pageNum: number
 	rowsPerPage: 10 | 25 | 50 | 100
 	graphKeys: any[]
@@ -15,6 +16,7 @@ interface State {
 }
 
 export enum ACTION {
+	UPDATE_SITE,
 	UPDATE_PAGENUM,
 	UPDATE_ROWSPERPAGE,
 	UPDATE_RESULTS,
@@ -28,6 +30,11 @@ interface OutputRow {
 
 export default function searchReducer(state: State, action: Action) {
 	switch (action.type) {
+		case ACTION.UPDATE_SITE:
+			return {
+				...state,
+				site: action.payload,
+			}
 		case ACTION.UPDATE_PAGENUM:
 			return {
 				...state,

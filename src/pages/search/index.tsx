@@ -11,34 +11,18 @@ import searchReducer, { ACTION } from "@/reducers/searchReducer"
 import ClusteredBarplot from "@/components/search/ClusteredBarplot"
 import { useSession } from "next-auth/react"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
-
-// type for the search query passed to mongo
-interface searchQuery {
-	diagnosis_resp?: string
-	diagnosis_cardiac?: string
-	outcm_hosp_discharge_loc?: string
-	hospadm_date_time_before?: Date
-	hospadm_date_time_after?: Date
-	icuadm_date_time_before?: Date
-	icuadm_date_time_after?: Date
-	ecmo_start_date_time_before?: Date
-	ecmo_start_date_time_after?: Date
-	decan_date_time_before?: Date
-	decan_date_time_after?: Date
-	outcm_icu_discharge_before?: Date
-	outcm_icu_discharge_after?: Date
-	outcm_hosp_discharge_before?: Date
-	outcm_hosp_discharge_after?: Date
-}
+import { UserEnteredQuery } from "@/types/searchTypes"
 
 // component
 function SearchPage() {
 	// auth session
 	const { data: session, status } = useSession()
+
 	// global store access
 	const [state, dispatch] = useReducer(searchReducer, {
 		searchResults: null,
 		slicedResults: [],
+		site: session?.user.sites?.at(0) as string,
 		pageNum: 0,
 		rowsPerPage: 10,
 		graphKeys: [],
@@ -47,7 +31,9 @@ function SearchPage() {
 	})
 
 	// presearch state
-	const [searchQuery, setSearchQuery] = useState<searchQuery>({})
+	const [userEnteredQuery, setUserEnteredQuery] = useState<UserEnteredQuery>(
+		{}
+	)
 	const [errorMessage, setErrorMessage] = useState("")
 	// visualisations state
 	const [showingVis, setShowingVis] = useState(false)
@@ -65,7 +51,7 @@ function SearchPage() {
 		// reset page state
 		setErrorMessage("")
 		setShowingVis(false)
-		setSearchQuery({})
+		setUserEnteredQuery({})
 		// dispatch to reset search state
 		dispatch({ type: ACTION.RESET_RESULTS })
 	}
@@ -85,13 +71,13 @@ function SearchPage() {
 		) =>
 		(event: React.ChangeEvent<HTMLSelectElement>) => {
 			if ((event.target as HTMLSelectElement).value === "Any") {
-				setSearchQuery((oldState) => {
+				setUserEnteredQuery((oldState) => {
 					const { [area]: string, ...newState } = oldState // Destructure to exclude the key
 					return newState
 				})
 			} else {
-				setSearchQuery({
-					...searchQuery,
+				setUserEnteredQuery({
+					...userEnteredQuery,
 					[area]: (event.target as HTMLSelectElement).value,
 				})
 			}
@@ -119,14 +105,14 @@ function SearchPage() {
 							event.$m
 						)
 					)
-					setSearchQuery({
-						...searchQuery,
+					setUserEnteredQuery({
+						...userEnteredQuery,
 						[area]: UtcDate,
 					})
 				}
 			} else {
 				if (area === "hospadm_date_time_after") {
-					setSearchQuery((oldState) => {
+					setUserEnteredQuery((oldState) => {
 						const {
 							["hospadm_date_time_after"]: Date,
 							...newState
@@ -134,7 +120,7 @@ function SearchPage() {
 						return newState
 					})
 				} else if (area === "hospadm_date_time_before") {
-					setSearchQuery((oldState) => {
+					setUserEnteredQuery((oldState) => {
 						const {
 							["hospadm_date_time_before"]: Date,
 							...newState
@@ -148,15 +134,17 @@ function SearchPage() {
 	// event handler for search query
 	function handleSearch() {
 		// form validation
-		if (Object.keys(searchQuery).length === 0) {
+		if (Object.keys(userEnteredQuery).length === 0) {
 			// no empty fields
 			setErrorMessage("Error: No Fields Inputted")
 		} else {
 			// run search
 			setLoading(true)
 			axios
-				.get("/api/database/getPatients", {
-					params: searchQuery,
+				.post("/api/database/postPatients", {
+					role: session?.user.role,
+					sites: session?.user.sites,
+					userEnteredQuery,
 				})
 				.then((result) => {
 					window.scrollTo(0, 0)
@@ -257,26 +245,26 @@ function SearchPage() {
 											<article className="font-semibold text-lg">
 												Searched for Patients With
 											</article>
-											{Object.keys(searchQuery).map(
+											{Object.keys(userEnteredQuery).map(
 												(key) => {
 													let value =
-														searchQuery[
-															key as keyof searchQuery
+														userEnteredQuery[
+															key as keyof UserEnteredQuery
 														] instanceof Date
 															? FormatDate(
-																	searchQuery[
-																		key as keyof searchQuery
+																	userEnteredQuery[
+																		key as keyof UserEnteredQuery
 																	] as Date
 															  )
-															: searchQuery[
-																	key as keyof searchQuery
+															: userEnteredQuery[
+																	key as keyof UserEnteredQuery
 															  ]?.toString()
 
 													return (
 														<div key={key}>
 															{
 																keyToTitle[
-																	key as keyof searchQuery
+																	key as keyof UserEnteredQuery
 																]
 															}
 															: {value}
@@ -336,18 +324,26 @@ function SearchPage() {
 								Export Cohort
 							</button>
 						</div>
-						<article className="w-full mb-2 text-md font-semibold">
-							{`You are currently viewing patients from: ${
-								session?.user?.role === "admin" ||
-								session?.user?.role === "global-viewer"
-									? "All Sites"
-									: session?.user?.sites
-									? session.user.sites
-											.map((site) => FormatSiteName(site))
-											.join(", ")
-									: ""
-							}`}
-						</article>
+						<fieldset className="fieldset w-1/3">
+							<legend className="fieldset-legend">
+								Select Site to Display
+							</legend>
+							<select
+								// defaultValue={
+								// 	session?.user.sites[0]
+								// }
+								className="select"
+								// onChange={(event) => {
+								// 	setDisplayedSite(event.target.value)
+								// }}
+							>
+								{session?.user.sites?.map((value) => (
+									<option key={value} value={value}>
+										{FormatSiteName(value)}
+									</option>
+								))}
+							</select>
+						</fieldset>
 						{showingVis ? (
 							<div className="flex flex-col items-center mt-4">
 								<article className="font-semibold text-lg">
