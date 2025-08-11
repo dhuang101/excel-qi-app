@@ -1,5 +1,4 @@
 import dayjs from "dayjs"
-import customParseFormat from "dayjs/plugin/customParseFormat"
 
 // takes Redcap's exported data and translate fields from EXCEL dictionary where applicable
 // Should be a object representing a single merged row from the exported EXCEL csv
