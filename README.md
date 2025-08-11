@@ -3,8 +3,6 @@
 A web application that serves as the frontend for the EXCEL QI project. Which aims to boost the capabilities of the EXCEL repository by  allowing them to efficiently explore and
 visualize data from the repository
 
----
-
 ## Dependencies 
 
 The app is currently built using [Node.js](https://nodejs.org/en) v22.11.0
@@ -24,7 +22,6 @@ to manage your versions of node
 | **Language**       | [TypeScript](https://www.typescriptlang.org/) |
 | **Styling**        | [Tailwind CSS](https://tailwindcss.com/) / [DaisyUI](https://daisyui.com/) |
 | **Auth**           | [Auth0](https://auth0.com/) |
----
 
 ## Getting Started
 
@@ -69,13 +66,9 @@ pnpm dev
 ```
 Your app is now running at http://localhost:3000
 
----
-
 ## Build
 
 To build the app simply run ```npm run build```. This will create a built version of the application which can then be launched using ```npm start```. The app will then be running on [localhost:3000](http:localhost:3000).
-
----
 
 ## File Structure
 ```
