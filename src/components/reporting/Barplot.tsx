@@ -143,7 +143,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 	})
 
 	const grid = xScale
-		.ticks(5)
+		.ticks(Math.floor(width / 80))
 		.slice(1)
 		.map((value, i) => (
 			<g key={i}>
