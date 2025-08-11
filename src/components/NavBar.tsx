@@ -61,6 +61,11 @@ function NavBar() {
 								ECMO Prediction
 							</article>
 						</Link>
+						<Link href={"/file-repo"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								File Repository
+							</article>
+						</Link>
 						<Link href={"/resources"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								ECMO Resources
