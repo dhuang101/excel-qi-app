@@ -87,6 +87,26 @@ function ResourcesPage() {
 						"https://www.vecmos.org.au/health-professionals/resources/"
 					}
 				/>
+				<ResourceCard
+					imageRes={[220, 229]}
+					imageSrc={ASSETS.excel}
+					cardTitle={"EXCEL"}
+					cardBody={
+						"The EXCEL Registry homepage provides information about the registry's purpose, research activities, team members, publications, news, and resources for participating sites."
+					}
+					link={"https://www.monash.edu/medicine/sphpm/excel/home"}
+				/>
+			</div>
+			<div className="flex gap-x-20">
+				<ResourceCard
+					imageRes={[1034, 360]}
+					imageSrc={ASSETS.redcap}
+					cardTitle={"REDCap"}
+					cardBody={
+						"The Monash University login for viewing and managing the EXCEL REDCap research project."
+					}
+					link={"https://redcap.helix.monash.edu/"}
+				/>
 			</div>
 			{/* footer */}
 			<div className="h-16" />

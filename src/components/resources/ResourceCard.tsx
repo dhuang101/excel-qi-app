@@ -23,7 +23,7 @@ function ResourceCard({
 					width={imageRes[0]}
 					height={imageRes[1]}
 					src={imageSrc}
-					className="max-w-80 w-full h-auto object-contain"
+					className="max-w-80 max-h-48 w-full h-auto object-contain"
 					alt={cardTitle}
 				/>
 			</div>
