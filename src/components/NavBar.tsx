@@ -95,6 +95,20 @@ function NavBar() {
 							className="btn btn-ghost rounded-btn"
 						>
 							<PersonIcon />
+							<article className="mx-2">
+								Role:{" "}
+								<b>
+									{session.user.role
+										?.replace(/-/g, " ")
+										.split(" ")
+										.map(
+											(word) =>
+												word.charAt(0).toUpperCase() +
+												word.slice(1)
+										)
+										.join(" ")}
+								</b>
+							</article>
 						</label>
 						<ul
 							tabIndex={0}
@@ -104,9 +118,6 @@ function NavBar() {
 								Signed In As
 								<br />
 								<b>{session.user && session.user.email}</b>
-							</article>
-							<article className="mx-2 mb-2">
-								Role: <b>{session.user.role}</b>
 							</article>
 							<li>
 								<a
