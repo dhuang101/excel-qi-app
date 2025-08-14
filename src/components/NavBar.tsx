@@ -95,6 +95,16 @@ function NavBar() {
 							className="btn btn-ghost rounded-btn"
 						>
 							<PersonIcon />
+							<article className="mx-2">
+								{session.user.role
+									?.split("-")
+									.map(
+										(word) =>
+											word.charAt(0).toUpperCase() +
+											word.slice(1)
+									)
+									.join(" ")}
+							</article>
 						</label>
 						<ul
 							tabIndex={0}
@@ -105,9 +115,7 @@ function NavBar() {
 								<br />
 								<b>{session.user && session.user.email}</b>
 							</article>
-							<article className="mx-2 mb-2">
-								Role: <b>{session.user.role}</b>
-							</article>
+
 							<li>
 								<a
 									onClick={async () => {
