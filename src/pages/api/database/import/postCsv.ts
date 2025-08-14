@@ -14,7 +14,7 @@ const dateFields = [
 ]
 
 // Helper to convert string numbers to numbers, except for date fields
-function preprocessRow(row: excelImportRow): excelImportRow {
+function preProcessRow(row: excelImportRow): excelImportRow {
 	const returnVal: Record<string, any> = { ...row }
 	for (const key in returnVal) {
 		const value = returnVal[key]
@@ -39,12 +39,12 @@ function preprocessRow(row: excelImportRow): excelImportRow {
 	return returnVal as excelImportRow
 }
 
-async function postCsv(params: excelImportRow[]) {
+async function PostCsv(params: excelImportRow[]) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client
 		.db("main")
 		.collection<excelImportRow>("collection")
-	const processedRows: excelImportRow[] = params.map(preprocessRow)
+	const processedRows: excelImportRow[] = params.map(preProcessRow)
 	await collection.insertMany(processedRows)
 }
 
@@ -53,7 +53,7 @@ export default async function handler(req: any, res: any) {
 	const params = req.body.records
 
 	try {
-		const results = await postCsv(params)
+		const results = await PostCsv(params)
 		res.status(200).json(results)
 	} catch (err) {
 		res.status(500).json(err)
