@@ -3,7 +3,6 @@ import reportReducer, { ACTION } from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
 import { useEffect, useReducer, useState } from "react"
 import { useSession } from "next-auth/react"
-import qs from "qs"
 import React from "react"
 import SingleView from "@/components/reporting/SingleView"
 import ComparisonView from "@/components/reporting/ComparisonView"
@@ -25,26 +24,18 @@ function ReportingPage() {
 	useEffect(() => {
 		let payload = {}
 		axios
-			.get("/api/database/getCounts", {
-				params: {
-					role: session?.user.role || "public",
-					sites: session?.user.sites || [],
-				},
-				paramsSerializer: (params) =>
-					qs.stringify(params, { arrayFormat: "brackets" }),
+			.post("/api/database/getCounts", {
+				role: session?.user.role || "public",
+				sites: session?.user.sites || [],
 			})
 			.then((result) => {
 				payload = { countData: result.data }
 			})
 			.then(() => {
 				return Promise.resolve(
-					axios.get("/api/database/getLosValues", {
-						params: {
-							role: session?.user.role || "public",
-							sites: session?.user.sites || [],
-						},
-						paramsSerializer: (params) =>
-							qs.stringify(params, { arrayFormat: "brackets" }),
+					axios.post("/api/database/getLosValues", {
+						role: session?.user.role || "public",
+						sites: session?.user.sites || [],
 					})
 				)
 			})
