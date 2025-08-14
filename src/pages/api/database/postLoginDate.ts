@@ -6,7 +6,7 @@ type ParamsType = {
 	loginDate: string
 }
 
-async function postLoginDate(params: ParamsType) {
+async function PostLoginDate(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const permissions = client.db("main").collection<Permission>("permissions")
 	// ensure the date is in the correct timezone
@@ -33,7 +33,7 @@ export default async function handler(req: any, res: any) {
 	const params = req.body
 
 	try {
-		const results = await postLoginDate(params)
+		const results = await PostLoginDate(params)
 		res.status(200).json(results)
 	} catch (err) {
 		res.status(500).json(err)

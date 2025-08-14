@@ -96,18 +96,14 @@ function NavBar() {
 						>
 							<PersonIcon />
 							<article className="mx-2">
-								Role:{" "}
-								<b>
-									{session.user.role
-										?.replace(/-/g, " ")
-										.split(" ")
-										.map(
-											(word) =>
-												word.charAt(0).toUpperCase() +
-												word.slice(1)
-										)
-										.join(" ")}
-								</b>
+								{session.user.role
+									?.split("-")
+									.map(
+										(word) =>
+											word.charAt(0).toUpperCase() +
+											word.slice(1)
+									)
+									.join(" ")}
 							</article>
 						</label>
 						<ul
@@ -118,6 +114,9 @@ function NavBar() {
 								Signed In As
 								<br />
 								<b>{session.user && session.user.email}</b>
+							</article>
+							<article className="mx-2 mb-2">
+								Role: <b>{session.user.role}</b>
 							</article>
 							<li>
 								<a

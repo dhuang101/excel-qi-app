@@ -1,5 +1,4 @@
 import { MongoClient } from "mongodb"
-import qs from "qs"
 
 interface ValueCount {
 	value: string
@@ -178,7 +177,7 @@ async function GetCounts(params: ParamsType) {
 
 // handler for any calls to this endpoint
 export default async function handler(req: any, res: any) {
-	const params = qs.parse(req.query) as ParamsType
+	const params = req.body as ParamsType
 
 	try {
 		const results = await GetCounts(params)
