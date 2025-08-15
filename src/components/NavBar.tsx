@@ -115,9 +115,6 @@ function NavBar() {
 								<br />
 								<b>{session.user && session.user.email}</b>
 							</article>
-							<article className="mx-2 mb-2">
-								Role: <b>{session.user.role}</b>
-							</article>
 							<li>
 								<a
 									onClick={async () => {
