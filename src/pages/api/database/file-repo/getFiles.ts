@@ -19,7 +19,7 @@ async function GetFiles(params: ParamsType) {
 			sites = await collection.distinct("redcap_data_access_group")
 		}
 
-		const query = { site: { $in: sites } }
+		const query = { redcap_data_access_group: { $in: sites } }
 		const results = await collection
 			.find(query, { projection: { _id: 0 } })
 			.toArray()
