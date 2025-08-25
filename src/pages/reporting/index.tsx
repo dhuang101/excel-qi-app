@@ -87,7 +87,8 @@ function ReportingPage() {
 			)}
 			<div className="flex justify-center items-center h-24">
 				<article>
-					Any queries or suggestions can be sent to contact@email.com
+					Please send any queries or suggestions to
+					carol.hodgson@monash.edu
 				</article>
 			</div>
 		</div>

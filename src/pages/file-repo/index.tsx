@@ -49,7 +49,7 @@ function FileRepoPage() {
 									return (
 										<div
 											key={file.name}
-											className="flex w-full justify-around "
+											className="flex w-full justify-around"
 										>
 											<article>{file.name}</article>
 											<article>{file.link}</article>
