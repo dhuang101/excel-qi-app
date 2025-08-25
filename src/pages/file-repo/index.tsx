@@ -4,8 +4,9 @@ import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 type FilesType = {
-	redcap_data_access_group: string
-	files: { name: string; link: string }[]
+	redcap_data_access_group: string[]
+	name: string
+	link: string
 }
 
 function FileRepoPage() {
@@ -35,28 +36,19 @@ function FileRepoPage() {
 				<article className="font-semibold mt-4 text-3xl">
 					File Repository
 				</article>
-				{files.map((site) => {
+				{files.map((file) => {
 					return (
-						<div className="mt-4 flex flex-col w-full items-center">
-							<article
-								className="font-semibold text-lg"
-								key={site.redcap_data_access_group}
+						<div
+							key={file.name}
+							className="mt-4 flex flex-col w-full"
+						>
+							<a
+								href={file.link}
+								target="_blank"
+								className="font-semibold text-lg underline hover:text-primary hover:no-underline cursor-pointer"
 							>
-								{FormatSiteName(site.redcap_data_access_group)}
-							</article>
-							<div className="w-full mt-2">
-								{site.files.map((file) => {
-									return (
-										<div
-											key={file.name}
-											className="flex w-full justify-around"
-										>
-											<article>{file.name}</article>
-											<article>{file.link}</article>
-										</div>
-									)
-								})}
-							</div>
+								{file.name}
+							</a>
 						</div>
 					)
 				})}
