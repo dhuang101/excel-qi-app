@@ -5,11 +5,12 @@ type ParamsType = {
 	sites: string[]
 }
 
-async function GetFiles(params: ParamsType) {
+async function GetFilesMetadata(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	try {
 		await client.connect()
-		const collection = client.db("main").collection("file-repository")
+		const db = client.db("main")
+		const collection = db.collection("file-repo.files")
 
 		let sites: string[] = params.sites
 		if (
@@ -21,7 +22,14 @@ async function GetFiles(params: ParamsType) {
 
 		const query = { redcap_data_access_group: { $in: sites } }
 		const results = await collection
-			.find(query, { projection: { _id: 0 } })
+			.find(query, {
+				projection: {
+					_id: 0,
+					name: 1,
+					path: 1,
+					redcap_data_access_group: 1,
+				},
+			})
 			.toArray()
 
 		return results
@@ -35,7 +43,7 @@ export default async function handler(req: any, res: any) {
 	const params = req.body as ParamsType
 
 	try {
-		const results = await GetFiles(params)
+		const results = await GetFilesMetadata(params)
 		res.status(200).json(results)
 	} catch (err) {
 		res.status(500).json({ error: "Internal Server Error" })

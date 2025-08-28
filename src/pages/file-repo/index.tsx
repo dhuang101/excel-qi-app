@@ -20,7 +20,7 @@ function FileRepoPage() {
 			return
 		}
 		axios
-			.post("/api/database/file-repo/getFiles", {
+			.post("/api/database/file-repo/getFilesMetadata", {
 				role: session?.user.role,
 				sites: session?.user.sites,
 			})
