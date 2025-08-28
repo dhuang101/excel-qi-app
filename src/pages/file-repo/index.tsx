@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 type FilesType = {
 	redcap_data_access_group: string[]
 	filename: string
-	link: string
+	path: string
 }
 
 function FileRepoPage() {
@@ -29,22 +29,24 @@ function FileRepoPage() {
 			})
 	}, [status])
 
-	function downloadFile(filename: string) {
+	function downloadFile(file: FilesType) {
+		// we are using post to hide sensitive info
 		axios
 			.post(
 				"/api/database/file-repo/downloadFile",
 				{
 					role: session?.user.role,
 					sites: session?.user.sites,
-					filename: filename,
+					filename: file.filename,
 				},
 				{ responseType: "blob" }
 			)
 			.then((result) => {
+				// build a temp link as post's do not automatically download returned files
 				const url = window.URL.createObjectURL(new Blob([result.data]))
 				const link = document.createElement("a")
 				link.href = url
-				link.setAttribute("download", `${filename}.pdf`) // name the downloaded file
+				link.setAttribute("download", file.path) // name the downloaded file
 				document.body.appendChild(link)
 				link.click()
 				link.remove()
@@ -59,6 +61,7 @@ function FileRepoPage() {
 					File Repository
 				</article>
 				{files.map((file) => {
+					console.log(file)
 					return (
 						<div
 							key={file.filename}
@@ -66,7 +69,7 @@ function FileRepoPage() {
 						>
 							<article
 								onClick={() => {
-									downloadFile(file.filename)
+									downloadFile(file)
 								}}
 								className="font-semibold text-lg underline hover:text-primary hover:no-underline cursor-pointer"
 							>
