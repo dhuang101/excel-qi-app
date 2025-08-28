@@ -1,11 +1,10 @@
-import { FormatSiteName } from "@/utilities/FormatSiteName"
 import axios from "axios"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 type FilesType = {
 	redcap_data_access_group: string[]
-	name: string
+	filename: string
 	link: string
 }
 
@@ -30,6 +29,29 @@ function FileRepoPage() {
 			})
 	}, [status])
 
+	function downloadFile(filename: string) {
+		axios
+			.post(
+				"/api/database/file-repo/downloadFile",
+				{
+					role: session?.user.role,
+					sites: session?.user.sites,
+					filename: filename,
+				},
+				{ responseType: "blob" }
+			)
+			.then((result) => {
+				const url = window.URL.createObjectURL(new Blob([result.data]))
+				const link = document.createElement("a")
+				link.href = url
+				link.setAttribute("download", `${filename}.pdf`) // name the downloaded file
+				document.body.appendChild(link)
+				link.click()
+				link.remove()
+				window.URL.revokeObjectURL(url)
+			})
+	}
+
 	return (
 		<div className="flex flex-col grow w-full items-center">
 			<div className="flex flex-col w-2/3 h-full items-center">
@@ -39,16 +61,17 @@ function FileRepoPage() {
 				{files.map((file) => {
 					return (
 						<div
-							key={file.name}
+							key={file.filename}
 							className="mt-4 flex flex-col w-full"
 						>
-							<a
-								href={file.link}
-								target="_blank"
+							<article
+								onClick={() => {
+									downloadFile(file.filename)
+								}}
 								className="font-semibold text-lg underline hover:text-primary hover:no-underline cursor-pointer"
 							>
-								{file.name}
-							</a>
+								{file.filename}
+							</article>
 						</div>
 					)
 				})}

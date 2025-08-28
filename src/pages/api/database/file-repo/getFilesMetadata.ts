@@ -25,7 +25,7 @@ async function GetFilesMetadata(params: ParamsType) {
 			.find(query, {
 				projection: {
 					_id: 0,
-					name: 1,
+					filename: 1,
 					path: 1,
 					redcap_data_access_group: 1,
 				},
