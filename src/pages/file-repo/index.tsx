@@ -72,6 +72,7 @@ function FileRepoPage() {
 					{session?.user.role !== "site-viewer" && (
 						<div className="flex w-full mt-4">
 							<button
+								disabled
 								onClick={() => {
 									modalRef.current!.showModal()
 								}}
