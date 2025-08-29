@@ -7,6 +7,7 @@ import DropdownInput from "@/components/search/DropdownInput"
 import { keyToTitle } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
 import { FormatDate } from "@/utilities/FormatDate"
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
 import ClusteredBarplot from "@/components/search/ClusteredBarplot"
 import { useSession } from "next-auth/react"
@@ -324,18 +325,45 @@ function SearchPage() {
 								Export Cohort
 							</button>
 						</div>
-						<article className="w-full mb-2 text-md font-semibold">
-							{`You are currently viewing patients from: ${
-								session?.user?.role === "admin" ||
-								session?.user?.role === "global-viewer"
-									? "All Sites"
-									: session?.user?.sites
-									? session.user.sites
-											.map((site) => FormatSiteName(site))
-											.join(", ")
-									: ""
-							}`}
-						</article>
+						<div className="flex w-full items-center mb-2">
+							<article className="w-full text-md font-semibold">
+								{`You are currently viewing patients from: ${
+									session?.user?.role === "admin" ||
+									session?.user?.role === "global-viewer"
+										? "All Sites"
+										: session?.user?.sites
+										? session.user.sites
+												.map((site) =>
+													FormatSiteName(site)
+												)
+												.join(", ")
+										: ""
+								}`}
+							</article>
+							<div className="flex items-center">
+								<article className="text-sm w-24 mr-4">
+									Rows Per Page:
+								</article>
+								<select
+									className="select select-sm select-ghost w-20"
+									value={state.rowsPerPage}
+									onChange={(event) => {
+										dispatch({
+											type: ACTION.UPDATE_ROWSPERPAGE,
+											payload: parseInt(
+												event.target.value
+											),
+										})
+									}}
+								>
+									<option>10</option>
+									<option>25</option>
+									<option>50</option>
+									<option>100</option>
+								</select>
+							</div>
+						</div>
+
 						{showingVis ? (
 							<div className="flex flex-col items-center mt-4">
 								<article className="font-semibold text-lg">
