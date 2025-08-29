@@ -27,20 +27,30 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 		const svg = d3.select(svgRef.current)
 		svg.selectAll("*").remove() // Clear previous content
 
-		// Set up dimensions
 		const chartWidth = width - margin.left - margin.right
 		const chartHeight = height - margin.top - margin.bottom
+
+		// Clean keys and data once
+		const cleanKeys = keys.filter(
+			(k) => k !== undefined && k !== "undefined"
+		)
+		const cleanData = data.filter(
+			(d) =>
+				d.category !== "N/A" &&
+				d.category !== undefined &&
+				d.category !== "undefined"
+		)
 
 		// Create scales
 		const x0 = d3
 			.scaleBand()
-			.domain(data.map((d) => d.category))
+			.domain(cleanData.map((d) => d.category))
 			.range([0, chartWidth])
 			.padding(0.2)
 
 		const x1 = d3
 			.scaleBand()
-			.domain(keys)
+			.domain(cleanKeys)
 			.range([0, x0.bandwidth()])
 			.padding(0.1)
 
@@ -48,23 +58,21 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.scaleLinear()
 			.domain([
 				0,
-				d3.max(data, (d) => d3.max(keys, (key) => d[key] as number)) ||
-					0,
+				d3.max(cleanData, (d) =>
+					d3.max(cleanKeys, (key) => Number(d[key]) || 0)
+				) || 0,
 			])
 			.nice()
 			.range([chartHeight, 0])
 
-		// Set up colors
 		const color = d3
 			.scaleOrdinal<string>()
-			.domain(keys)
+			.domain(cleanKeys)
 			.range(d3.schemeObservable10)
 
-		// Create axes
 		const xAxis = d3.axisBottom(x0)
 		const yAxis = d3.axisLeft(y)
 
-		// Append group for chart
 		const chartGroup = svg
 			.attr("width", width)
 			.attr("height", height)
@@ -84,20 +92,19 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 
 		// Function to wrap text
 		function wrapText(
-			text: d3.Selection<d3.BaseType, unknown, SVGGElement, unknown>, // Use BaseType for broader compatibility
+			text: d3.Selection<d3.BaseType, unknown, SVGGElement, unknown>,
 			width: number
 		): void {
 			text.each(function () {
 				const textElement = d3.select<SVGTextElement, unknown>(
 					this as SVGTextElement
-				) // Assert `this` as SVGTextElement
-				const words: string[] = textElement.text().split(/\s+/) // Split text into words
+				)
+				const words: string[] = textElement.text().split(/\s+/)
 				let line: string[] = []
-				const lineHeight = 1.1 // Line height for wrapping
+				const lineHeight = 1.1
 				const y: string | null = textElement.attr("y")
 				let dy: number = parseFloat(textElement.attr("dy") || "0")
 
-				// Clear the existing text and append the first tspan
 				let tspan = textElement
 					.text(null)
 					.append("tspan")
@@ -109,19 +116,19 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 					line.push(word)
 					tspan.text(line.join(" "))
 
-					const tspanNode = tspan.node() // Safely get the DOM node
+					const tspanNode = tspan.node()
 					if (
 						tspanNode &&
 						tspanNode.getComputedTextLength() > width
 					) {
-						line.pop() // Remove the word that caused the overflow
-						tspan.text(line.join(" ")) // Set the text for the current line
-						line = [word] // Start a new line with the overflow word
+						line.pop()
+						tspan.text(line.join(" "))
+						line = [word]
 						tspan = textElement
 							.append("tspan")
 							.attr("x", 0)
 							.attr("y", y)
-							.attr("dy", `${++dy * lineHeight}em`) // Move the new line downward
+							.attr("dy", `${++dy * lineHeight}em`)
 							.text(word)
 					}
 				})
@@ -139,26 +146,28 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 		// Add bars
 		const bars = chartGroup
 			.selectAll(".category-group")
-			.data(data)
+			.data(cleanData)
 			.enter()
 			.append("g")
 			.attr("class", "category-group")
 			.attr("transform", (d) => `translate(${x0(d.category)},0)`)
 
 		bars.selectAll("rect")
-			.data((d) => keys.map((key) => ({ key, value: d[key] as number })))
+			.data((d) =>
+				cleanKeys.map((key) => ({ key, value: Number(d[key]) || 0 }))
+			)
 			.enter()
 			.append("rect")
 			.attr("x", (d) => x1(d.key) || 0)
 			.attr("y", (d) => y(d.value))
 			.attr("width", x1.bandwidth())
-			.attr("height", (d) => (y(d.value) ? chartHeight - y(d.value) : 0))
+			.attr("height", (d) => chartHeight - y(d.value))
 			.attr("stroke", "var(--color-base-content)")
 			.attr("stroke-width", "1")
 			.attr("fill", (d) => color(d.key) || "#000")
 			.attr("fill-opacity", "0.6")
 
-		// Add labels for the x-axis
+		// Add axis labels
 		svg.append("text")
 			.attr("class", "x-axis-label")
 			.attr("x", width / 2)
@@ -167,7 +176,6 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("fill", "var(--color-base-content)")
 			.text("Primary Diagnosis")
 
-		// Add labels for the y-axis
 		svg.append("text")
 			.attr("class", "y-axis-label")
 			.attr("x", -(height / 2))
@@ -186,11 +194,10 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 				`translate(${width - margin.right + 20}, ${margin.top})`
 			)
 
-		keys.forEach((key, i) => {
+		cleanKeys.forEach((key, i) => {
 			const legendGroup = legend
 				.append("g")
 				.attr("transform", `translate(0, ${i * 20})`)
-
 			legendGroup
 				.append("rect")
 				.attr("x", 0)
