@@ -50,11 +50,14 @@ function FileRepoPage() {
 				{ responseType: "blob" }
 			)
 			.then((result) => {
+				console.log(result)
 				// build a temp link as post's do not automatically download returned files
+				const fileName =
+					result.headers["x-filename"] || file.filename + ".pdf"
 				const url = window.URL.createObjectURL(new Blob([result.data]))
 				const link = document.createElement("a")
 				link.href = url
-				link.setAttribute("download", file.path) // name the downloaded file
+				link.setAttribute("download", fileName)
 				document.body.appendChild(link)
 				link.click()
 				link.remove()
