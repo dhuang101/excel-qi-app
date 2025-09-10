@@ -88,7 +88,7 @@ function FileRepoPage() {
 						<article className="font-semibold mt-4 text-3xl">
 							File Repository
 						</article>
-						{session?.user.role !== "site-viewer" && (
+						{session?.user.role === "admin" && (
 							<div className="flex w-full mt-4">
 								<button
 									onClick={() => {
