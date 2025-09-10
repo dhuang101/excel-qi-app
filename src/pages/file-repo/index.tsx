@@ -17,7 +17,7 @@ function FileRepoPage() {
 	const { data: session, status } = useSession()
 	// state
 	const [files, setFiles] = useState<FilesType[]>([])
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(true)
 	// modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
@@ -77,7 +77,10 @@ function FileRepoPage() {
 					<div className="flex flex-col justify-center items-center h-[83vh]">
 						<CircularProgress size={80} />
 						<article className="text-lg font-semibold pt-4">
-							Running Prediction...
+							Fetching File...
+						</article>
+						<article className="pt-2">
+							This may take a moment
 						</article>
 					</div>
 				) : (
