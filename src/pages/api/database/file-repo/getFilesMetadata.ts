@@ -43,6 +43,7 @@ export default async function handler(req: any, res: any) {
 		const results = await GetFilesMetadata(params)
 		res.status(200).json(results)
 	} catch (err) {
+		console.error("Error at database/file-repo/getFilesMetadata :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

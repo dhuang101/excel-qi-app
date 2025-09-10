@@ -97,7 +97,7 @@ export default async function handler(
 	try {
 		await DownloadFile(params, res)
 	} catch (err) {
-		console.log(err)
+		console.error("Error at database/file-repo/downloadFile :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

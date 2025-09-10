@@ -105,7 +105,7 @@ export default async function handler(req: any, res: any) {
 		const results = await PostPatients(params)
 		res.status(200).json(results)
 	} catch (err) {
-		console.error("Error fetching patients:", err)
+		console.error("Error at database/permissions/postPatients :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }
