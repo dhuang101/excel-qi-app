@@ -17,7 +17,7 @@ function FileRepoPage() {
 	const { data: session, status } = useSession()
 	// state
 	const [files, setFiles] = useState<FilesType[]>([])
-	const [loading, setLoading] = useState(true)
+	const [loading, setLoading] = useState(false)
 	// modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
@@ -91,7 +91,6 @@ function FileRepoPage() {
 						{session?.user.role !== "site-viewer" && (
 							<div className="flex w-full mt-4">
 								<button
-									disabled
 									onClick={() => {
 										modalRef.current!.showModal()
 									}}
