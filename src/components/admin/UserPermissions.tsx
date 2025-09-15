@@ -103,7 +103,7 @@ export default function UserPermissions() {
 			<div className="flex flex-col justify-center items-center h-[83vh]">
 				<CircularProgress size={80} />
 				<article className="text-lg font-semibold pt-4">
-					Fetching File...
+					Fetching Users...
 				</article>
 			</div>
 		)
