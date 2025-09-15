@@ -22,8 +22,8 @@ export default async function handler(req: any, res: any) {
 	try {
 		const result = await PostEcmoPalEvaluate(params.variables)
 		res.status(200).json(result)
-		// res.status(200).json(result)
 	} catch (err) {
-		res.status(500).json(err)
+		console.error("Error at ecmo-pal/evaluate :", err)
+		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

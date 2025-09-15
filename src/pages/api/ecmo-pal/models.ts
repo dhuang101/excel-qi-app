@@ -11,6 +11,7 @@ export default async function handler(req: any, res: any) {
 		const result = await GetEcmoPalModels()
 		res.status(200).json(result)
 	} catch (err) {
-		res.status(500).json(err)
+		console.error("Error at ecmo-pal/models :", err)
+		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

@@ -121,38 +121,37 @@ function AdminPage() {
 				<div className="w-2/3 h-full">
 					{session?.user.role === "admin" ? (
 						<React.Fragment>
-							<article className="my-4 text-3xl font-semibold">
-								View and Edit User Permissions
-							</article>
-							<div className="flex items-center justify-between mb-4">
-								<div className="flex">
-									<input
-										type="text"
-										className="input w-80 mr-4"
-										placeholder="Search by email"
-										onKeyDown={handleKeyDown}
-										onChange={(event) => {
-											searchQuery.current =
-												event.target.value
-										}}
-									/>
-									<button
-										className="btn btn-primary"
-										onClick={handleEmailSearch}
-									>
-										Search
-									</button>
-								</div>
-
+							<div className="flex items-center justify-between my-4">
+								<article className="text-3xl font-semibold">
+									View and Edit User Permissions
+								</article>
 								<button
 									className="btn btn-primary"
 									onClick={() => {
 										router.push("/admin/import")
 									}}
 								>
-									Import
+									Import Cohort
 								</button>
 							</div>
+							<div className="flex mb-4">
+								<input
+									type="text"
+									className="input w-80 mr-4"
+									placeholder="Search by email"
+									onKeyDown={handleKeyDown}
+									onChange={(event) => {
+										searchQuery.current = event.target.value
+									}}
+								/>
+								<button
+									className="btn btn-primary"
+									onClick={handleEmailSearch}
+								>
+									Search
+								</button>
+							</div>
+
 							<AdminTable
 								users={slicedUsers}
 								onClick={(event) => {

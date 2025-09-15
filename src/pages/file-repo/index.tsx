@@ -1,3 +1,4 @@
+import { CircularProgress } from "@mui/material"
 import axios from "axios"
 import { useSession } from "next-auth/react"
 import React, { useRef } from "react"
@@ -16,6 +17,7 @@ function FileRepoPage() {
 	const { data: session, status } = useSession()
 	// state
 	const [files, setFiles] = useState<FilesType[]>([])
+	const [loading, setLoading] = useState(false)
 	// modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
@@ -38,6 +40,7 @@ function FileRepoPage() {
 	}, [status])
 
 	function downloadFile(file: FilesType) {
+		setLoading(true)
 		// we are using post to hide sensitive info
 		axios
 			.post(
@@ -51,56 +54,72 @@ function FileRepoPage() {
 			)
 			.then((result) => {
 				// build a temp link as post's do not automatically download returned files
+				const fileName =
+					result.headers["x-filename"] || file.filename + ".pdf"
 				const url = window.URL.createObjectURL(new Blob([result.data]))
 				const link = document.createElement("a")
 				link.href = url
-				link.setAttribute("download", file.path) // name the downloaded file
+				link.setAttribute("download", fileName)
 				document.body.appendChild(link)
 				link.click()
 				link.remove()
 				window.URL.revokeObjectURL(url)
+			})
+			.then(() => {
+				setLoading(false)
 			})
 	}
 
 	return (
 		<React.Fragment>
 			<div className="flex flex-col grow w-full items-center">
-				<div className="flex flex-col w-1/2 h-full items-center">
-					<article className="font-semibold mt-4 text-3xl">
-						File Repository
-					</article>
-					{session?.user.role !== "site-viewer" && (
-						<div className="flex w-full mt-4">
-							<button
-								disabled
-								onClick={() => {
-									modalRef.current!.showModal()
-								}}
-								className="ml-auto btn btn-primary"
-							>
-								Upload
-							</button>
-						</div>
-					)}
-					{files.map((file) => {
-						return (
-							<div
-								key={file.filename}
-								className="mt-4 flex flex-col w-full"
-							>
-								<article
+				{loading ? (
+					<div className="flex flex-col justify-center items-center h-[83vh]">
+						<CircularProgress size={80} />
+						<article className="text-lg font-semibold pt-4">
+							Fetching File...
+						</article>
+						<article className="pt-2">
+							This may take a moment
+						</article>
+					</div>
+				) : (
+					<div className="flex flex-col w-1/2 h-full items-center">
+						<article className="font-semibold mt-4 text-3xl">
+							File Repository
+						</article>
+						{session?.user.role === "admin" && (
+							<div className="flex w-full mt-4">
+								<button
 									onClick={() => {
-										downloadFile(file)
+										modalRef.current!.showModal()
 									}}
-									className="font-semibold text-lg underline ml-4 hover:text-primary hover:no-underline cursor-pointer"
+									className="ml-auto btn btn-primary"
 								>
-									{file.filename}
-								</article>
-								<div className="divider" />
+									Upload
+								</button>
 							</div>
-						)
-					})}
-				</div>
+						)}
+						{files.map((file) => {
+							return (
+								<div
+									key={file.filename}
+									className="mt-4 flex flex-col w-full"
+								>
+									<article
+										onClick={() => {
+											downloadFile(file)
+										}}
+										className="font-semibold text-lg underline ml-4 hover:text-primary hover:no-underline cursor-pointer"
+									>
+										{file.filename}
+									</article>
+									<div className="divider" />
+								</div>
+							)
+						})}
+					</div>
+				)}
 			</div>
 			{/* Modal */}
 			<dialog

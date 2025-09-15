@@ -10,7 +10,7 @@ async function GetFilesMetadata(params: ParamsType) {
 	try {
 		await client.connect()
 		const db = client.db("main")
-		const collection = db.collection("file-repo.files")
+		const collection = db.collection("file-repository")
 
 		let sites: string[] = params.sites
 		if (
@@ -25,9 +25,6 @@ async function GetFilesMetadata(params: ParamsType) {
 			.find(query, {
 				projection: {
 					_id: 0,
-					filename: 1,
-					path: 1,
-					redcap_data_access_group: 1,
 				},
 			})
 			.toArray()
@@ -46,6 +43,7 @@ export default async function handler(req: any, res: any) {
 		const results = await GetFilesMetadata(params)
 		res.status(200).json(results)
 	} catch (err) {
+		console.error("Error at database/file-repo/getFilesMetadata :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }
