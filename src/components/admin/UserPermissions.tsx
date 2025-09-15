@@ -26,13 +26,17 @@ const SITES = [
 ]
 
 export default function UserPermissions() {
-	// state and refs copied exactly
+	// state
 	const users = useRef<User[]>([])
+	const [loading, setLoading] = useState(true)
 	const [slicedUsers, setSlicedUsers] = useState<User[]>([])
+	// search state
 	const searchQuery = useRef("")
+	// selected user state
 	const [selectedUser, setSelectedUser] = useState<User | null>(null)
 	const additionalSites = useRef<string[]>([])
 	const removeSites = useRef<string[]>([])
+	// modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
 	const [error, setError] = useState(false)
@@ -42,6 +46,7 @@ export default function UserPermissions() {
 		axios.get("/api/database/permissions/getAllPerms").then((result) => {
 			users.current = result.data
 			setSlicedUsers(result.data)
+			setLoading(false)
 		})
 	}, [])
 
@@ -91,6 +96,17 @@ export default function UserPermissions() {
 		const index = selected.indexOf(site)
 		if (index === -1) selected.push(site)
 		else selected.splice(index, 1)
+	}
+
+	if (loading) {
+		return (
+			<div className="flex flex-col justify-center items-center h-[83vh]">
+				<CircularProgress size={80} />
+				<article className="text-lg font-semibold pt-4">
+					Fetching File...
+				</article>
+			</div>
+		)
 	}
 
 	return (
