@@ -26,7 +26,7 @@ function FileRepoPage() {
 	// modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
-	const [error, setError] = useState(false)
+	const [error, setError] = useState<string | null>(null)
 	// file upload state
 	const [file, setFile] = useState<File | null>(null)
 	const [name, setName] = useState("")
@@ -88,15 +88,32 @@ function FileRepoPage() {
 
 	function uploadFile() {
 		if (!file) {
+			setError("Please select a file to upload.")
+			return
+		}
+		if (!name.trim()) {
+			setError("Please enter a file name.")
+			return
+		}
+		if (sites.length === 0) {
+			setError("Please select at least one site.")
 			return
 		}
 
+		setError(null)
+		setModalStatus("uploading")
+
 		const formData = new FormData()
 		formData.append("file", file)
+		formData.append("customName", name)
+		formData.append("sites", JSON.stringify(sites))
 
 		axios
 			.post("/api/database/file-repo/uploadFile", formData, {
 				headers: { "Content-Type": "multipart/form-data" },
+			})
+			.then(() => {
+				setModalStatus("submitted")
 			})
 			.catch((error) => {
 				console.error("Error fetching permissions:", error)
@@ -170,19 +187,18 @@ function FileRepoPage() {
 						!modalRef.current?.open &&
 						event.propertyName === "visibility"
 					) {
-						setError(false)
+						setError(null)
 						setModalStatus("selecting")
 						setModalKey((prev) => prev + 1)
 					}
 				}}
 			>
-				<div className="modal-box w-fit p-8">
+				<div className="modal-box max-w-xl p-8" key={modalKey}>
 					{modalStatus === "selecting" ? (
-						<React.Fragment>
-							<article className="font-semibold text-lg">
+						<div className="flex flex-col">
+							<article className="font-semibold text-xl">
 								Upload To Repository
 							</article>
-
 							<article className="font-semibold mt-4">
 								Choose File
 							</article>
@@ -230,21 +246,55 @@ function FileRepoPage() {
 										type="checkbox"
 										className="checkbox checkbox-primary mr-2 mb-1"
 										value={site}
+										checked={sites.includes(site)}
+										onChange={(e) => {
+											if (e.target.checked) {
+												setSites((prev) => [
+													...prev,
+													site,
+												])
+											} else {
+												setSites((prev) =>
+													prev.filter(
+														(s) => s !== site
+													)
+												)
+											}
+										}}
 									/>
 									<article>{FormatSiteName(site)}</article>
 								</div>
 							))}
-							<button
-								className="btn btn-primary mt-4"
-								onClick={uploadFile}
-							>
-								Upload
-							</button>
-						</React.Fragment>
+							<div className="flex items-center mt-4">
+								<button
+									className="btn btn-primary"
+									onClick={uploadFile}
+								>
+									Upload
+								</button>
+								{error && (
+									<article className="ml-8 text-error font-semibold">
+										Error: No Changes Were Made
+									</article>
+								)}
+							</div>
+						</div>
 					) : modalStatus === "uploading" ? (
-						<React.Fragment></React.Fragment>
+						<div className="flex flex-col justify-center items-center p-16">
+							<CircularProgress size={80} />
+							<article className="text-lg font-semibold pt-4">
+								Uploading File...
+							</article>
+							<article className="pt-2">
+								This may take a moment
+							</article>
+						</div>
 					) : modalStatus === "submitted" ? (
-						<React.Fragment></React.Fragment>
+						<div className="flex flex-col justify-center items-center p-16">
+							<article className="text-3xl font-semibold">
+								File Uploaded Successfully
+							</article>
+						</div>
 					) : (
 						<div>Error: You Should Not Be Seeing This</div>
 					)}
