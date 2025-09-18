@@ -33,7 +33,10 @@ export async function middleware(req: NextRequest) {
 	}
 
 	// Access to /api/database/permissions — admin only
-	if (pathname.startsWith("/api/database/permissions/updatePerms")) {
+	if (
+		pathname.startsWith("/api/database/permissions/updatePerms") ||
+		pathname.startsWith("/api/database/file-repo/uploadFiles")
+	) {
 		if (!token || token.role !== "admin") {
 			return NextResponse.redirect(new URL("/forbidden", req.url))
 		}
