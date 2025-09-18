@@ -7,17 +7,19 @@ import DropdownInput from "@/components/search/DropdownInput"
 import { keyToTitle } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
 import { FormatDate } from "@/utilities/FormatDate"
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
 import ClusteredBarplot from "@/components/search/ClusteredBarplot"
 import { useSession } from "next-auth/react"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
 import { UserEnteredQuery } from "@/types/searchTypes"
+import { useRouter } from "next/router"
 
 // component
 function SearchPage() {
 	// auth session
 	const { data: session, status } = useSession()
+	// nextjs router
+	const router = useRouter()
 
 	// global store access
 	const [state, dispatch] = useReducer(searchReducer, {
@@ -156,6 +158,10 @@ function SearchPage() {
 				})
 				.then(() => {
 					setLoading(false)
+				})
+				.catch((error) => {
+					console.error("Error fetching permissions:", error)
+					router.push("/error")
 				})
 		}
 	}

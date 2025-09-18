@@ -1,6 +1,7 @@
 import { CircularProgress } from "@mui/material"
 import axios from "axios"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/router"
 import React, { useRef } from "react"
 import { useEffect, useState } from "react"
 
@@ -14,6 +15,7 @@ type ModalStatus = "selecting" | "confirming" | "updating" | "submitted"
 
 function FileRepoPage() {
 	// hooks
+	const router = useRouter()
 	const { data: session, status } = useSession()
 	// state
 	const [files, setFiles] = useState<FilesType[]>([])
@@ -36,6 +38,10 @@ function FileRepoPage() {
 			})
 			.then((result) => {
 				setFiles(result.data)
+			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
 			})
 	}, [status])
 
@@ -67,6 +73,10 @@ function FileRepoPage() {
 			})
 			.then(() => {
 				setLoading(false)
+			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
 			})
 	}
 

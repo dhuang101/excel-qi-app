@@ -6,10 +6,13 @@ import { useSession } from "next-auth/react"
 import React from "react"
 import SingleView from "@/components/reporting/SingleView"
 import ComparisonView from "@/components/reporting/ComparisonView"
+import { useRouter } from "next/router"
 
 type displayViews = "Single" | "Comparison"
 
 function ReportingPage() {
+	// nextjs router
+	const router = useRouter()
 	// auth session
 	const { data: session, status } = useSession()
 	// state
@@ -44,6 +47,10 @@ function ReportingPage() {
 			})
 			.then(() => {
 				dispatch({ type: ACTION.SET_SUMMARY, payload: payload })
+			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
 			})
 	}, [status])
 

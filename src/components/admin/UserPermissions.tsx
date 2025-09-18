@@ -2,6 +2,7 @@ import AdminTable from "@/components/admin/AdminTable"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
 import { CircularProgress } from "@mui/material"
 import axios from "axios"
+import { useRouter } from "next/router"
 import React, { useEffect, useRef, useState } from "react"
 
 interface User {
@@ -26,6 +27,8 @@ const SITES = [
 ]
 
 export default function UserPermissions() {
+	// nextjs router
+	const router = useRouter()
 	// state
 	const users = useRef<User[]>([])
 	const [loading, setLoading] = useState(true)
@@ -43,11 +46,17 @@ export default function UserPermissions() {
 	const modalRef = useRef<HTMLDialogElement>(null)
 
 	useEffect(() => {
-		axios.get("/api/database/permissions/getAllPerms").then((result) => {
-			users.current = result.data
-			setSlicedUsers(result.data)
-			setLoading(false)
-		})
+		axios
+			.get("/api/database/permissions/getAllPerms")
+			.then((result) => {
+				users.current = result.data
+				setSlicedUsers(result.data)
+				setLoading(false)
+			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
+			})
 	}, [])
 
 	function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -81,6 +90,10 @@ export default function UserPermissions() {
 						users.current = result.data
 					})
 				setModalStatus("submitted")
+			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
 			})
 	}
 

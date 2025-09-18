@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { useRouter } from "next/router"
 import Papa from "papaparse"
 import axios from "axios"
 import ImportPreviewTable from "@/components/admin/ImportPreviewTable"
@@ -6,6 +7,8 @@ import { TranslateExcel } from "@/utilities/TranslateExcel"
 import { excelImportRow } from "@/types/excelImportTypes"
 
 export default function ImportCohort() {
+	// nextjs router
+	const router = useRouter()
 	const [file, setFile] = useState<File | null>(null)
 	const [rows, setRows] = useState<excelImportRow[]>([])
 
@@ -61,6 +64,10 @@ export default function ImportCohort() {
 			.then((response) => {
 				alert(response.data.message)
 				handleGoBack()
+			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
 			})
 	}
 

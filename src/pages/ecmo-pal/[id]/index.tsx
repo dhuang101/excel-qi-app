@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import { CircularProgress } from "@mui/material"
-import test from "node:test"
+import router from "next/router"
 
 function EcmoPalPage() {
 	const testVars = testEcmo
@@ -30,6 +30,10 @@ function EcmoPalPage() {
 			.then(() => {
 				setLoading(false)
 			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
+			})
 	}
 
 	function handleBack() {
@@ -41,13 +45,19 @@ function EcmoPalPage() {
 	}
 
 	useEffect(() => {
-		axios.get("/api/ecmo-pal/models").then((res) => {
-			setModelDetails(
-				res.data.filter((obj: { name: string }) => {
-					return obj.name === "Full"
-				})[0]
-			)
-		})
+		axios
+			.get("/api/ecmo-pal/models")
+			.then((res) => {
+				setModelDetails(
+					res.data.filter((obj: { name: string }) => {
+						return obj.name === "Full"
+					})[0]
+				)
+			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
+			})
 	}, [])
 
 	return (
