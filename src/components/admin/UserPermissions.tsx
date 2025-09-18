@@ -1,4 +1,5 @@
 import AdminTable from "@/components/admin/AdminTable"
+import { SITE_NAMES } from "@/constants/sitesNames"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
 import { CircularProgress } from "@mui/material"
 import axios from "axios"
@@ -12,19 +13,6 @@ interface User {
 }
 
 type ModalStatus = "selecting" | "confirming" | "updating" | "submitted"
-
-const SITES = [
-	"alfred_hospital",
-	"auckland_city_hospital",
-	"box_hill_hospital",
-	"john_hunter_hospital",
-	"prince_charles_hospital",
-	"royal_adelaide_hospital",
-	"royal_north_shore_hospital",
-	"royal_prince_alfred_hospital",
-	"st_vincents_sydney",
-	"townsville_hospital",
-]
 
 export default function UserPermissions() {
 	// nextjs router
@@ -208,7 +196,7 @@ export default function UserPermissions() {
 								<article className="font-semibold text-lg mt-4">
 									Choose Sites to Give Access to
 								</article>
-								{SITES.filter(
+								{SITE_NAMES.filter(
 									(site) =>
 										!selectedUser?.sites.includes(site)
 								).map((site) => (

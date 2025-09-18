@@ -1,9 +1,12 @@
 import { CircularProgress } from "@mui/material"
+import { SITE_NAMES } from "@/constants/sitesNames"
 import axios from "axios"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import React, { useRef } from "react"
 import { useEffect, useState } from "react"
+import { FormatSiteName } from "@/utilities/FormatSiteName"
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 
 type FilesType = {
 	redcap_data_access_group: string[]
@@ -11,7 +14,7 @@ type FilesType = {
 	path: string
 }
 
-type ModalStatus = "selecting" | "confirming" | "updating" | "submitted"
+type ModalStatus = "selecting" | "uploading" | "submitted"
 
 function FileRepoPage() {
 	// hooks
@@ -24,7 +27,10 @@ function FileRepoPage() {
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
 	const [error, setError] = useState(false)
+	// file upload state
 	const [file, setFile] = useState<File | null>(null)
+	const [name, setName] = useState("")
+	const [sites, setSites] = useState<string[]>([])
 	const modalRef = useRef<HTMLDialogElement>(null)
 
 	useEffect(() => {
@@ -73,6 +79,24 @@ function FileRepoPage() {
 			})
 			.then(() => {
 				setLoading(false)
+			})
+			.catch((error) => {
+				console.error("Error fetching permissions:", error)
+				router.push("/error")
+			})
+	}
+
+	function uploadFile() {
+		if (!file) {
+			return
+		}
+
+		const formData = new FormData()
+		formData.append("file", file)
+
+		axios
+			.post("/api/database/file-repo/uploadFile", formData, {
+				headers: { "Content-Type": "multipart/form-data" },
 			})
 			.catch((error) => {
 				console.error("Error fetching permissions:", error)
@@ -153,25 +177,77 @@ function FileRepoPage() {
 				}}
 			>
 				<div className="modal-box w-fit p-8">
-					<article className="font-semibold text-lg">
-						Upload To Repository
-					</article>
-					<fieldset className="fieldset mt-4">
-						<legend className="fieldset-legend">
-							.pdf file only
-						</legend>
-						<input
-							type="file"
-							accept=".pdf"
-							onChange={(e) =>
-								setFile(
-									e.target.files ? e.target.files[0] : null
-								)
-							}
-							className="file-input file-input-primary"
-						/>
-					</fieldset>
-					<button className="btn btn-primary mt-4">Preview</button>
+					{modalStatus === "selecting" ? (
+						<React.Fragment>
+							<article className="font-semibold text-lg">
+								Upload To Repository
+							</article>
+
+							<article className="font-semibold mt-4">
+								Choose File
+							</article>
+							<fieldset className="fieldset">
+								<legend className="fieldset-legend">
+									.pdf file only
+								</legend>
+								<input
+									type="file"
+									accept=".pdf"
+									onChange={(e) =>
+										setFile(
+											e.target.files
+												? e.target.files[0]
+												: null
+										)
+									}
+									className="file-input file-input-primary"
+								/>
+							</fieldset>
+							<div className="flex items-center mt-4 mb-2">
+								<article className="font-semibold">
+									Enter File Name
+								</article>
+								<div
+									className="tooltip tooltip-accent ml-2"
+									data-tip="This will be the name shown on the page"
+								>
+									<InfoOutlinedIcon className="" />
+								</div>
+							</div>
+							<input
+								type="text"
+								placeholder="Enter file name"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								className="input input-primary"
+							/>
+							<article className="font-semibold mt-4 mb-2">
+								Select Site Access
+							</article>
+							{SITE_NAMES.map((site) => (
+								<div key={site} className="flex">
+									<input
+										type="checkbox"
+										className="checkbox checkbox-primary mr-2 mb-1"
+										value={site}
+									/>
+									<article>{FormatSiteName(site)}</article>
+								</div>
+							))}
+							<button
+								className="btn btn-primary mt-4"
+								onClick={uploadFile}
+							>
+								Upload
+							</button>
+						</React.Fragment>
+					) : modalStatus === "uploading" ? (
+						<React.Fragment></React.Fragment>
+					) : modalStatus === "submitted" ? (
+						<React.Fragment></React.Fragment>
+					) : (
+						<div>Error: You Should Not Be Seeing This</div>
+					)}
 				</div>
 				<form method="dialog" className="modal-backdrop">
 					<button>close</button>

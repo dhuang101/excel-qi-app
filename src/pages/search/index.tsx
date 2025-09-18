@@ -4,7 +4,7 @@ import axios from "axios"
 import React from "react"
 import DateRangeInput from "@/components/search/DateRangeInput"
 import DropdownInput from "@/components/search/DropdownInput"
-import { keyToTitle } from "@/constants/search/keyToTitle"
+import { KEY_TO_TITLE } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
 import { FormatDate } from "@/utilities/FormatDate"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
@@ -270,7 +270,7 @@ function SearchPage() {
 													return (
 														<div key={key}>
 															{
-																keyToTitle[
+																KEY_TO_TITLE[
 																	key as keyof UserEnteredQuery
 																]
 															}

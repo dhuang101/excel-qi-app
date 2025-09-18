@@ -1,6 +1,6 @@
-import { diagnosis_resp_options } from "@/constants/search/selectOptions"
-import { diagnosis_cardiac_options } from "@/constants/search/selectOptions"
-import { outcm_hosp_discharge_loc_options } from "@/constants/search/selectOptions"
+import { DIAGNOSIS_RESP_OPTIONS } from "@/constants/search/selectOptions"
+import { DIAGNOSIS_CARDIAC_OPTIONS } from "@/constants/search/selectOptions"
+import { OUTCM_HOSP_DISCHARGE_LOC_OPTIONS } from "@/constants/search/selectOptions"
 import { ChangeEventHandler } from "react"
 
 interface Props {
@@ -19,9 +19,9 @@ interface Props {
 
 function DropdownInput({ title, queryAttribute, handleSelectChange }: Props) {
 	const optionsMap = {
-		diagnosis_resp: diagnosis_resp_options,
-		diagnosis_cardiac: diagnosis_cardiac_options,
-		outcm_hosp_discharge_loc: outcm_hosp_discharge_loc_options,
+		diagnosis_resp: DIAGNOSIS_RESP_OPTIONS,
+		diagnosis_cardiac: DIAGNOSIS_CARDIAC_OPTIONS,
+		outcm_hosp_discharge_loc: OUTCM_HOSP_DISCHARGE_LOC_OPTIONS,
 	}
 
 	return (
