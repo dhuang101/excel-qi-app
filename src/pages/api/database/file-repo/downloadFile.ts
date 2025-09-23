@@ -66,13 +66,14 @@ async function DownloadFile(
 	})
 	const drive = google.drive({ version: "v3", auth })
 	const response = await drive.files.get(
-		{ fileId: driveFileId, alt: "media" },
+		{ fileId: driveFileId, alt: "media", supportsAllDrives: true },
 		{ responseType: "stream" }
 	)
 	// optionally fetch file metadata (to get original name / mime type)
 	const metadata = await drive.files.get({
 		fileId: driveFileId,
 		fields: "name, mimeType",
+		supportsAllDrives: true,
 	})
 	// stream file to frontend
 	res.setHeader(

@@ -43,6 +43,7 @@ export default async function handler(
 		const file = Array.isArray(uploadedFile)
 			? uploadedFile[0]
 			: uploadedFile
+		console.log(file)
 
 		const fileName = fields.customName?.toString() || file.originalFilename
 		const sites = fields.sites ? JSON.parse(fields.sites.toString()) : []
@@ -59,7 +60,7 @@ export default async function handler(
 			// Upload file to Drive
 			const response = await drive.files.create({
 				requestBody: {
-					name: fileName,
+					name: file.originalFilename,
 					parents: process.env.GOOGLE_DRIVE_FOLDER_ID
 						? [process.env.GOOGLE_DRIVE_FOLDER_ID]
 						: undefined,
@@ -69,6 +70,7 @@ export default async function handler(
 					body: fs.createReadStream(file.filepath),
 				},
 				fields: "id, name, webViewLink, webContentLink",
+				supportsAllDrives: true,
 			})
 
 			// Save metadata to MongoDB
