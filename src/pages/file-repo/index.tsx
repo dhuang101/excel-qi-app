@@ -187,6 +187,8 @@ function FileRepoPage() {
 						!modalRef.current?.open &&
 						event.propertyName === "visibility"
 					) {
+						setName("")
+						setSites([])
 						setError(null)
 						setModalStatus("selecting")
 						setModalKey((prev) => prev + 1)
