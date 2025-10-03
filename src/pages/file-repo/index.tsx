@@ -167,28 +167,30 @@ function FileRepoPage() {
 										>
 											{file.filename}
 										</article>
-										<div className="dropdown dropdown-end">
-											<div
-												tabIndex={0}
-												role="button"
-												className="btn btn-square btn-info btn-ghost"
-											>
-												<MoreVertIcon />
+										{session?.user.role === "admin" && (
+											<div className="dropdown dropdown-end">
+												<div
+													tabIndex={0}
+													role="button"
+													className="btn btn-square btn-info btn-ghost"
+												>
+													<MoreVertIcon />
+												</div>
+												<ul
+													tabIndex={0}
+													className="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm"
+												>
+													<li>
+														<a>Edit File</a>
+													</li>
+													<li>
+														<a className="text-error">
+															Delete File
+														</a>
+													</li>
+												</ul>
 											</div>
-											<ul
-												tabIndex={0}
-												className="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm"
-											>
-												<li>
-													<a>Edit File</a>
-												</li>
-												<li>
-													<a className="text-error">
-														Delete File
-													</a>
-												</li>
-											</ul>
-										</div>
+										)}
 									</div>
 									<div className="divider" />
 								</div>
