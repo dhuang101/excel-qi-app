@@ -56,7 +56,7 @@ function FileRepoPage() {
 				setFiles(result.data)
 			})
 			.catch((error) => {
-				console.error("Error fetching permissions:", error)
+				console.error("Error 500", error)
 				router.push("/error")
 			})
 	}, [status])
@@ -91,7 +91,7 @@ function FileRepoPage() {
 				setLoading(false)
 			})
 			.catch((error) => {
-				console.error("Error fetching permissions:", error)
+				console.error("Error 500", error)
 				router.push("/error")
 			})
 	}
@@ -126,7 +126,7 @@ function FileRepoPage() {
 				setModalStatus("submitted")
 			})
 			.catch((error) => {
-				console.error("Error fetching permissions:", error)
+				console.error("Error 500", error)
 				router.push("/error")
 			})
 	}

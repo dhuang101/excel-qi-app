@@ -42,7 +42,7 @@ export default function UserPermissions() {
 				setLoading(false)
 			})
 			.catch((error) => {
-				console.error("Error fetching permissions:", error)
+				console.error("Error 500", error)
 				router.push("/error")
 			})
 	}, [])
@@ -80,7 +80,7 @@ export default function UserPermissions() {
 				setModalStatus("submitted")
 			})
 			.catch((error) => {
-				console.error("Error fetching permissions:", error)
+				console.error("Error 500", error)
 				router.push("/error")
 			})
 	}

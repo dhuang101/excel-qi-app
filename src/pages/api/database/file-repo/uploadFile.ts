@@ -43,7 +43,6 @@ export default async function handler(
 		const file = Array.isArray(uploadedFile)
 			? uploadedFile[0]
 			: uploadedFile
-		console.log(file)
 
 		const fileName = fields.customName?.toString() || file.originalFilename
 		const sites = fields.sites ? JSON.parse(fields.sites.toString()) : []

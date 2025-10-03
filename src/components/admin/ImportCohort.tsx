@@ -66,7 +66,7 @@ export default function ImportCohort() {
 				handleGoBack()
 			})
 			.catch((error) => {
-				console.error("Error fetching permissions:", error)
+				console.error("Error 500", error)
 				router.push("/error")
 			})
 	}
