@@ -36,6 +36,9 @@ function FileRepoPage() {
 	const editModalRef = useRef<HTMLDialogElement>(null)
 	const [editName, setEditName] = useState("")
 	const [editSites, setEditSites] = useState<string[]>([])
+	// delete modal state
+	const deleteModalRef = useRef<HTMLDialogElement>(null)
+	const [deleteName, setDeleteName] = useState("")
 
 	useEffect(() => {
 		if (status !== "authenticated") {
@@ -125,6 +128,10 @@ function FileRepoPage() {
 			})
 	}
 
+	function updateFile() {}
+
+	function deleteFile() {}
+
 	return (
 		<React.Fragment>
 			<div className="flex flex-col grow w-full items-center bg-base-100">
@@ -200,7 +207,15 @@ function FileRepoPage() {
 														</a>
 													</li>
 													<li>
-														<a className="text-error">
+														<a
+															className="text-error"
+															onClick={() => {
+																setDeleteName(
+																	file.filename
+																)
+																deleteModalRef.current!.showModal()
+															}}
+														>
 															Delete File
 														</a>
 													</li>
@@ -420,6 +435,23 @@ function FileRepoPage() {
 							// onClick={updateFileMetadata}
 						>
 							Save Changes
+						</button>
+					</div>
+				</div>
+				<form method="dialog" className="modal-backdrop">
+					<button>close</button>
+				</form>
+			</dialog>
+			{/* Delete Modal */}
+			<dialog ref={deleteModalRef} className="modal">
+				<div className="modal-box max-w-md p-8">
+					<article className="text-lg">
+						Are you sure you want to delete
+					</article>
+					<article className="text-lg mb-8">{deleteName}?</article>
+					<div className="flex items-center mt-4">
+						<button className="btn btn-error" onClick={deleteFile}>
+							Delete
 						</button>
 					</div>
 				</div>
