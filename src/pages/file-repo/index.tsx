@@ -7,6 +7,7 @@ import React, { useRef } from "react"
 import { useEffect, useState } from "react"
 import { FormatSiteName } from "@/utilities/FormatSiteName"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
 
 type FilesType = {
 	redcap_data_access_group: string[]
@@ -23,7 +24,7 @@ function FileRepoPage() {
 	// state
 	const [files, setFiles] = useState<FilesType[]>([])
 	const [loading, setLoading] = useState(false)
-	// modal state
+	// upload modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
 	const [error, setError] = useState<string | null>(null)
@@ -123,7 +124,7 @@ function FileRepoPage() {
 
 	return (
 		<React.Fragment>
-			<div className="flex flex-col grow w-full items-center">
+			<div className="flex flex-col grow w-full items-center bg-base-100">
 				{loading ? (
 					<div className="flex flex-col justify-center items-center h-[83vh]">
 						<CircularProgress size={80} />
@@ -155,16 +156,40 @@ function FileRepoPage() {
 							return (
 								<div
 									key={file.filename}
-									className="mt-4 flex flex-col w-full"
+									className="flex flex-col w-full mt-8"
 								>
-									<article
-										onClick={() => {
-											downloadFile(file)
-										}}
-										className="font-semibold text-lg underline ml-4 hover:text-primary hover:no-underline cursor-pointer"
-									>
-										{file.filename}
-									</article>
+									<div className="flex justify-between">
+										<article
+											onClick={() => {
+												downloadFile(file)
+											}}
+											className="font-semibold text-lg underline ml-4 hover:text-primary hover:no-underline cursor-pointer"
+										>
+											{file.filename}
+										</article>
+										<div className="dropdown dropdown-end">
+											<div
+												tabIndex={0}
+												role="button"
+												className="btn btn-square btn-info btn-ghost"
+											>
+												<MoreVertIcon />
+											</div>
+											<ul
+												tabIndex={0}
+												className="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm"
+											>
+												<li>
+													<a>Edit File</a>
+												</li>
+												<li>
+													<a className="text-error">
+														Delete File
+													</a>
+												</li>
+											</ul>
+										</div>
+									</div>
 									<div className="divider" />
 								</div>
 							)
