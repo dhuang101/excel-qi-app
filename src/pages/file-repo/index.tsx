@@ -28,11 +28,14 @@ function FileRepoPage() {
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
 	const [error, setError] = useState<string | null>(null)
-	// file upload state
 	const [file, setFile] = useState<File | null>(null)
 	const [name, setName] = useState("")
 	const [sites, setSites] = useState<string[]>([])
 	const modalRef = useRef<HTMLDialogElement>(null)
+	// edit modal state
+	const editModalRef = useRef<HTMLDialogElement>(null)
+	const [editName, setEditName] = useState("")
+	const [editSites, setEditSites] = useState<string[]>([])
 
 	useEffect(() => {
 		if (status !== "authenticated") {
@@ -181,7 +184,20 @@ function FileRepoPage() {
 													className="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm"
 												>
 													<li>
-														<a>Edit File</a>
+														<a
+															onClick={() => {
+																setEditName(
+																	file.filename
+																)
+																setEditSites(
+																	file.redcap_data_access_group ||
+																		[]
+																)
+																editModalRef.current!.showModal()
+															}}
+														>
+															Edit File
+														</a>
 													</li>
 													<li>
 														<a className="text-error">
@@ -199,7 +215,7 @@ function FileRepoPage() {
 					</div>
 				)}
 			</div>
-			{/* Modal */}
+			{/* Upload Modal */}
 			<dialog
 				ref={modalRef}
 				className="modal"
@@ -327,6 +343,85 @@ function FileRepoPage() {
 					) : (
 						<div>Error: You Should Not Be Seeing This</div>
 					)}
+				</div>
+				<form method="dialog" className="modal-backdrop">
+					<button>close</button>
+				</form>
+			</dialog>
+			{/* Edit Modal */}
+			<dialog
+				ref={editModalRef}
+				className="modal"
+				onTransitionEnd={(event: React.TransitionEvent) => {
+					if (
+						!editModalRef.current?.open &&
+						event.propertyName === "visibility" &&
+						modalStatus === "submitted"
+					) {
+						window.location.reload()
+					} else if (
+						!editModalRef.current?.open &&
+						event.propertyName === "visibility"
+					) {
+						setEditName("")
+						setEditSites([])
+					}
+				}}
+			>
+				<div className="modal-box max-w-xl p-8">
+					<article className="font-semibold text-xl mb-4">
+						Edit File Metadata
+					</article>
+					<div className="mb-4">
+						<div className="flex items-center mt-4 mb-2">
+							<article className="font-semibold">
+								Enter File Name
+							</article>
+							<div
+								className="tooltip tooltip-accent ml-2"
+								data-tip="This will be the name shown on the page"
+							>
+								<InfoOutlinedIcon className="" />
+							</div>
+						</div>
+						<input
+							type="text"
+							value={editName}
+							onChange={(e) => setEditName(e.target.value)}
+							className="input input-primary w-full"
+						/>
+					</div>
+					<article className="font-semibold mt-4 mb-2">
+						Select Site Access
+					</article>
+					{SITE_NAMES.map((site) => (
+						<div key={site} className="flex">
+							<input
+								type="checkbox"
+								className="checkbox checkbox-primary mr-2 mb-1"
+								value={site}
+								checked={editSites.includes(site)}
+								onChange={(e) => {
+									if (e.target.checked) {
+										setEditSites((prev) => [...prev, site])
+									} else {
+										setEditSites((prev) =>
+											prev.filter((s) => s !== site)
+										)
+									}
+								}}
+							/>
+							<article>{FormatSiteName(site)}</article>
+						</div>
+					))}
+					<div className="flex items-center mt-4">
+						<button
+							className="btn btn-primary"
+							// onClick={updateFileMetadata}
+						>
+							Save Changes
+						</button>
+					</div>
 				</div>
 				<form method="dialog" className="modal-backdrop">
 					<button>close</button>
