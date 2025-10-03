@@ -41,7 +41,7 @@ function FileRepoPage() {
 	const [deleteModalStatus, setDeleteModalStatus] =
 		useState<DeleteModalStatus>("confirming")
 	const deleteModalRef = useRef<HTMLDialogElement>(null)
-	const [deleteName, setDeleteName] = useState("")
+	const [deleteFileName, setDeleteFileName] = useState("")
 
 	useEffect(() => {
 		if (status !== "authenticated") {
@@ -133,7 +133,14 @@ function FileRepoPage() {
 
 	function updateFile() {}
 
-	function deleteFile() {}
+	function deleteFile() {
+		setDeleteModalStatus("deleting")
+		axios
+			.post("/api/database/file-repo/deleteFile", deleteFileName)
+			.then(() => {
+				setDeleteModalStatus("deleted")
+			})
+	}
 
 	return (
 		<React.Fragment>
@@ -213,7 +220,7 @@ function FileRepoPage() {
 														<a
 															className="text-error"
 															onClick={() => {
-																setDeleteName(
+																setDeleteFileName(
 																	file.filename
 																)
 																deleteModalRef.current!.showModal()
@@ -446,14 +453,21 @@ function FileRepoPage() {
 				</form>
 			</dialog>
 			{/* Delete Modal */}
-			<dialog ref={deleteModalRef} className="modal">
+			<dialog
+				ref={deleteModalRef}
+				className="modal"
+				onTransitionEnd={(event: React.TransitionEvent) => {
+					setDeleteFileName("")
+					setDeleteModalStatus("confirming")
+				}}
+			>
 				{deleteModalStatus === "confirming" ? (
 					<div className="modal-box max-w-md p-8">
 						<article className="text-lg">
 							Are you sure you want to delete
 						</article>
 						<article className="text-lg mb-8">
-							{deleteName}?
+							{deleteFileName}?
 						</article>
 						<div className="flex items-center mt-4">
 							<button
