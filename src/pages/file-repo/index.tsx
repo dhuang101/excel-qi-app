@@ -16,6 +16,7 @@ type FilesType = {
 }
 
 type ModalStatus = "selecting" | "uploading" | "submitted"
+type DeleteModalStatus = "confirming" | "deleting" | "deleted"
 
 function FileRepoPage() {
 	// hooks
@@ -37,6 +38,8 @@ function FileRepoPage() {
 	const [editName, setEditName] = useState("")
 	const [editSites, setEditSites] = useState<string[]>([])
 	// delete modal state
+	const [deleteModalStatus, setDeleteModalStatus] =
+		useState<DeleteModalStatus>("confirming")
 	const deleteModalRef = useRef<HTMLDialogElement>(null)
 	const [deleteName, setDeleteName] = useState("")
 
@@ -444,17 +447,42 @@ function FileRepoPage() {
 			</dialog>
 			{/* Delete Modal */}
 			<dialog ref={deleteModalRef} className="modal">
-				<div className="modal-box max-w-md p-8">
-					<article className="text-lg">
-						Are you sure you want to delete
-					</article>
-					<article className="text-lg mb-8">{deleteName}?</article>
-					<div className="flex items-center mt-4">
-						<button className="btn btn-error" onClick={deleteFile}>
-							Delete
-						</button>
+				{deleteModalStatus === "confirming" ? (
+					<div className="modal-box max-w-md p-8">
+						<article className="text-lg">
+							Are you sure you want to delete
+						</article>
+						<article className="text-lg mb-8">
+							{deleteName}?
+						</article>
+						<div className="flex items-center mt-4">
+							<button
+								className="btn btn-error"
+								onClick={deleteFile}
+							>
+								Delete
+							</button>
+						</div>
 					</div>
-				</div>
+				) : deleteModalStatus === "deleting" ? (
+					<div className="flex flex-col justify-center items-center p-16">
+						<CircularProgress size={80} />
+						<article className="text-lg font-semibold pt-4">
+							Deleting File...
+						</article>
+						<article className="pt-2">
+							This may take a moment
+						</article>
+					</div>
+				) : deleteModalStatus === "deleted" ? (
+					<div className="flex flex-col justify-center items-center p-16">
+						<article className="text-3xl font-semibold">
+							File Deleted Successfully
+						</article>
+					</div>
+				) : (
+					<div>Error: You Should Not Be Seeing This</div>
+				)}
 				<form method="dialog" className="modal-backdrop">
 					<button>close</button>
 				</form>
