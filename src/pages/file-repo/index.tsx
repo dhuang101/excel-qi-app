@@ -252,7 +252,7 @@ function FileRepoPage() {
 															Edit File
 														</a>
 													</li>
-													<li>
+													{/* <li>
 														<a
 															className="text-error"
 															onClick={() => {
@@ -264,7 +264,7 @@ function FileRepoPage() {
 														>
 															Delete File
 														</a>
-													</li>
+													</li> */}
 												</ul>
 											</div>
 										)}
@@ -529,6 +529,12 @@ function FileRepoPage() {
 				onTransitionEnd={(event: React.TransitionEvent) => {
 					if (
 						!deleteModalRef.current?.open &&
+						event.propertyName === "visibility" &&
+						deleteModalStatus === "deleted"
+					) {
+						window.location.reload()
+					} else if (
+						!deleteModalRef.current?.open &&
 						event.propertyName === "visibility"
 					) {
 						setSelectedFileToDelete(undefined)
@@ -536,42 +542,44 @@ function FileRepoPage() {
 					}
 				}}
 			>
-				{deleteModalStatus === "confirming" ? (
-					<div className="modal-box max-w-md p-8">
-						<article className="text-lg">
-							Are you sure you want to delete
-						</article>
-						<article className="text-lg mb-8">
-							{selectedFileToDelete?.filename}?
-						</article>
-						<div className="flex items-center mt-4">
-							<button
-								className="btn btn-error"
-								onClick={deleteFile}
-							>
-								Delete
-							</button>
+				<div className="modal-box max-w-md p-8">
+					{deleteModalStatus === "confirming" ? (
+						<React.Fragment>
+							<article className="text-lg">
+								Are you sure you want to delete
+							</article>
+							<article className="text-lg mb-8">
+								{selectedFileToDelete?.filename}?
+							</article>
+							<div className="flex items-center mt-4">
+								<button
+									className="btn btn-error"
+									onClick={deleteFile}
+								>
+									Delete
+								</button>
+							</div>
+						</React.Fragment>
+					) : deleteModalStatus === "deleting" ? (
+						<div className="flex flex-col justify-center items-center p-16">
+							<CircularProgress size={80} />
+							<article className="text-lg font-semibold pt-4">
+								Deleting File...
+							</article>
+							<article className="pt-2">
+								This may take a moment
+							</article>
 						</div>
-					</div>
-				) : deleteModalStatus === "deleting" ? (
-					<div className="flex flex-col justify-center items-center p-16">
-						<CircularProgress size={80} />
-						<article className="text-lg font-semibold pt-4">
-							Deleting File...
-						</article>
-						<article className="pt-2">
-							This may take a moment
-						</article>
-					</div>
-				) : deleteModalStatus === "deleted" ? (
-					<div className="flex flex-col justify-center items-center p-16">
-						<article className="text-3xl font-semibold">
-							File Deleted Successfully
-						</article>
-					</div>
-				) : (
-					<div>Error: You Should Not Be Seeing This</div>
-				)}
+					) : deleteModalStatus === "deleted" ? (
+						<div className="flex flex-col justify-center items-center py-16">
+							<article className="text-3xl font-semibold">
+								File Deleted Successfully
+							</article>
+						</div>
+					) : (
+						<div>Error: You Should Not Be Seeing This</div>
+					)}
+				</div>
 				<form method="dialog" className="modal-backdrop">
 					<button>close</button>
 				</form>
