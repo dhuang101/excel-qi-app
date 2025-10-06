@@ -16,6 +16,7 @@ type FilesType = {
 }
 
 type ModalStatus = "selecting" | "uploading" | "submitted"
+type EditModalStatus = "selecting" | "editing" | "edited"
 type DeleteModalStatus = "confirming" | "deleting" | "deleted"
 
 function FileRepoPage() {
@@ -34,9 +35,13 @@ function FileRepoPage() {
 	const [sites, setSites] = useState<string[]>([])
 	const modalRef = useRef<HTMLDialogElement>(null)
 	// edit modal state
+	const [editModalStatus, setEditModalStatus] =
+		useState<EditModalStatus>("selecting")
 	const editModalRef = useRef<HTMLDialogElement>(null)
-	const [editName, setEditName] = useState("")
-	const [editSites, setEditSites] = useState<string[]>([])
+	const [editError, setEditError] = useState<string | null>(null)
+	const [selectedFileToEdit, setSelectedFileToEdit] = useState<FilesType>()
+	const [editedName, setEditedName] = useState("")
+	const [editedSites, setEditedSites] = useState<string[]>([])
 	// delete modal state
 	const [deleteModalStatus, setDeleteModalStatus] =
 		useState<DeleteModalStatus>("confirming")
@@ -132,7 +137,30 @@ function FileRepoPage() {
 			})
 	}
 
-	function updateFile() {}
+	function updateFile() {
+		if (
+			editedName === selectedFileToEdit?.filename &&
+			editedSites === selectedFileToEdit.redcap_data_access_group
+		) {
+			setEditError("Error: No Changes Detected")
+			return
+		}
+
+		setEditModalStatus("editing")
+		axios
+			.post("/api/database/file-repo/updateFile", {
+				filename: selectedFileToEdit?.filename,
+				newName: editedName,
+				newSites: editedSites,
+			})
+			.then(() => {
+				setEditModalStatus("edited")
+			})
+			.catch((error) => {
+				console.error("Error updating file metadata:", error)
+				router.push("/error")
+			})
+	}
 
 	function deleteFile() {
 		setDeleteModalStatus("deleting")
@@ -208,10 +236,13 @@ function FileRepoPage() {
 													<li>
 														<a
 															onClick={() => {
-																setEditName(
+																setSelectedFileToEdit(
+																	file
+																)
+																setEditedName(
 																	file.filename
 																)
-																setEditSites(
+																setEditedSites(
 																	file.redcap_data_access_group ||
 																		[]
 																)
@@ -225,9 +256,6 @@ function FileRepoPage() {
 														<a
 															className="text-error"
 															onClick={() => {
-																console.log(
-																	file
-																)
 																setSelectedFileToDelete(
 																	file
 																)
@@ -389,72 +417,106 @@ function FileRepoPage() {
 					if (
 						!editModalRef.current?.open &&
 						event.propertyName === "visibility" &&
-						modalStatus === "submitted"
+						editModalStatus === "edited"
 					) {
 						window.location.reload()
 					} else if (
 						!editModalRef.current?.open &&
 						event.propertyName === "visibility"
 					) {
-						setEditName("")
-						setEditSites([])
+						setEditedName("")
+						setEditedSites([])
 					}
 				}}
 			>
 				<div className="modal-box max-w-xl p-8">
-					<article className="font-semibold text-xl mb-4">
-						Edit File Metadata
-					</article>
-					<div className="mb-4">
-						<div className="flex items-center mt-4 mb-2">
-							<article className="font-semibold">
-								Enter File Name
+					{editModalStatus === "selecting" ? (
+						<React.Fragment>
+							<article className="font-semibold text-xl mb-4">
+								Edit File Metadata
 							</article>
-							<div
-								className="tooltip tooltip-accent ml-2"
-								data-tip="This will be the name shown on the page"
-							>
-								<InfoOutlinedIcon className="" />
-							</div>
-						</div>
-						<input
-							type="text"
-							value={editName}
-							onChange={(e) => setEditName(e.target.value)}
-							className="input input-primary w-full"
-						/>
-					</div>
-					<article className="font-semibold mt-4 mb-2">
-						Select Site Access
-					</article>
-					{SITE_NAMES.map((site) => (
-						<div key={site} className="flex">
-							<input
-								type="checkbox"
-								className="checkbox checkbox-primary mr-2 mb-1"
-								value={site}
-								checked={editSites.includes(site)}
-								onChange={(e) => {
-									if (e.target.checked) {
-										setEditSites((prev) => [...prev, site])
-									} else {
-										setEditSites((prev) =>
-											prev.filter((s) => s !== site)
-										)
+							<div className="mb-4">
+								<div className="flex items-center mt-4 mb-2">
+									<article className="font-semibold">
+										Enter File Name
+									</article>
+									<div
+										className="tooltip tooltip-accent ml-2"
+										data-tip="This will be the name shown on the page"
+									>
+										<InfoOutlinedIcon className="" />
+									</div>
+								</div>
+								<input
+									type="text"
+									value={editedName}
+									onChange={(e) =>
+										setEditedName(e.target.value)
 									}
-								}}
-							/>
-							<article>{FormatSiteName(site)}</article>
+									className="input input-primary w-full"
+								/>
+							</div>
+							<article className="font-semibold mt-4 mb-2">
+								Select Site Access
+							</article>
+							{SITE_NAMES.map((site) => (
+								<div key={site} className="flex">
+									<input
+										type="checkbox"
+										className="checkbox checkbox-primary mr-2 mb-1"
+										value={site}
+										checked={editedSites.includes(site)}
+										onChange={(e) => {
+											if (e.target.checked) {
+												setEditedSites((prev) => [
+													...prev,
+													site,
+												])
+											} else {
+												setEditedSites((prev) =>
+													prev.filter(
+														(s) => s !== site
+													)
+												)
+											}
+										}}
+									/>
+									<article>{FormatSiteName(site)}</article>
+								</div>
+							))}
+							<div className="flex items-center mt-4">
+								<button
+									className="btn btn-primary"
+									onClick={updateFile}
+								>
+									Save Changes
+								</button>
+								{editError && (
+									<article className="ml-8 text-error font-semibold">
+										Error: No Changes Were Made
+									</article>
+								)}
+							</div>
+						</React.Fragment>
+					) : editModalStatus === "editing" ? (
+						<div className="flex flex-col justify-center items-center p-16">
+							<CircularProgress size={80} />
+							<article className="text-lg font-semibold pt-4">
+								Editing File...
+							</article>
+							<article className="pt-2">
+								This may take a moment
+							</article>
 						</div>
-					))}
-					<div className="flex items-center mt-4">
-						<button
-							className="btn btn-primary"
-							// onClick={updateFileMetadata}
-						>
-							Save Changes
-						</button>
-					</div>
+					) : editModalStatus === "edited" ? (
+						<div className="flex flex-col justify-center items-center p-16">
+							<article className="text-3xl font-semibold">
+								File Edited Successfully
+							</article>
+						</div>
+					) : (
+						<div>Error: You Should Not Be Seeing This</div>
+					)}
 				</div>
 				<form method="dialog" className="modal-backdrop">
 					<button>close</button>
