@@ -87,8 +87,8 @@ To build the app simply run ```npm run build```. This will create a built versio
 │   ├── store/          # Global store reducer declatations
 │   ├── styles/         # TailwindCSS/DaisyUI dependencies
 │   ├── types/          # Reusable TS Types
-│   └── utilities/      # Reusable functions
-│   ├── middleware.ts   # NextJS middleware function
+│   ├── utilities/      # Reusable functions
+│   └── middleware.ts   # NextJS middleware function
 ├── .env.local          # Local environment variables
 ├── next.config.js      # Next.js configuration
 ├── tsconfig.json       # TypeScript configuration
