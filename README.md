@@ -72,7 +72,7 @@ Your app is now running at http://localhost:3000
 
 ## Build
 
-To build the app simply run ```npm run build```. This will create a built version of the application which can then be launched using ```npm start```. The app will then be running on [localhost:3000](http:localhost:3000).
+To build the app simply run ```npm run build```. This will create a built version of the application which can then be launched using ```npm start```. The app will then be running on [localhost:3000](http:localhost:3000) or the UNIX equivalent address.
 
 ## File Structure
 ```
