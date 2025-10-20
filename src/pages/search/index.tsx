@@ -144,7 +144,7 @@ function SearchPage() {
 			// run search
 			setLoading(true)
 			axios
-				.post("/api/database/postPatients", {
+				.post("/api/database/getPatients", {
 					role: session?.user.role,
 					sites: session?.user.sites,
 					userEnteredQuery,

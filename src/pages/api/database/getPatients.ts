@@ -1,7 +1,7 @@
 import { SearchQuery, UserEnteredQuery } from "@/types/searchTypes"
 import { FindOptions, MongoClient } from "mongodb"
 
-async function PostPatients(params: SearchQuery) {
+async function GetPatients(params: SearchQuery) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection("excel-data")
 
@@ -102,10 +102,10 @@ export default async function handler(req: any, res: any) {
 	const params = req.body as SearchQuery
 
 	try {
-		const results = await PostPatients(params)
+		const results = await GetPatients(params)
 		res.status(200).json(results)
 	} catch (err) {
-		console.error("Error at database/permissions/postPatients :", err)
+		console.error("Error at database/permissions/getPatients :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }
