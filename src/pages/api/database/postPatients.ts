@@ -3,7 +3,7 @@ import { FindOptions, MongoClient } from "mongodb"
 
 async function PostPatients(params: SearchQuery) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
-	const collection = client.db("main").collection("collection")
+	const collection = client.db("main").collection("excel-data")
 
 	// Build text-based filters
 	let query: any = {

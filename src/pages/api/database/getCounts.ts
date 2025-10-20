@@ -13,7 +13,7 @@ type ParamsType = {
 // this api fetches each the count of unique value of each attribute in the attributes list
 async function GetCounts(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
-	const collection = client.db("main").collection("collection")
+	const collection = client.db("main").collection("excel-data")
 	const attributes = [
 		"outcm_hosp_discharge_loc",
 		"diagnosis_cardiac",
