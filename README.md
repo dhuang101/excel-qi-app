@@ -4,7 +4,7 @@ A web application that serves as the frontend for the EXCEL QI project. Which ai
 visualize data from the repository
 
 ## Main Documentation
-[Google Docs](https://docs.google.com/document/d/1f8zLlsFvWbIlqeKyX8SoypB2A__mPakyHVGCj2CsHKU/edit?usp=sharing)
+[Google Docs](https://docs.google.com/document/d/1DVFFSDRPC33LMscfds1c9auRf74Pf46EVr_3PAcg2nw/edit?usp=sharing)
 
 ## Dependencies 
 
