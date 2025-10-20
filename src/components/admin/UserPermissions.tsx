@@ -9,7 +9,7 @@ import React, { useEffect, useRef, useState } from "react"
 interface User {
 	email: string
 	role: string
-	sites: string[]
+	redcap_data_access_group: string[]
 }
 
 type ModalStatus = "selecting" | "confirming" | "updating" | "submitted"
@@ -177,28 +177,32 @@ export default function UserPermissions() {
 								<article className="font-semibold text-lg">
 									Update Current Access
 								</article>
-								{selectedUser?.sites.map((site) => (
-									<div key={site} className="flex">
-										<input
-											type="checkbox"
-											defaultChecked
-											className="checkbox checkbox-primary mr-2 mb-1"
-											value={site}
-											onChange={() =>
-												handleRemoveCheckbox(site)
-											}
-										/>
-										<article>
-											{FormatSiteName(site)}
-										</article>
-									</div>
-								))}
+								{selectedUser?.redcap_data_access_group.map(
+									(site) => (
+										<div key={site} className="flex">
+											<input
+												type="checkbox"
+												defaultChecked
+												className="checkbox checkbox-primary mr-2 mb-1"
+												value={site}
+												onChange={() =>
+													handleRemoveCheckbox(site)
+												}
+											/>
+											<article>
+												{FormatSiteName(site)}
+											</article>
+										</div>
+									)
+								)}
 								<article className="font-semibold text-lg mt-4">
 									Choose Sites to Give Access to
 								</article>
 								{SITE_NAMES.filter(
 									(site) =>
-										!selectedUser?.sites.includes(site)
+										!selectedUser?.redcap_data_access_group.includes(
+											site
+										)
 								).map((site) => (
 									<div key={site} className="flex">
 										<input
