@@ -3,6 +3,9 @@
 A web application that serves as the frontend for the EXCEL QI project. Which aims to boost the capabilities of the EXCEL repository by  allowing them to efficiently explore and
 visualize data from the repository
 
+## Main Documentation
+[Google Docs](https://docs.google.com/document/d/1f8zLlsFvWbIlqeKyX8SoypB2A__mPakyHVGCj2CsHKU/edit?usp=sharing)
+
 ## Dependencies 
 
 The app is currently built using [Node.js](https://nodejs.org/en) v22.11.0
@@ -11,7 +14,7 @@ It is recommended to use nvm
 - [UNIX](https://github.com/nvm-sh/nvm) 
 - [Windows](https://github.com/coreybutler/nvm-windows) 
   
-to manage your versions of node
+to manage your versions of node.
 
 ###  Tech Stack
 
@@ -22,6 +25,7 @@ to manage your versions of node
 | **Language**       | [TypeScript](https://www.typescriptlang.org/) |
 | **Styling**        | [Tailwind CSS](https://tailwindcss.com/) / [DaisyUI](https://daisyui.com/) |
 | **Auth**           | [NextAuth.js](https://next-auth.js.org/) |
+| **Database**           | [MongoDB](https://www.mongodb.com/) |
 
 ## Getting Started
 
@@ -83,7 +87,8 @@ To build the app simply run ```npm run build```. This will create a built versio
 │   ├── store/          # Global store reducer declatations
 │   ├── styles/         # TailwindCSS/DaisyUI dependencies
 │   ├── types/          # Reusable TS Types
-│   └── utilities/      # Reusable functions
+│   ├── utilities/      # Reusable functions
+│   └── middleware.ts   # NextJS middleware function
 ├── .env.local          # Local environment variables
 ├── next.config.js      # Next.js configuration
 ├── tsconfig.json       # TypeScript configuration
