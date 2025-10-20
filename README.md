@@ -21,7 +21,7 @@ to manage your versions of node
 | **UI Library**     | [React](https://react.dev/) |
 | **Language**       | [TypeScript](https://www.typescriptlang.org/) |
 | **Styling**        | [Tailwind CSS](https://tailwindcss.com/) / [DaisyUI](https://daisyui.com/) |
-| **Auth**           | [Auth0](https://auth0.com/) |
+| **Auth**           | [NextAuth.js](https://next-auth.js.org/) |
 
 ## Getting Started
 
