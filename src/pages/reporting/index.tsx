@@ -52,7 +52,7 @@ function ReportingPage() {
 				console.error("Error fetching permissions:", error)
 				router.push("/error")
 			})
-	}, [status])
+	}, [status, router, session?.user.role, session?.user.sites])
 
 	function switchView() {
 		setCurrentView((current) => {

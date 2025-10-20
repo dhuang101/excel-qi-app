@@ -65,7 +65,7 @@ function FileRepoPage() {
 				console.error("Error 500", error)
 				router.push("/error")
 			})
-	}, [status])
+	}, [status, router, session?.user.role, session?.user.sites])
 
 	function downloadFile(file: FilesType) {
 		setLoading(true)

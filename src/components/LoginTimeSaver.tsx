@@ -30,7 +30,7 @@ function LoginTimeSaver() {
 					router.push("/error")
 				})
 		}
-	}, [status])
+	}, [status, router, session])
 
 	return null
 }

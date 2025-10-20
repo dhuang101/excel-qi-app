@@ -45,7 +45,7 @@ export default function UserPermissions() {
 				console.error("Error 500", error)
 				router.push("/error")
 			})
-	}, [])
+	}, [router])
 
 	function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 		if (event.key === "Enter") {
