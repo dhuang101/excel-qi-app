@@ -104,15 +104,19 @@ function FileRepoPage() {
 
 	function uploadFile() {
 		if (!file) {
-			setError("Please select a file to upload.")
+			setError("Error: Please select a file to upload.")
 			return
 		}
 		if (!name.trim()) {
-			setError("Please enter a file name.")
+			setError("Error: Please enter a file name.")
 			return
 		}
 		if (sites.length === 0) {
-			setError("Please select at least one site.")
+			setError("Error: Please select at least one site.")
+			return
+		}
+		if (files.map((file) => file.filename).includes(editedName)) {
+			setError("Error: File With Name Already Exists")
 			return
 		}
 
@@ -138,6 +142,7 @@ function FileRepoPage() {
 	}
 
 	function updateFile() {
+		console.log(files.map((file) => file.filename))
 		if (
 			editedName === selectedFileToEdit?.filename &&
 			editedSites === selectedFileToEdit.redcap_data_access_group
@@ -146,7 +151,11 @@ function FileRepoPage() {
 			return
 		}
 
-		setEditModalStatus("editing")
+		if (files.map((file) => file.filename).includes(editedName)) {
+			setEditError("Error: File With Name Already Exists")
+			return
+		}
+
 		axios
 			.post("/api/database/file-repo/updateFile", {
 				filename: selectedFileToEdit?.filename,
