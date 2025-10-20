@@ -39,14 +39,14 @@ async function UpdatePerms({ email, addSites, removeSites }: ParamsType) {
 	await permissions.updateOne(
 		{ email: email },
 		{
-			$addToSet: { sites: { $each: addSites } },
+			$addToSet: { redcap_data_access_group: { $each: addSites } },
 		}
 	)
 
 	await permissions.updateOne(
 		{ email: email },
 		{
-			$pull: { sites: { $in: removeSites } },
+			$pull: { redcap_data_access_group: { $in: removeSites } },
 		}
 	)
 

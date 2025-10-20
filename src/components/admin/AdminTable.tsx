@@ -10,7 +10,7 @@ interface Props {
 interface user {
 	email: string
 	role: string
-	sites: string[]
+	redcap_data_access_group: string[]
 	loginDate?: string
 }
 
@@ -49,10 +49,10 @@ function AdminTable({ users, onClick }: Props) {
 					<td className="flex flex-col">
 						{["admin", "global-viewer"].includes(user.role) ? (
 							<div>All</div>
-						) : user.sites.length === 0 ? (
+						) : user.redcap_data_access_group.length === 0 ? (
 							<div>None</div>
 						) : (
-							user.sites.map((site) => (
+							user.redcap_data_access_group.map((site) => (
 								<div key={site}>{FormatSiteName(site)}</div>
 							))
 						)}

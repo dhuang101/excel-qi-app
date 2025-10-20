@@ -27,7 +27,7 @@ export const authOptions = {
 				const permissions = await rolesCollection.findOne({ email })
 				if (permissions) {
 					token.role = permissions.role
-					token.sites = permissions.sites
+					token.sites = permissions.redcap_data_access_group
 				}
 			}
 			return token
