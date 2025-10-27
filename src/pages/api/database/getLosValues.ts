@@ -56,7 +56,7 @@ function quantile(sortedArr: number[], q: number): number {
 // this api fetches the length of stay values for each site
 async function GetLosValues(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
-	const collection = client.db("main").collection<DocumentType>("collection")
+	const collection = client.db("main").collection<DocumentType>("excel-data")
 	const attributes = [
 		"outcm_ecmo_days_2",
 		"outcm_icu_days",

@@ -43,7 +43,7 @@ async function PostCsv(params: excelImportRow[]) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client
 		.db("main")
-		.collection<excelImportRow>("collection")
+		.collection<excelImportRow>("excel-data")
 	const processedRows: excelImportRow[] = params.map(preProcessRow)
 	await collection.insertMany(processedRows)
 }
