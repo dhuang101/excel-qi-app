@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb"
 import { excelImportRow } from "@/types/excelImportTypes"
+import { NextApiRequest, NextApiResponse } from "next"
 
 // this api takes the translated and merged rows from the CSV import
 // and inserts them into the database
@@ -45,16 +46,27 @@ async function PostCsv(params: excelImportRow[]) {
 		.db("main")
 		.collection<excelImportRow>("excel-data")
 	const processedRows: excelImportRow[] = params.map(preProcessRow)
-	await collection.insertMany(processedRows)
+	const operations = processedRows.map((row) => ({
+		updateOne: {
+			filter: { record_id: row.record_id },
+			update: { $set: row },
+			upsert: true,
+		},
+	}))
+	await collection.bulkWrite(operations)
+	return "Import Successful!"
 }
 
 // handler for any calls to this endpoint
-export default async function handler(req: any, res: any) {
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	const params = req.body.records
 
 	try {
 		const results = await PostCsv(params)
-		res.status(200).json(results)
+		res.status(200).json({ message: "Import Successful!" })
 	} catch (err) {
 		console.error("Error at database/import/postCsv :", err)
 		res.status(500).json({ error: "Internal Server Error" })
