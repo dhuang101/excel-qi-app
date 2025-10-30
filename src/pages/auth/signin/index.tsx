@@ -12,11 +12,11 @@ function SignInPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	return (
 		<div className="flex h-full items-center justify-center">
-			<div className="flex flex-col bg-base-300 p-10 rounded-4xl">
+			<div className="flex flex-col bg-base-300 p-10 rounded-4xl items-center">
 				{Object.values(providers).map((provider) => (
-					<div key={provider.name}>
+					<div key={provider.name} className="p-4">
 						<button
-							className="btn btn-primary btn-xl px-12"
+							className="btn btn-primary btn-xl w-full px-12"
 							onClick={() => signIn(provider.id)}
 						>
 							Sign in with {provider.name}

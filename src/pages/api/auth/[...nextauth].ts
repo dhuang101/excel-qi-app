@@ -2,6 +2,7 @@ import { MongoClient } from "mongodb"
 import NextAuth, { User } from "next-auth"
 import { JWT } from "next-auth/jwt"
 import Auth0Provider from "next-auth/providers/auth0"
+import OktaProvider from "next-auth/providers/okta"
 
 const client = await MongoClient.connect(
 	process.env.DB_CONNECTION_URI as string
@@ -16,6 +17,10 @@ export const authOptions = {
 			clientId: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID as string,
 			clientSecret: process.env.AUTH0_CLIENT_SECRET as string,
 			issuer: process.env.NEXT_PUBLIC_AUTH0_ISSUER,
+		}),
+		OktaProvider({
+			clientId: process.env.OKTA_CLIENT_ID as string,
+			clientSecret: process.env.OKTA_CLIENT_SECRET as string,
 		}),
 	],
 	callbacks: {
