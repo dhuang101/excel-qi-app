@@ -19,8 +19,9 @@ export const authOptions = {
 			issuer: process.env.NEXT_PUBLIC_AUTH0_ISSUER,
 		}),
 		OktaProvider({
-			clientId: process.env.OKTA_CLIENT_ID as string,
+			clientId: process.env.NEXT_PUBLIC_OKTA_CLIENT_ID as string,
 			clientSecret: process.env.OKTA_CLIENT_SECRET as string,
+			issuer: process.env.NEXT_PUBLIC_OKTA_ISSUER,
 		}),
 	],
 	callbacks: {
