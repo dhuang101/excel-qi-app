@@ -51,6 +51,9 @@ Create a .env.local file in the root:
 ECMOPAL_API_URL = "the port which ECMO-PAL is deployed to"
 DB_CONNECTION_URI = "MongoDB's connection URL"
 
+GOOGLE_DRIVE_KEY = "The key related to the Google Cloud Service Account"
+GOOGLE_DRIVE_FOLDER_ID = "The ID of the Google Drive Folder for the file-repository"
+
 NEXTAUTH_URL = "URL for NextAuthJS"
 NEXTAUTH_SECRET = "Secret for NextAuthJS"
 
