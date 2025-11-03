@@ -108,7 +108,7 @@ function NavBar() {
 						</label>
 						<ul
 							tabIndex={0}
-							className="menu dropdown-content z-1 p-2 shadow-sm rounded-box w-60 mt-4 bg-primary text-primary-content"
+							className="menu dropdown-content z-1 p-2 shadow-sm rounded-box min-w-60 w-fit mt-4 bg-primary text-primary-content"
 						>
 							<article className="mx-2 my-2">
 								Signed In As
