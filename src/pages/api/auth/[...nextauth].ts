@@ -34,6 +34,9 @@ export const authOptions = {
 				if (permissions) {
 					token.role = permissions.role
 					token.sites = permissions.redcap_data_access_group
+				} else {
+					token.role = "public"
+					token.sites = []
 				}
 			}
 			return token

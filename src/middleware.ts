@@ -46,7 +46,10 @@ export async function middleware(req: NextRequest) {
 	}
 
 	// All other paths require authentication
-	if (!token || (token.role === "site-viewer" && token.sites.length === 0)) {
+	if (
+		!token ||
+		((token.role === "site-viewer" || "public") && token.sites.length === 0)
+	) {
 		return NextResponse.redirect(new URL("/forbidden", req.url))
 	}
 
