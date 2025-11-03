@@ -51,13 +51,12 @@ Create a .env.local file in the root:
 ECMOPAL_API_URL = "the port which ECMO-PAL is deployed to"
 DB_CONNECTION_URI = "MongoDB's connection URL"
 
-AUTH0_CLIENT_SECRET = "the secret for Auth0"
-
 NEXTAUTH_URL = "URL for NextAuthJS"
 NEXTAUTH_SECRET = "Secret for NextAuthJS"
 
-NEXT_PUBLIC_AUTH0_CLIENT_ID = "Auth0's client ID made public to the frontend"
-NEXT_PUBLIC_AUTH0_ISSUER = "Auth0's issuer URL made public to the frontend"
+NEXT_PUBLIC_OKTA_CLIENT_ID = "Okta's client ID made public to the frontend"
+NEXT_PUBLIC_OKTA_ISSUER = "Okta's issuer URL made public to the frontend"
+OKTA_CLIENT_SECRET = "the secret key for Okta"
 ```
 
 ### Start dev server
