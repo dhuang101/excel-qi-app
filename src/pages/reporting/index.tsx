@@ -49,7 +49,7 @@ function ReportingPage() {
 				dispatch({ type: ACTION.SET_SUMMARY, payload: payload })
 			})
 			.catch((error) => {
-				console.error("Error fetching permissions:", error)
+				console.error("Error fetching data:", error)
 				router.push("/error")
 			})
 	}, [status, router, session?.user.role, session?.user.sites])
@@ -64,20 +64,25 @@ function ReportingPage() {
 		<div className="flex flex-col grow w-full items-center justify-center">
 			{state.countData[0]?.totalDocuments > 0 ? (
 				<div className="flex flex-col w-2/3 h-full items-center">
-					{status === "authenticated" && (
-						<div className="flex justify-between items-center w-full mt-4">
-							<button
-								className="btn btn-primary"
-								onClick={switchView}
-							>
-								Change to{" "}
-								{currentView === "Single"
-									? "Comparison"
-									: "Single"}{" "}
-								View
-							</button>
-						</div>
-					)}
+					{session?.user &&
+						session.user.role !== "public" &&
+						!(
+							session.user.role === "site-viewer" &&
+							session.user.sites.length === 0
+						) && (
+							<div className="flex justify-between items-center w-full mt-4">
+								<button
+									className="btn btn-primary"
+									onClick={switchView}
+								>
+									Change to{" "}
+									{currentView === "Single"
+										? "Comparison"
+										: "Single"}{" "}
+									View
+								</button>
+							</div>
+						)}
 					{currentView === "Single" ? (
 						<SingleView state={state} />
 					) : (

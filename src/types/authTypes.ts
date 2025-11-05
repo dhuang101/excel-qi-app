@@ -8,8 +8,8 @@ declare module "next-auth" {
 			name?: string | null
 			email?: string | null
 			picture?: string | null
-			role?: "admin" | "global-viewer" | "site-viewer"
-			sites?: string[]
+			role?: "admin" | "global-viewer" | "site-viewer" | "public"
+			sites: string[]
 		}
 	}
 }
