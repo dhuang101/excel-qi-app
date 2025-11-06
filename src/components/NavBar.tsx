@@ -113,7 +113,7 @@ function NavBar() {
 							<article className="mx-2 my-2">
 								Signed In As
 								<br />
-								<b>{session.user && session.user.email}</b>
+								<b>{session.user && session.user.name}</b>
 							</article>
 							<li>
 								<a
