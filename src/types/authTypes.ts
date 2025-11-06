@@ -12,6 +12,9 @@ declare module "next-auth" {
 			sites: string[]
 		}
 	}
+	interface User {
+		preferred_username?: string | null
+	}
 }
 
 declare module "next-auth/jwt" {

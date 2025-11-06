@@ -22,12 +22,21 @@ export const authOptions = {
 			clientId: process.env.NEXT_PUBLIC_OKTA_CLIENT_ID as string,
 			clientSecret: process.env.OKTA_CLIENT_SECRET as string,
 			issuer: process.env.NEXT_PUBLIC_OKTA_ISSUER,
+			profile(profile) {
+				return {
+					id: profile.sub,
+					name: profile.name,
+					email: profile.email,
+					preferred_username:
+						profile.preferred_username ?? profile.email ?? null,
+				}
+			},
 		}),
 	],
 	callbacks: {
 		async jwt({ token, user }: { token: JWT; user?: User }) {
 			// ensure we are fetching the email as user.email only exist on initial signin
-			const email = user?.email ?? token?.email
+			const email = user?.preferred_username ?? token?.email
 			// attach permissions from database
 			if (email) {
 				const permissions = await rolesCollection.findOne({ email })
@@ -39,6 +48,7 @@ export const authOptions = {
 					token.sites = []
 				}
 			}
+			token.email = email
 			return token
 		},
 		session({ session, token }: any) {
