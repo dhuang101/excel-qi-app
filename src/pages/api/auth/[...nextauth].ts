@@ -13,11 +13,6 @@ const rolesCollection = db.collection("permissions")
 export const authOptions = {
 	// Configure one or more authentication providers
 	providers: [
-		Auth0Provider({
-			clientId: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID as string,
-			clientSecret: process.env.AUTH0_CLIENT_SECRET as string,
-			issuer: process.env.NEXT_PUBLIC_AUTH0_ISSUER,
-		}),
 		OktaProvider({
 			clientId: process.env.NEXT_PUBLIC_OKTA_CLIENT_ID as string,
 			clientSecret: process.env.OKTA_CLIENT_SECRET as string,
