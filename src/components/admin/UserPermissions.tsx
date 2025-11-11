@@ -4,7 +4,7 @@ import { FormatName } from "@/utilities/FormatName"
 import { CircularProgress } from "@mui/material"
 import axios from "axios"
 import { useRouter } from "next/router"
-import React, { useEffect, useRef, useState } from "react"
+import React, { use, useEffect, useRef, useState } from "react"
 
 interface User {
 	email: string
@@ -28,6 +28,7 @@ export default function UserPermissions() {
 	const [selectedUser, setSelectedUser] = useState<User | null>(null)
 	const additionalSites = useRef<string[]>([])
 	const removeSites = useRef<string[]>([])
+	const changedRole = useRef<string>("")
 	// modal state
 	const [modalStatus, setModalStatus] = useState<ModalStatus>("selecting")
 	const [modalKey, setModalKey] = useState(0)
@@ -71,6 +72,7 @@ export default function UserPermissions() {
 				email: selectedUser!.email,
 				addSites: additionalSites.current,
 				removeSites: removeSites.current,
+				changedRole: changedRole.current,
 			})
 			.then(() => {
 				axios
@@ -154,6 +156,7 @@ export default function UserPermissions() {
 					) {
 						additionalSites.current = []
 						removeSites.current = []
+						changedRole.current = ""
 						setError(false)
 						setModalStatus("selecting")
 						setModalKey((prev) => prev + 1)
@@ -178,14 +181,27 @@ export default function UserPermissions() {
 								<article className="font-semibold text-lg">
 									Change Current Role
 								</article>
-								<select
-									defaultValue={selectedUser?.role}
-									className="select"
-								>
-									<option>Public</option>
-									<option>Site-Viewer</option>
-									<option>Global-Viewer</option>
-								</select>
+								{selectedUser && (
+									<select
+										key={selectedUser?.name}
+										defaultValue={
+											selectedUser?.role as string
+										}
+										onChange={(event) => {
+											changedRole.current =
+												event.target.value
+										}}
+										className="select"
+									>
+										<option value={"public"}>Public</option>
+										<option value={"site-viewer"}>
+											Site-Viewer
+										</option>
+										<option value={"global-viewer"}>
+											Global-Viewer
+										</option>
+									</select>
+								)}
 								<article className="font-semibold text-lg mt-4">
 									Update Current Access
 								</article>
@@ -235,7 +251,9 @@ export default function UserPermissions() {
 											if (
 												additionalSites.current.length >
 													0 ||
-												removeSites.current.length > 0
+												removeSites.current.length >
+													0 ||
+												changedRole.current !== ""
 											) {
 												setModalStatus("confirming")
 											} else {
@@ -261,6 +279,16 @@ export default function UserPermissions() {
 							<article className="font-semibold text-2xl">
 								{selectedUser?.email}
 							</article>
+							{changedRole.current !== "" && (
+								<React.Fragment>
+									<article className="font-semibold text-lg mt-4">
+										Changing Role to:
+									</article>
+									<article>
+										{FormatName(changedRole.current)}
+									</article>
+								</React.Fragment>
+							)}
 							{additionalSites.current.length > 0 && (
 								<React.Fragment>
 									<article className="font-semibold text-lg mt-4">

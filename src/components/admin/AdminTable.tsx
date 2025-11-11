@@ -51,7 +51,8 @@ function AdminTable({ users, onClick }: Props) {
 					<td className="flex flex-col">
 						{["admin", "global-viewer"].includes(user.role) ? (
 							<div>All</div>
-						) : user.redcap_data_access_group.length === 0 ? (
+						) : user.redcap_data_access_group.length === 0 ||
+						  user.role === "public" ? (
 							<div>None</div>
 						) : (
 							user.redcap_data_access_group.map((site) => (
