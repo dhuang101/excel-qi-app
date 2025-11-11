@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb"
+import { NextApiRequest, NextApiResponse } from "next"
 
 type ParamsType = {
 	role: string
@@ -36,7 +37,10 @@ async function GetFilesMetadata(params: ParamsType) {
 }
 
 // handler for any calls to this endpoint
-export default async function handler(req: any, res: any) {
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	const params = req.body as ParamsType
 
 	try {

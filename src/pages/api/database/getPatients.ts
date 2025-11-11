@@ -1,5 +1,6 @@
 import { SearchQuery, UserEnteredQuery } from "@/types/searchTypes"
 import { FindOptions, MongoClient } from "mongodb"
+import { NextApiRequest, NextApiResponse } from "next"
 
 async function GetPatients(params: SearchQuery) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
@@ -98,7 +99,10 @@ async function GetPatients(params: SearchQuery) {
 }
 
 // API Route Handler
-export default async function handler(req: any, res: any) {
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	const params = req.body as SearchQuery
 
 	try {

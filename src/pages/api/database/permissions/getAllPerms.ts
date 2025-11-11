@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb"
+import { NextApiRequest, NextApiResponse } from "next"
 
 // this api will update any users attributes in the permissions collection effectively
 // adjusting their access to the application
@@ -15,7 +16,10 @@ async function GetAllPerms() {
 }
 
 // handler for any calls to this endpoint
-export default async function handler(req: any, res: any) {
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
 	try {
 		const results = await GetAllPerms()
 		res.status(200).json(results)

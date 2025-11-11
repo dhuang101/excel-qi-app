@@ -61,7 +61,7 @@ export default async function handler(
 
 		return res.status(200).json({ message: "File deleted successfully" })
 	} catch (err: any) {
-		console.error("Error at database/file-repo/downloadFile :", err)
+		console.error("Error at database/file-repo/deleteFile :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }
