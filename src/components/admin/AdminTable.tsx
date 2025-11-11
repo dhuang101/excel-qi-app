@@ -1,4 +1,4 @@
-import { FormatSiteName } from "@/utilities/FormatSiteName"
+import { FormatName } from "@/utilities/FormatName"
 import Table from "../baseComponents/Table"
 
 interface Props {
@@ -47,7 +47,7 @@ function AdminTable({ users, onClick }: Props) {
 				>
 					<td>{user.name}</td>
 					<td>{user.email}</td>
-					<td>{FormatSiteName(user.role)}</td>
+					<td>{FormatName(user.role)}</td>
 					<td className="flex flex-col">
 						{["admin", "global-viewer"].includes(user.role) ? (
 							<div>All</div>
@@ -55,7 +55,7 @@ function AdminTable({ users, onClick }: Props) {
 							<div>None</div>
 						) : (
 							user.redcap_data_access_group.map((site) => (
-								<div key={site}>{FormatSiteName(site)}</div>
+								<div key={site}>{FormatName(site)}</div>
 							))
 						)}
 					</td>

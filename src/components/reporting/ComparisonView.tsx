@@ -1,7 +1,7 @@
 import { ReportReducer } from "@/reducers/reportReducer"
 import { GraphType } from "@/types/reportingTypes"
 import React, { useEffect, useRef, useState } from "react"
-import { FormatSiteName } from "@/utilities/FormatSiteName"
+import { FormatName } from "@/utilities/FormatName"
 import GraphRenderer from "./GraphRenderer"
 
 type PropType = { state: ReportReducer }
@@ -83,7 +83,7 @@ function ComparisonView({ state }: PropType) {
 						>
 							{state.countData.map((site) => (
 								<option key={site.site} value={site.site}>
-									{FormatSiteName(site.site)}
+									{FormatName(site.site)}
 								</option>
 							))}
 						</select>
@@ -110,7 +110,7 @@ function ComparisonView({ state }: PropType) {
 						>
 							{state.countData.map((site) => (
 								<option key={site.site} value={site.site}>
-									{FormatSiteName(site.site)}
+									{FormatName(site.site)}
 								</option>
 							))}
 						</select>

@@ -1,5 +1,5 @@
-// takes the site name as it is in the database and formats it for readability
-export function FormatSiteName(input: string): string {
+// takes a name as it is in the database and formats it for readability
+export function FormatName(input: string): string {
 	return input
 		.replace(/[-_]/g, " ")
 		.split(" ")

@@ -1,6 +1,6 @@
 import AdminTable from "@/components/admin/AdminTable"
 import { SITE_NAMES } from "@/constants/sitesNames"
-import { FormatSiteName } from "@/utilities/FormatSiteName"
+import { FormatName } from "@/utilities/FormatName"
 import { CircularProgress } from "@mui/material"
 import axios from "axios"
 import { useRouter } from "next/router"
@@ -8,6 +8,7 @@ import React, { useEffect, useRef, useState } from "react"
 
 interface User {
 	email: string
+	name: string
 	role: string
 	redcap_data_access_group: string[]
 }
@@ -161,7 +162,7 @@ export default function UserPermissions() {
 				className="modal"
 			>
 				<div className="modal-box max-w-3xl" key={modalKey}>
-					{selectedUser?.role !== "site-viewer" ? (
+					{selectedUser?.role === "admin" ? (
 						<div className="flex flex-col items-center justify-center h-18">
 							<article className="font-bold text-xl">
 								Cannot edit permissions for user&apos;s with
@@ -175,6 +176,17 @@ export default function UserPermissions() {
 							</article>
 							<div className="flex flex-col mt-4">
 								<article className="font-semibold text-lg">
+									Change Current Role
+								</article>
+								<select
+									defaultValue={selectedUser?.role}
+									className="select"
+								>
+									<option>Public</option>
+									<option>Site-Viewer</option>
+									<option>Global-Viewer</option>
+								</select>
+								<article className="font-semibold text-lg mt-4">
 									Update Current Access
 								</article>
 								{selectedUser?.redcap_data_access_group.map(
@@ -190,7 +202,7 @@ export default function UserPermissions() {
 												}
 											/>
 											<article>
-												{FormatSiteName(site)}
+												{FormatName(site)}
 											</article>
 										</div>
 									)
@@ -213,9 +225,7 @@ export default function UserPermissions() {
 												handleAddCheckbox(site)
 											}
 										/>
-										<article>
-											{FormatSiteName(site)}
-										</article>
+										<article>{FormatName(site)}</article>
 									</div>
 								))}
 								<div className="flex items-center mt-8">
@@ -258,7 +268,7 @@ export default function UserPermissions() {
 									</article>
 									{additionalSites.current.map((site) => (
 										<article key={site}>
-											{FormatSiteName(site)}
+											{FormatName(site)}
 										</article>
 									))}
 								</React.Fragment>
@@ -270,7 +280,7 @@ export default function UserPermissions() {
 									</article>
 									{removeSites.current.map((site) => (
 										<article key={site}>
-											{FormatSiteName(site)}
+											{FormatName(site)}
 										</article>
 									))}
 								</React.Fragment>

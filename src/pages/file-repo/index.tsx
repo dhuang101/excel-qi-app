@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import React, { useRef } from "react"
 import { useEffect, useState } from "react"
-import { FormatSiteName } from "@/utilities/FormatSiteName"
+import { FormatName } from "@/utilities/FormatName"
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
 
@@ -377,7 +377,7 @@ function FileRepoPage() {
 											}
 										}}
 									/>
-									<article>{FormatSiteName(site)}</article>
+									<article>{FormatName(site)}</article>
 								</div>
 							))}
 							<div className="flex items-center mt-4">
@@ -490,7 +490,7 @@ function FileRepoPage() {
 											}
 										}}
 									/>
-									<article>{FormatSiteName(site)}</article>
+									<article>{FormatName(site)}</article>
 								</div>
 							))}
 							<div className="flex items-center mt-4">

@@ -10,7 +10,7 @@ import { FormatDate } from "@/utilities/FormatDate"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
 import ClusteredBarplot from "@/components/search/ClusteredBarplot"
 import { useSession } from "next-auth/react"
-import { FormatSiteName } from "@/utilities/FormatSiteName"
+import { FormatName } from "@/utilities/FormatName"
 import { UserEnteredQuery } from "@/types/searchTypes"
 import { useRouter } from "next/router"
 
@@ -339,9 +339,7 @@ function SearchPage() {
 										? "All Sites"
 										: session?.user?.sites
 										? session.user.sites
-												.map((site) =>
-													FormatSiteName(site)
-												)
+												.map((site) => FormatName(site))
 												.join(", ")
 										: ""
 								}`}

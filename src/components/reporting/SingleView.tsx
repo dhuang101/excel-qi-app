@@ -1,7 +1,7 @@
 import { ReportReducer } from "@/reducers/reportReducer"
 import React, { useEffect, useRef, useState } from "react"
 import { GraphType } from "@/types/reportingTypes"
-import { FormatSiteName } from "@/utilities/FormatSiteName"
+import { FormatName } from "@/utilities/FormatName"
 import GraphRenderer from "./GraphRenderer"
 import { useSession } from "next-auth/react"
 
@@ -82,7 +82,7 @@ function SingleView({ state }: PropType) {
 						>
 							{state.countData.map((site) => (
 								<option key={site.site} value={site.site}>
-									{FormatSiteName(site.site)}
+									{FormatName(site.site)}
 								</option>
 							))}
 						</select>
