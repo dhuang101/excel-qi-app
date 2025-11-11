@@ -44,8 +44,13 @@ export const authOptions = {
 					token.role = permissions.role
 					token.sites = permissions.redcap_data_access_group
 				} else {
-					token.role = "public"
-					token.sites = []
+					// provision the user a new public account
+					await rolesCollection.insertOne({
+						email,
+						role: "public",
+						redcap_data_access_group: [],
+						name: user?.name || "",
+					})
 				}
 			}
 			token.email = email
