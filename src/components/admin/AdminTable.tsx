@@ -9,12 +9,13 @@ interface Props {
 
 interface user {
 	email: string
+	name: string
 	role: string
 	redcap_data_access_group: string[]
 	loginDate?: string
 }
 
-const headers = ["Email", "Role", "Sites", "Last Login Date"]
+const headers = ["Name", "Email", "Role", "Sites", "Last Login Date"]
 
 function AdminTable({ users, onClick }: Props) {
 	function formatLoginDate(date?: string): string {
@@ -44,6 +45,7 @@ function AdminTable({ users, onClick }: Props) {
 						}
 					}}
 				>
+					<td>{user.name}</td>
 					<td>{user.email}</td>
 					<td>{FormatSiteName(user.role)}</td>
 					<td className="flex flex-col">
