@@ -21,7 +21,7 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.next()
 	}
 
-	// Access to /admin
+	// Access to the admin panel
 	if (pathname.startsWith("/admin")) {
 		if (
 			!token ||
@@ -32,7 +32,7 @@ export async function middleware(req: NextRequest) {
 		return NextResponse.next()
 	}
 
-	// Access to /api/database/permissions — admin only
+	// Access to permissions updating and file repo adjustments — admin only
 	if (
 		pathname.startsWith("/api/database/permissions/updatePerms") ||
 		pathname.startsWith("/api/database/file-repo/uploadFile") ||
@@ -40,6 +40,14 @@ export async function middleware(req: NextRequest) {
 		pathname.startsWith("/api/database/file-repo/updateFile")
 	) {
 		if (!token || token.role !== "admin") {
+			return NextResponse.redirect(new URL("/forbidden", req.url))
+		}
+		return NextResponse.next()
+	}
+
+	// only save login date for signed in users
+	if (pathname === "/api/database/postLoginDate") {
+		if (!token) {
 			return NextResponse.redirect(new URL("/forbidden", req.url))
 		}
 		return NextResponse.next()
