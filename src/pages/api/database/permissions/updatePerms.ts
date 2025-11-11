@@ -8,6 +8,7 @@ interface ParamsType {
 	email: string
 	addSites: string[]
 	removeSites: string[]
+	changedRole: string
 }
 
 const VALID_SITES = [
@@ -23,7 +24,12 @@ const VALID_SITES = [
 	"townsville_hospital",
 ]
 
-async function UpdatePerms({ email, addSites, removeSites }: ParamsType) {
+async function UpdatePerms({
+	email,
+	addSites,
+	removeSites,
+	changedRole,
+}: ParamsType) {
 	// connect to db
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const permissions = client.db("main").collection<Permission>("permissions")
@@ -36,22 +42,25 @@ async function UpdatePerms({ email, addSites, removeSites }: ParamsType) {
 		throw new Error("Invalid sites in parameters")
 	}
 
-	await permissions.updateOne(
-		{ email: email },
-		{
-			$addToSet: { redcap_data_access_group: { $each: addSites } },
-		}
-	)
+	const updateDoc: any = {}
 
-	await permissions.updateOne(
-		{ email: email },
-		{
-			$pull: { redcap_data_access_group: { $in: removeSites } },
-		}
-	)
+	if (addSites.length > 0) {
+		updateDoc.$addToSet = { redcap_data_access_group: { $each: addSites } }
+	}
 
-	client.close()
-	return { message: "Sites updated successfully." }
+	if (removeSites.length > 0) {
+		updateDoc.$pull = { redcap_data_access_group: { $in: removeSites } }
+	}
+
+	if (changedRole && changedRole.trim() !== "") {
+		updateDoc.$set = { role: changedRole }
+	}
+
+	// apply update
+	await permissions.updateOne({ email }, updateDoc)
+
+	await client.close()
+	return { message: "Permissions updated successfully." }
 }
 
 // handler for any calls to this endpoint
@@ -62,6 +71,7 @@ export default async function handler(req: any, res: any) {
 		const results = await UpdatePerms(params)
 		res.status(200).json(results)
 	} catch (err) {
-		res.status(500).json(err)
+		console.error("Error at database/permissions/updatePerms :", err)
+		res.status(500).json({ error: "Internal Server Error" })
 	}
 }
