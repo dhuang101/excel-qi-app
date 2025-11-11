@@ -131,7 +131,7 @@ export default async function handler(req: any, res: any) {
 		const results = await GetLosValues(params)
 		res.status(200).json(results)
 	} catch (err) {
-		console.error("Error at database/permissions/getLosValues :", err)
+		console.error("Error at database/getLosValues :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

@@ -183,7 +183,7 @@ export default async function handler(req: any, res: any) {
 		const results = await GetCounts(params)
 		res.status(200).json(results)
 	} catch (err) {
-		console.error("Error at database/permissions/getCounts :", err)
+		console.error("Error at database/getCounts :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }
