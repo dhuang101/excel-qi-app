@@ -17,6 +17,8 @@ function LoginTimeSaver() {
 	const { data: session, status } = useSession()
 
 	useEffect(() => {
+		if (sessionStorage.getItem("loginTimeSaved")) return
+
 		if (session && status === "authenticated") {
 			// we use dayjs here to ensure the date is in the correct timezone
 			const currentDate = dayjs().tz("Australia/Sydney").format()
@@ -24,6 +26,9 @@ function LoginTimeSaver() {
 				.post("/api/database/postLoginDate", {
 					email: session.user.email,
 					loginDate: currentDate,
+				})
+				.then(() => {
+					sessionStorage.setItem("loginTimeSaved", "true")
 				})
 				.catch((error) => {
 					console.error("Error 500", error)
