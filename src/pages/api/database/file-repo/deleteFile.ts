@@ -38,12 +38,6 @@ export default async function handler(
 
 		const drive = google.drive({ version: "v3", auth })
 
-		const check = await drive.files.get({
-			fileId: driveFileId,
-			fields: "id, name, parents",
-			supportsAllDrives: true,
-		})
-
 		await drive.files.delete({
 			fileId: driveFileId,
 			supportsAllDrives: true,

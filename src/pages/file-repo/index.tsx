@@ -261,7 +261,7 @@ function FileRepoPage() {
 															Edit File
 														</a>
 													</li>
-													{/* <li>
+													<li>
 														<a
 															className="text-error"
 															onClick={() => {
@@ -273,7 +273,7 @@ function FileRepoPage() {
 														>
 															Delete File
 														</a>
-													</li> */}
+													</li>
 												</ul>
 											</div>
 										)}
