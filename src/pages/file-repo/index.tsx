@@ -414,9 +414,11 @@ function FileRepoPage() {
 						<div>Error: You Should Not Be Seeing This</div>
 					)}
 				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button>close</button>
-				</form>
+				{modalStatus !== "uploading" && (
+					<form method="dialog" className="modal-backdrop">
+						<button>close</button>
+					</form>
+				)}
 			</dialog>
 			{/* Edit Modal */}
 			<dialog
@@ -527,9 +529,11 @@ function FileRepoPage() {
 						<div>Error: You Should Not Be Seeing This</div>
 					)}
 				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button>close</button>
-				</form>
+				{editModalStatus !== "editing" && (
+					<form method="dialog" className="modal-backdrop">
+						<button>close</button>
+					</form>
+				)}
 			</dialog>
 			{/* Delete Modal */}
 			<dialog
@@ -589,9 +593,11 @@ function FileRepoPage() {
 						<div>Error: You Should Not Be Seeing This</div>
 					)}
 				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button>close</button>
-				</form>
+				{deleteModalStatus !== "deleting" && (
+					<form method="dialog" className="modal-backdrop">
+						<button>close</button>
+					</form>
+				)}
 			</dialog>
 		</React.Fragment>
 	)

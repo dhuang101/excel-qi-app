@@ -337,9 +337,11 @@ export default function UserPermissions() {
 						<div>Error: You Should Not Be Seeing This</div>
 					)}
 				</div>
-				<form method="dialog" className="modal-backdrop">
-					<button>close</button>
-				</form>
+				{modalStatus !== "updating" && (
+					<form method="dialog" className="modal-backdrop">
+						<button>close</button>
+					</form>
+				)}
 			</dialog>
 		</React.Fragment>
 	)
