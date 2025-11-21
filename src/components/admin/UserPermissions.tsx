@@ -3,8 +3,9 @@ import { SITE_NAMES } from "@/constants/sitesNames"
 import { FormatName } from "@/utilities/FormatName"
 import { CircularProgress } from "@mui/material"
 import axios from "axios"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import React, { use, useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 interface User {
 	email: string
@@ -18,6 +19,8 @@ type ModalStatus = "selecting" | "confirming" | "updating" | "submitted"
 export default function UserPermissions() {
 	// nextjs router
 	const router = useRouter()
+	// auth session
+	const { data: session, status } = useSession()
 	// state
 	const users = useRef<User[]>([])
 	const [loading, setLoading] = useState(true)
@@ -132,12 +135,20 @@ export default function UserPermissions() {
 
 			<AdminTable
 				users={slicedUsers}
-				onClick={(event) => {
-					modalRef.current!.showModal()
-					setSelectedUser(
-						slicedUsers[Number(event.currentTarget.dataset.index)]
-					)
-				}}
+				onClick={
+					session?.user.role === "admin"
+						? (event) => {
+								modalRef.current!.showModal()
+								setSelectedUser(
+									slicedUsers[
+										Number(
+											event.currentTarget.dataset.index
+										)
+									]
+								)
+						  }
+						: undefined
+				}
 			/>
 
 			{/* Modal */}
@@ -165,14 +176,7 @@ export default function UserPermissions() {
 				className="modal"
 			>
 				<div className="modal-box max-w-3xl" key={modalKey}>
-					{selectedUser?.role === "admin" ? (
-						<div className="flex flex-col items-center justify-center h-18">
-							<article className="font-bold text-xl">
-								Cannot edit permissions for user&apos;s with
-								this role!
-							</article>
-						</div>
-					) : modalStatus === "selecting" ? (
+					{modalStatus === "selecting" ? (
 						<React.Fragment>
 							<article className="font-bold text-xl">
 								Edit Permissions for {selectedUser?.email}
@@ -193,13 +197,14 @@ export default function UserPermissions() {
 										}}
 										className="select"
 									>
-										<option value={"public"}>Public</option>
-										<option value={"site-viewer"}>
-											Site-Viewer
-										</option>
+										<option value={"admin"}>Admin</option>
 										<option value={"global-viewer"}>
 											Global-Viewer
 										</option>
+										<option value={"site-viewer"}>
+											Site-Viewer
+										</option>
+										<option value={"public"}>Public</option>
 									</select>
 								)}
 								<article className="font-semibold text-lg mt-4">
