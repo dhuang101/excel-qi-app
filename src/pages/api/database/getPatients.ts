@@ -76,16 +76,14 @@ async function GetPatients(params: SearchQuery) {
 			...Object.entries(dateConditions).map(([field, condition]) => ({
 				[field]: condition,
 			})),
-			// Conditionally include site filtering if not admin/global_viewer
-			...(params.role !== "admin" && params.role !== "global_viewer"
-				? [
+			...(params.sites === "all" &&
+			(params.role === "admin" || params.role === "global_viewer")
+				? []
+				: [
 						{
-							redcap_data_access_group: {
-								$in: params.sites,
-							},
+							redcap_data_access_group: params.sites,
 						},
-				  ]
-				: []),
+				  ]),
 		],
 	}
 

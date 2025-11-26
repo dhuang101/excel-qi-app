@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react"
 import { FormatName } from "@/utilities/FormatName"
 import { UserEnteredQuery } from "@/types/searchTypes"
 import { useRouter } from "next/router"
+import { SITE_NAMES } from "@/constants/sitesNames"
 
 // component
 function SearchPage() {
@@ -37,6 +38,10 @@ function SearchPage() {
 	const [userEnteredQuery, setUserEnteredQuery] = useState<UserEnteredQuery>(
 		{}
 	)
+	// selected site
+	const [selectedSite, setSelectedSite] = useState(
+		(session?.user.sites?.at(0) as string) || "all"
+	)
 	const [errorMessage, setErrorMessage] = useState("")
 	// visualisations state
 	const [showingVis, setShowingVis] = useState(false)
@@ -54,6 +59,7 @@ function SearchPage() {
 		// reset page state
 		setErrorMessage("")
 		setShowingVis(false)
+		setSelectedSite((session?.user.sites?.at(0) as string) || "all")
 		setUserEnteredQuery({})
 		// dispatch to reset search state
 		dispatch({ type: ACTION.RESET_RESULTS })
@@ -62,6 +68,10 @@ function SearchPage() {
 	// toggles viewing of the clustered bar chart
 	function handleToggleVis() {
 		setShowingVis(!showingVis)
+	}
+
+	function handleSiteSelect(event: React.ChangeEvent<HTMLSelectElement>) {
+		setSelectedSite(event.target.value)
 	}
 
 	// arrow function used to pipe input into event handler
@@ -75,7 +85,7 @@ function SearchPage() {
 		(event: React.ChangeEvent<HTMLSelectElement>) => {
 			if ((event.target as HTMLSelectElement).value === "Any") {
 				setUserEnteredQuery((oldState) => {
-					const { [area]: string, ...newState } = oldState // Destructure to exclude the key
+					const { [area]: string, ...newState } = oldState
 					return newState
 				})
 			} else {
@@ -146,10 +156,11 @@ function SearchPage() {
 			axios
 				.post("/api/database/getPatients", {
 					role: session?.user.role,
-					sites: session?.user.sites,
+					sites: selectedSite,
 					userEnteredQuery,
 				})
 				.then((result) => {
+					console.log(result.data)
 					window.scrollTo(0, 0)
 					dispatch({
 						type: ACTION.UPDATE_RESULTS,
@@ -334,14 +345,9 @@ function SearchPage() {
 						<div className="flex w-full items-center mb-2">
 							<article className="w-full text-md font-semibold">
 								{`You are currently viewing patients from: ${
-									session?.user?.role === "admin" ||
-									session?.user?.role === "global-viewer"
+									selectedSite === "all"
 										? "All Sites"
-										: session?.user?.sites
-										? session.user.sites
-												.map((site) => FormatName(site))
-												.join(", ")
-										: ""
+										: FormatName(selectedSite)
 								}`}
 							</article>
 							<div className="flex items-center">
@@ -435,11 +441,43 @@ function SearchPage() {
 					// search page
 					<React.Fragment>
 						<div className="flex flex-col w-full">
-							<article className="mb-4 text-xl">
-								Find patients with...
+							<article className="mb-2 text-xl">
+								Select site to search
+							</article>
+							<label className="form-control w-1/4">
+								<select
+									className="select w-full"
+									onChange={handleSiteSelect}
+								>
+									{session?.user.role === "admin" ||
+									session?.user.role === "global-viewer" ? (
+										<React.Fragment>
+											<option value="all">
+												All Sites
+											</option>
+											{SITE_NAMES.map((value) => (
+												<option
+													key={value}
+													value={value}
+												>
+													{FormatName(value)}
+												</option>
+											))}
+										</React.Fragment>
+									) : (
+										session?.user.sites.map((value) => (
+											<option key={value} value={value}>
+												{FormatName(value)}
+											</option>
+										))
+									)}
+								</select>
+							</label>
+							<article className="mt-4 mb-2 text-xl">
+								Patient attributes
 							</article>
 							<div className="flex flex-col w-full">
-								<div className="flex w-full justify-between">
+								<div className="flex w-full justify-between mb-2">
 									<DropdownInput
 										title={"Primary Respiratory Diagnosis"}
 										handleSelectChange={handleSelectChange}
@@ -458,9 +496,6 @@ function SearchPage() {
 										}
 									/>
 								</div>
-								<article className="my-4 text-xl">
-									Narrow By...
-								</article>
 								<div className="flex flex-col gap-y-3">
 									<DateRangeInput
 										title={"Hospital Admission Time"}

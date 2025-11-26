@@ -1,7 +1,7 @@
 // type for the search query passed to mongo
 export interface SearchQuery {
 	role: string
-	sites: string[]
+	sites: string
 	userEnteredQuery: UserEnteredQuery
 }
 
