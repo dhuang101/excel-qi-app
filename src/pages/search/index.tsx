@@ -160,7 +160,6 @@ function SearchPage() {
 					userEnteredQuery,
 				})
 				.then((result) => {
-					console.log(result.data)
 					window.scrollTo(0, 0)
 					dispatch({
 						type: ACTION.UPDATE_RESULTS,
