@@ -119,6 +119,7 @@ export default function searchReducer(state: State, action: Action) {
 			return {
 				...state,
 				searchResults: null,
+				pageNum: 0,
 			}
 		default:
 			return state
