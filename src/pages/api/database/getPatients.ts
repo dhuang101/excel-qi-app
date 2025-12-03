@@ -9,25 +9,14 @@ async function GetPatients(params: SearchQuery) {
 	// Build text-based filters
 	let query: any = {
 		...(params.userEnteredQuery.diagnosis_resp && {
-			diagnosis_resp: {
-				$regex: params.userEnteredQuery.diagnosis_resp,
-				$options: "i",
-				$ne: "N/A",
-			},
+			diagnosis_resp: params.userEnteredQuery.diagnosis_resp,
 		}),
 		...(params.userEnteredQuery.diagnosis_cardiac && {
-			diagnosis_cardiac: {
-				$regex: params.userEnteredQuery.diagnosis_cardiac,
-				$options: "i",
-				$ne: "N/A",
-			},
+			diagnosis_cardiac: params.userEnteredQuery.diagnosis_cardiac,
 		}),
 		...(params.userEnteredQuery.outcm_hosp_discharge_loc && {
-			outcm_hosp_discharge_loc: {
-				$regex: params.userEnteredQuery.outcm_hosp_discharge_loc,
-				$options: "i",
-				$ne: "N/A",
-			},
+			outcm_hosp_discharge_loc:
+				params.userEnteredQuery.outcm_hosp_discharge_loc,
 		}),
 	}
 
