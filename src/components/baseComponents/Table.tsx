@@ -18,9 +18,7 @@ function Table<T>({ data, headers, renderRow, emptyMessage }: TableProps<T>) {
 								{headers.map((header, i) => (
 									<th
 										key={i}
-										className={`bg-base-300 text-lg font-semibold ${
-											i === 0 ? "sticky left-0" : ""
-										}`}
+										className="bg-base-300 text-lg font-semibold"
 									>
 										{header}
 									</th>
