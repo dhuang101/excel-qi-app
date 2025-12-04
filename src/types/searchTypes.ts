@@ -10,6 +10,8 @@ export interface UserEnteredQuery {
 	diagnosis_resp?: string
 	diagnosis_cardiac?: string
 	outcm_hosp_discharge_loc?: string
+	ecmo_mode?: string
+	ecmo_indication?: string
 	hospadm_date_time_before?: Date
 	hospadm_date_time_after?: Date
 	icuadm_date_time_before?: Date

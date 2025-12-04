@@ -1,4 +1,8 @@
-import { DIAGNOSIS_RESP_OPTIONS } from "@/constants/search/selectOptions"
+import {
+	DIAGNOSIS_RESP_OPTIONS,
+	ECMO_INDICIATION_OPTIONS,
+	ECMO_MODE_OPTIONS,
+} from "@/constants/search/selectOptions"
 import { DIAGNOSIS_CARDIAC_OPTIONS } from "@/constants/search/selectOptions"
 import { OUTCM_HOSP_DISCHARGE_LOC_OPTIONS } from "@/constants/search/selectOptions"
 import { ChangeEventHandler } from "react"
@@ -9,11 +13,15 @@ interface Props {
 		| "diagnosis_resp"
 		| "diagnosis_cardiac"
 		| "outcm_hosp_discharge_loc"
+		| "ecmo_mode"
+		| "ecmo_indication"
 	handleSelectChange(
 		area:
 			| "diagnosis_resp"
 			| "diagnosis_cardiac"
 			| "outcm_hosp_discharge_loc"
+			| "ecmo_mode"
+			| "ecmo_indication"
 	): ChangeEventHandler<HTMLSelectElement> | undefined
 }
 
@@ -22,10 +30,12 @@ function DropdownInput({ title, queryAttribute, handleSelectChange }: Props) {
 		diagnosis_resp: DIAGNOSIS_RESP_OPTIONS,
 		diagnosis_cardiac: DIAGNOSIS_CARDIAC_OPTIONS,
 		outcm_hosp_discharge_loc: OUTCM_HOSP_DISCHARGE_LOC_OPTIONS,
+		ecmo_mode: ECMO_MODE_OPTIONS,
+		ecmo_indication: ECMO_INDICIATION_OPTIONS,
 	}
 
 	return (
-		<label className="form-control w-1/4">
+		<label className="form-control w-full">
 			<div className="pb-2">
 				<span className="label-text">{title}</span>
 			</div>

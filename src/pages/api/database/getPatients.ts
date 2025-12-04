@@ -18,6 +18,12 @@ async function GetPatients(params: SearchQuery) {
 			outcm_hosp_discharge_loc:
 				params.userEnteredQuery.outcm_hosp_discharge_loc,
 		}),
+		...(params.userEnteredQuery.ecmo_mode && {
+			ecmo_mode: params.userEnteredQuery.ecmo_mode,
+		}),
+		...(params.userEnteredQuery.ecmo_indication && {
+			ecmo_indication: params.userEnteredQuery.ecmo_indication,
+		}),
 	}
 
 	// Remove undefined or null fields
@@ -91,6 +97,7 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	const params = req.body as SearchQuery
+	console.log(params)
 
 	try {
 		const results = await GetPatients(params)

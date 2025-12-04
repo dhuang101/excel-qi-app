@@ -81,6 +81,8 @@ function SearchPage() {
 				| "diagnosis_resp"
 				| "diagnosis_cardiac"
 				| "outcm_hosp_discharge_loc"
+				| "ecmo_mode"
+				| "ecmo_indication"
 		) =>
 		(event: React.ChangeEvent<HTMLSelectElement>) => {
 			if ((event.target as HTMLSelectElement).value === "Any") {
@@ -476,24 +478,52 @@ function SearchPage() {
 								Patient attributes
 							</article>
 							<div className="flex flex-col w-full">
-								<div className="flex w-full justify-between mb-2">
-									<DropdownInput
-										title={"Primary Respiratory Diagnosis"}
-										handleSelectChange={handleSelectChange}
-										queryAttribute={"diagnosis_resp"}
-									/>
-									<DropdownInput
-										title={"Primary Cardiac Diagnosis"}
-										handleSelectChange={handleSelectChange}
-										queryAttribute={"diagnosis_cardiac"}
-									/>
-									<DropdownInput
-										title={"Discharge Outcome"}
-										handleSelectChange={handleSelectChange}
-										queryAttribute={
-											"outcm_hosp_discharge_loc"
-										}
-									/>
+								<div className="flex w-full justify-between mb-4">
+									<div className="flex flex-col w-1/4 gap-y-2">
+										<DropdownInput
+											title={
+												"Primary Respiratory Diagnosis"
+											}
+											handleSelectChange={
+												handleSelectChange
+											}
+											queryAttribute={"diagnosis_resp"}
+										/>
+										<DropdownInput
+											title={"ECMO Mode"}
+											handleSelectChange={
+												handleSelectChange
+											}
+											queryAttribute={"ecmo_mode"}
+										/>
+									</div>
+									<div className="flex flex-col w-1/4 gap-y-2">
+										<DropdownInput
+											title={"Primary Cardiac Diagnosis"}
+											handleSelectChange={
+												handleSelectChange
+											}
+											queryAttribute={"diagnosis_cardiac"}
+										/>
+										<DropdownInput
+											title={"ECMO Indication"}
+											handleSelectChange={
+												handleSelectChange
+											}
+											queryAttribute={"ecmo_indication"}
+										/>
+									</div>
+									<div className="flex flex-col w-1/4 gap-y-2">
+										<DropdownInput
+											title={"Discharge Outcome"}
+											handleSelectChange={
+												handleSelectChange
+											}
+											queryAttribute={
+												"outcm_hosp_discharge_loc"
+											}
+										/>
+									</div>
 								</div>
 								<div className="flex flex-col gap-y-3">
 									<DateRangeInput

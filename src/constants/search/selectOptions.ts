@@ -39,3 +39,16 @@ export const OUTCM_HOSP_DISCHARGE_LOC_OPTIONS = [
 	"Other",
 	"N/A",
 ]
+
+export const ECMO_MODE_OPTIONS = [
+	"Any",
+	"V-A",
+	"V-V",
+	"V-VA",
+	"A-VCO2R",
+	"V-VECCO2R",
+	"VP",
+	"Other",
+]
+
+export const ECMO_INDICIATION_OPTIONS = ["Any", "Pulmonary", "Cardiac", "ECPR"]
