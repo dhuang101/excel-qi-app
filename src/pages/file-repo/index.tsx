@@ -142,7 +142,6 @@ function FileRepoPage() {
 	}
 
 	function updateFile() {
-		console.log(files.map((file) => file.filename))
 		if (
 			editedName === selectedFileToEdit?.filename &&
 			editedSites === selectedFileToEdit.redcap_data_access_group
