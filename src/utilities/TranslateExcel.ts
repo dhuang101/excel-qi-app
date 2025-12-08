@@ -27,7 +27,7 @@ export function TranslateExcel(currentRow: any, key: string) {
 	} else if (key === "diagnosis_cardiac") {
 		const mapping = [
 			"0",
-			"Acute myocaridal infarction (AMI)",
+			"Acute myocardial infarction (AMI)",
 			"Myocarditis",
 			"Toxic",
 			"Septic shock with myocardial depression",
@@ -66,6 +66,23 @@ export function TranslateExcel(currentRow: any, key: string) {
 			"Extremely frail",
 			"N/A",
 		]
+		currentRow[key] = mapping[parseInt(currentRow[key])]
+	} else if (key === "ecmo_mode") {
+		const mapping = [
+			"Unknown",
+			"V-A",
+			"V-V",
+			"V-VA",
+			"A-VCO2R",
+			"V-VECCO2R",
+			"VP",
+			"7",
+			"8",
+			"Other",
+		]
+		currentRow[key] = mapping[parseInt(currentRow[key])]
+	} else if (key === "ecmo_indication") {
+		const mapping = ["0", "Pulmonary", "Cardiac", "ECPR"]
 		currentRow[key] = mapping[parseInt(currentRow[key])]
 	}
 }
