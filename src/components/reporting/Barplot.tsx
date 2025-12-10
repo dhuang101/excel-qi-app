@@ -11,7 +11,6 @@ interface BarplotProps {
 }
 
 export const Barplot = ({ width, height, data }: BarplotProps) => {
-	// bounds = area inside the graph axis = calculated by substracting the margins
 	const boundsWidth = width - MARGIN.right - MARGIN.left
 	const boundsHeight = height - MARGIN.top - MARGIN.bottom
 
@@ -40,16 +39,19 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 
 	const SvgWrapText = (textElement: any, width: number): void => {
 		const text = textElement
-		const words = text.text().split(/\s+/) // Split the text into words
+		const originalText = text.attr("data-original-text")
+		if (originalText) {
+			text.text(originalText)
+			text.selectAll("tspan").remove()
+		}
+
+		const words = text.text().split(/\s+/)
 		let word
 		const line: string[] = []
-		const lineHeight = 1.1 // Line height multiplier
+		const lineHeight = 1.1
 		const x = text.attr("x")
 		const y = text.attr("y")
 		let dy = parseFloat(text.attr("dy") || "0")
-
-		// Only wrap text if it hasn't been wrapped already
-		if (text.selectAll("tspan").size() > 0) return // Exit if wrapping has already been done
 
 		// Start with the first tspan element
 		let tspan = text
@@ -60,21 +62,17 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 			.attr("dy", dy + "em")
 
 		while ((word = words.shift())) {
-			// Shift words from the front of the array
 			line.push(word)
 			tspan.text(line.join(" "))
 
-			// Safely check the computed text length
 			const computedTextLength =
 				tspan.node()?.getComputedTextLength() ?? 0
 
-			// Check if the current tspan width exceeds the allowed width
 			if (computedTextLength > width) {
-				// If it does, remove the last word and start a new tspan line
 				line.pop()
 				tspan.text(line.join(" "))
 				line.length = 0
-				line.push(word) // Push the current word to start a new line
+				line.push(word)
 				tspan = text
 					.append("tspan")
 					.attr("x", x)
@@ -91,6 +89,10 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 		if (y === undefined) {
 			return null
 		}
+
+		// Available space for the Y-axis label (d.value)
+		const availableWidthForLabel = 128
+		const labelText = d.value
 
 		return (
 			<g key={i}>
@@ -128,15 +130,16 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					fill="var(--color-base-content)"
 					alignmentBaseline="central"
 					fontSize={12}
+					data-original-text={labelText}
 					ref={(node: SVGTextElement) => {
 						// Use the wrapText function to wrap the text
 						if (node) {
 							const textElement = d3.select(node)
-							SvgWrapText(textElement, xScale(0) + 128) // Wrap the text to fit within the available width
+							SvgWrapText(textElement, availableWidthForLabel)
 						}
 					}}
 				>
-					{d.value}
+					{labelText}
 				</text>
 			</g>
 		)
@@ -181,7 +184,6 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 				>
 					{grid}
 					{allShapes}
-					{/* X-axis title */}
 					<text
 						x={boundsWidth / 2}
 						y={boundsHeight + 50}
