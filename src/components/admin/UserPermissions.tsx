@@ -282,7 +282,7 @@ export default function UserPermissions() {
 								Confirm Changes for:
 							</article>
 							<article className="font-semibold text-2xl">
-								{selectedUser?.email}
+								{selectedUser?.name}
 							</article>
 							{changedRole.current !== "" && (
 								<React.Fragment>

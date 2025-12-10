@@ -97,7 +97,6 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	const params = req.body as SearchQuery
-	console.log(params)
 
 	try {
 		const results = await GetPatients(params)

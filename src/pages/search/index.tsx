@@ -46,8 +46,6 @@ function SearchPage() {
 	// visualisations state
 	const [showingVis, setShowingVis] = useState(false)
 	const [width, setWidth] = useState(0)
-	// modal
-	const [modalSubmitted, setModalSubmitted] = useState(false)
 	// loading
 	const [loading, setLoading] = useState(false)
 
@@ -241,78 +239,60 @@ function SearchPage() {
 					// search completed
 					<React.Fragment>
 						{/* dialog overlay for modal */}
-						<dialog
-							ref={modalRef}
-							onClose={() => {
-								setModalSubmitted(false)
-							}}
-							className="modal"
-						>
+						<dialog ref={modalRef} className="modal">
 							<div className="modal-box max-w-3xl">
-								{modalSubmitted ? (
-									<div className="flex flex-col items-center justify-center h-20">
-										<article className="font-semibold text-2xl">
-											Request Submitted
+								<React.Fragment>
+									<article className="font-bold text-xl">
+										Request Cohort Export
+									</article>
+									<div className="flex flex-col mt-4">
+										<article className="font-semibold text-lg">
+											Searched for Patients With
+										</article>
+										{`Site: ${
+											selectedSite === "all"
+												? "All Sites"
+												: FormatName(selectedSite)
+										}`}{" "}
+										{Object.keys(userEnteredQuery).map(
+											(key) => {
+												let value =
+													userEnteredQuery[
+														key as keyof UserEnteredQuery
+													] instanceof Date
+														? FormatDate(
+																userEnteredQuery[
+																	key as keyof UserEnteredQuery
+																] as Date
+														  )
+														: userEnteredQuery[
+																key as keyof UserEnteredQuery
+														  ]?.toString()
+
+												return (
+													<div key={key}>
+														{
+															KEY_TO_TITLE[
+																key as keyof UserEnteredQuery
+															]
+														}
+														: {value}
+													</div>
+												)
+											}
+										)}
+										<article className="my-3">
+											Total Cohort Size:{" "}
+											{state.searchResults.length}{" "}
+											patient(s)
+										</article>
+										<article>
+											Please send these details to the
+											administrator of EXCEL to request an
+											export of this cohort
 										</article>
 									</div>
-								) : (
-									<React.Fragment>
-										<article className="font-bold text-xl">
-											Request Cohort Export
-										</article>
-										<div className="flex flex-col mt-4">
-											<article className="font-semibold text-lg">
-												Searched for Patients With
-											</article>
-											{Object.keys(userEnteredQuery).map(
-												(key) => {
-													let value =
-														userEnteredQuery[
-															key as keyof UserEnteredQuery
-														] instanceof Date
-															? FormatDate(
-																	userEnteredQuery[
-																		key as keyof UserEnteredQuery
-																	] as Date
-															  )
-															: userEnteredQuery[
-																	key as keyof UserEnteredQuery
-															  ]?.toString()
-
-													return (
-														<div key={key}>
-															{
-																KEY_TO_TITLE[
-																	key as keyof UserEnteredQuery
-																]
-															}
-															: {value}
-														</div>
-													)
-												}
-											)}
-											<article className="mt-3">
-												Total Cohort Size:{" "}
-												{state.searchResults.length}{" "}
-												patient(s)
-											</article>
-											<article className="font-semibold mt-3">
-												Further Comments
-											</article>
-											<textarea className="textarea textarea-bordered mt-2"></textarea>
-											<div>
-												<button
-													className="btn btn-primary mt-2"
-													onClick={() => {
-														setModalSubmitted(true)
-													}}
-												>
-													Submit Request
-												</button>
-											</div>
-										</div>
-									</React.Fragment>
-								)}
+								</React.Fragment>
 							</div>
 							<form method="dialog" className="modal-backdrop">
 								<button>close</button>

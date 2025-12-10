@@ -22,7 +22,6 @@ interface patientRecord {
 }
 
 function SearchTable({ patientData }: Props) {
-	console.log(patientData)
 	return (
 		<Table
 			data={patientData}
