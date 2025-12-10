@@ -3,3 +3,5 @@ export type GraphType =
 	| "Primary Cardiac Diagnosis"
 	| "Primary Respiratory Diagnosis"
 	| "Length of Stay Distribution"
+	| "ECMO Mode"
+	| "ECMO Indication"

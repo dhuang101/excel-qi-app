@@ -69,6 +69,36 @@ function GraphRenderer({
 					/>
 				</div>
 			)
+		case "ECMO Mode":
+			return (
+				<div className="flex items-center flex-col">
+					<article className="font-semibold">ECMO Mode</article>
+					<Barplot
+						width={width}
+						height={height}
+						data={
+							state.countData.find(
+								(site) => site.site === displayedSite
+							)?.counts.ecmo_mode as CountEntry[]
+						}
+					/>
+				</div>
+			)
+		case "ECMO Indication":
+			return (
+				<div className="flex items-center flex-col">
+					<article className="font-semibold">ECMO Indication</article>
+					<Barplot
+						width={width}
+						height={height}
+						data={
+							state.countData.find(
+								(site) => site.site === displayedSite
+							)?.counts.ecmo_indication as CountEntry[]
+						}
+					/>
+				</div>
+			)
 		case "Length of Stay Distribution":
 			return (
 				<div className="flex items-center flex-col">

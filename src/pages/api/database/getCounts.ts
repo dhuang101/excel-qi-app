@@ -19,6 +19,8 @@ async function GetCounts(params: ParamsType) {
 		"outcm_hosp_discharge_loc",
 		"diagnosis_cardiac",
 		"diagnosis_resp",
+		"ecmo_mode",
+		"ecmo_indication",
 	]
 
 	// Initialize objects to hold results
