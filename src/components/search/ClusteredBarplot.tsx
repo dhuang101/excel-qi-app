@@ -143,6 +143,24 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("font-size", "12px")
 			.attr("fill", "var(--color-base-content)")
 
+		// Add horizontal gridlines
+		const grid = chartGroup
+			.append("g")
+			.attr("class", "gridlines")
+			.call(
+				d3
+					.axisLeft(y)
+					.tickSize(-chartWidth)
+					.tickFormat(() => "")
+			)
+
+		grid.selectAll("line")
+			.attr("stroke", "var(--color-base-content)")
+			.attr("stroke-opacity", 0.2)
+
+		// Remove the axis domain line so it doesn't sit on top
+		grid.select(".domain").remove()
+
 		// Add bars
 		const bars = chartGroup
 			.selectAll(".category-group")
@@ -166,6 +184,30 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("stroke-width", "1")
 			.attr("fill", (d) => color(d.key) || "#000")
 			.attr("fill-opacity", "0.6")
+
+		bars.selectAll(".bar-label")
+			.data((d) => {
+				const total = cleanKeys.reduce(
+					(sum, key) => sum + (Number(d[key]) || 0),
+					0
+				)
+
+				return cleanKeys.map((key) => {
+					const value = Number(d[key]) || 0
+					const pct = total > 0 ? (value / total) * 100 : 0
+					return { key, value, pct }
+				})
+			})
+			.enter()
+			.filter((d) => d.value > 0) // <-- correct placement!
+			.append("text")
+			.attr("class", "bar-label")
+			.attr("x", (d) => (x1(d.key) || 0) + x1.bandwidth() / 2)
+			.attr("y", (d) => y(d.value) - 5)
+			.attr("text-anchor", "middle")
+			.attr("font-size", "10px")
+			.attr("fill", "var(--color-base-content)")
+			.text((d) => `${d.pct.toFixed(0)}%`)
 
 		// Add axis labels
 		svg.append("text")
