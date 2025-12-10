@@ -59,6 +59,8 @@ function ComparisonView({ state }: PropType) {
 						<option>Hospital Outcomes</option>
 						<option>Primary Cardiac Diagnosis</option>
 						<option>Primary Respiratory Diagnosis</option>
+						<option>ECMO Mode</option>
+						<option>ECMO Indication</option>
 						<option>Length of Stay Distribution</option>
 					</select>
 				</fieldset>
