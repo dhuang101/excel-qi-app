@@ -325,11 +325,17 @@ function SearchPage() {
 						</div>
 						<div className="flex w-full items-center mb-2">
 							<article className="w-full text-md font-semibold">
-								{`You are currently viewing patients from: ${
+								{`Filters: ${[
 									selectedSite === "all"
 										? "All Sites"
-										: FormatName(selectedSite)
-								}`}
+										: FormatName(selectedSite),
+									userEnteredQuery.diagnosis_cardiac,
+									userEnteredQuery.diagnosis_resp,
+									userEnteredQuery.ecmo_mode,
+									userEnteredQuery.ecmo_indication,
+								]
+									.filter((v) => v)
+									.join(", ")}`}
 							</article>
 							<div className="flex items-center">
 								<article className="text-sm w-24 mr-4">
