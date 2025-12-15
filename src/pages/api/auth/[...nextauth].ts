@@ -1,7 +1,9 @@
+import nodemailer from "nodemailer"
 import { MongoClient } from "mongodb"
 import NextAuth, { User } from "next-auth"
 import { JWT } from "next-auth/jwt"
 import OktaProvider from "next-auth/providers/okta"
+import { createAccountProvisionedEmail } from "@/utilities/accountProvisionedTemplate"
 // import Auth0Provider from "next-auth/providers/auth0"
 
 const client = await MongoClient.connect(
@@ -51,6 +53,25 @@ export const authOptions = {
 						redcap_data_access_group: [],
 						name: user?.name || "",
 					})
+
+					try {
+						const transporter = nodemailer.createTransport({
+							service: "gmail",
+							auth: {
+								user: process.env.GMAIL_USER,
+								pass: process.env.GMAIL_PASS,
+							},
+						})
+						const mailOptions = {
+							from: process.env.GMAIL_USER,
+							to: process.env.GMAIL_USER,
+							subject: "EXCEL QI Account Provision Notification",
+							html: createAccountProvisionedEmail(email),
+						}
+						await transporter.sendMail(mailOptions)
+					} catch (error) {
+						console.error("Error sending email:", error)
+					}
 				}
 			}
 			token.email = email
