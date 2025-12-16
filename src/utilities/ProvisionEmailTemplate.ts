@@ -1,5 +1,5 @@
 // this function controls the format of the email sent when an account is provisioned
-export const createAccountProvisionedEmail = (email: string) => {
+export const CreateAccountProvisionedEmail = (name: string) => {
 	return `
         <!DOCTYPE html>
         <html lang="en">
@@ -23,12 +23,11 @@ export const createAccountProvisionedEmail = (email: string) => {
                             <tr>
                                 <td style="padding: 40px 30px; color: #555555;">
                                     <p style="margin: 0 0 20px 0; font-size: 16px;">
-                                        The following email address has been successfully provisioned with a new account on <strong>EXCEL QI</strong>.
+                                        The following user has been successfully provisioned with a new account on <strong>EXCEL QI</strong>.
                                     </p>
                                     
                                     <p style="margin: 0; font-size: 18px; font-weight: bold; color: #007bff; background-color: #f7f9fc; padding: 15px; border-radius: 4px; text-align: center;">
-                                        ${email} </p>
-
+                                        ${name} </p>
                                     <p style="margin-top: 30px; font-size: 14px; color: #888888;">
                                         This is an automated notification. Please ensure the new user is informed and provided with any necessary setup instructions.
                                     </p>

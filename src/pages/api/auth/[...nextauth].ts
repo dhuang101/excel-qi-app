@@ -3,7 +3,7 @@ import { MongoClient } from "mongodb"
 import NextAuth, { User } from "next-auth"
 import { JWT } from "next-auth/jwt"
 import OktaProvider from "next-auth/providers/okta"
-import { createAccountProvisionedEmail } from "@/utilities/accountProvisionedTemplate"
+import { CreateAccountProvisionedEmail } from "@/utilities/ProvisionEmailTemplate"
 // import Auth0Provider from "next-auth/providers/auth0"
 
 const client = await MongoClient.connect(
@@ -66,7 +66,7 @@ export const authOptions = {
 							from: process.env.GMAIL_USER,
 							to: process.env.GMAIL_USER,
 							subject: "EXCEL QI Account Provision Notification",
-							html: createAccountProvisionedEmail(
+							html: CreateAccountProvisionedEmail(
 								user?.name || email
 							),
 						}
