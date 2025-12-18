@@ -54,6 +54,10 @@ DB_CONNECTION_URI = "MongoDB's connection URL"
 GOOGLE_DRIVE_KEY = "The key related to the Google Cloud Service Account"
 GOOGLE_DRIVE_FOLDER_ID = "The ID of the Google Drive Folder for the file-repository"
 
+GMAIL_USER = "The email from which the notification service will be sent"
+GMAIL_MAILING_LIST = "Additional emails that will be notified"
+GMAIL_PASS = "A generated app password for the email above"
+
 NEXTAUTH_URL = "URL for NextAuthJS"
 NEXTAUTH_SECRET = "Secret for NextAuthJS"
 
