@@ -118,7 +118,7 @@ function NavBar() {
 							<li>
 								<a
 									onClick={async () => {
-										await signOut({ redirect: false })
+										await signOut({ callbackUrl: "/" })
 
 										window.location.href = `${
 											process.env.NEXT_PUBLIC_AUTH0_ISSUER
