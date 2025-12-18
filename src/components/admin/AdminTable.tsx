@@ -22,8 +22,7 @@ function AdminTable({ users, onClick }: Props) {
 		if (!date) {
 			return "N/A"
 		} else {
-			const splitDate = date.split("T")[0].split("-")
-			return splitDate[2] + "/" + splitDate[1] + "/" + splitDate[0]
+			return new Date(date).toLocaleString()
 		}
 	}
 

@@ -12,14 +12,7 @@ async function PostLoginDate(params: ParamsType) {
 	const permissions = client.db("main").collection<Permission>("permissions")
 	// ensure the date is in the correct timezone
 	// no need for dayjs here, we can use native Date methods
-	const splitDate = params.loginDate.split("T")[0].split("-")
-	const loginDate = new Date(
-		Date.UTC(
-			parseInt(splitDate[0]),
-			parseInt(splitDate[1]) - 1,
-			parseInt(splitDate[2])
-		)
-	)
+	const loginDate = new Date(params.loginDate)
 	await permissions.updateOne(
 		{ email: params.email },
 		{ $set: { loginDate: loginDate } },
