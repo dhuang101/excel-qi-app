@@ -65,6 +65,9 @@ export const authOptions = {
 						const mailOptions = {
 							from: process.env.GMAIL_USER,
 							to: process.env.GMAIL_USER,
+							bcc: (process.env.GMAIL_MAILING_LIST as string)
+								.split(",")
+								.map((email) => email.trim()),
 							subject: "EXCEL QI Account Provision Notification",
 							html: CreateAccountProvisionedEmail(
 								email,
