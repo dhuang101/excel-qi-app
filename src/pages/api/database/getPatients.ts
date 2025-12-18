@@ -88,7 +88,8 @@ async function GetPatients(params: SearchQuery) {
 
 	const results = await collection.find(query, options).toArray()
 	client.close()
-	return results
+	// Block from returning queries with results less than 5
+	return results.length > 5 ? results : []
 }
 
 // API Route Handler
