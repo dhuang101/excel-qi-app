@@ -67,7 +67,8 @@ export const authOptions = {
 							to: process.env.GMAIL_USER,
 							subject: "EXCEL QI Account Provision Notification",
 							html: CreateAccountProvisionedEmail(
-								user?.name || email
+								email,
+								user?.name || ""
 							),
 						}
 						await transporter.sendMail(mailOptions)
