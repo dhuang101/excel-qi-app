@@ -253,7 +253,7 @@ function SearchPage() {
 	return (
 		<div className="flex flex-col grow w-full items-center">
 			<div className="w-2/3 h-full">
-				<article className="mt-2 mb-4 text-3xl font-semibold">
+				<article className="my-2 text-3xl font-semibold">
 					Cohort Construction
 				</article>
 				{loading === true ? (
@@ -340,15 +340,15 @@ function SearchPage() {
 							</form>
 						</dialog>
 						{/* rest of the page */}
-						<div className="flex w-full justify-between">
+						<div className="flex w-full justify-between mb-2">
 							<button
-								className="btn btn-primary mb-4"
+								className="btn btn-primary"
 								onClick={handleBack}
 							>
 								New Search
 							</button>
 							<button
-								className="btn btn-primary mb-4"
+								className="btn btn-primary"
 								onClick={handleToggleVis}
 							>
 								{showingVis
@@ -356,7 +356,7 @@ function SearchPage() {
 									: "Visualise Cohort"}
 							</button>
 							<button
-								className="btn btn-primary mb-4"
+								className="btn btn-primary"
 								onClick={() => {
 									modalRef.current!.showModal()
 								}}
@@ -415,7 +415,6 @@ function SearchPage() {
 								</div>
 							)}
 						</div>
-
 						{showingVis ? (
 							<div className="flex flex-col items-center mt-4">
 								<article className="font-semibold text-lg">
