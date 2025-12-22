@@ -284,18 +284,31 @@ function SearchPage() {
 										}`}{" "}
 										{Object.keys(userEnteredQuery).map(
 											(key) => {
-												let value =
+												const rawValue =
 													userEnteredQuery[
 														key as keyof UserEnteredQuery
-													] instanceof Date
-														? FormatDate(
-																userEnteredQuery[
-																	key as keyof UserEnteredQuery
-																] as Date
-														  )
-														: userEnteredQuery[
-																key as keyof UserEnteredQuery
-														  ]?.toString()
+													]
+												let value:
+													| string
+													| null
+													| undefined
+
+												if (Array.isArray(rawValue)) {
+													if (rawValue.length === 0)
+														return null
+													value = rawValue.join(", ")
+												} else if (
+													rawValue instanceof Date
+												) {
+													value = FormatDate(rawValue)
+												} else {
+													value = rawValue?.toString()
+												}
+												if (
+													value === null ||
+													value === undefined
+												)
+													return null
 
 												return (
 													<div key={key}>
@@ -351,42 +364,56 @@ function SearchPage() {
 								Export Cohort
 							</button>
 						</div>
-						<div className="flex w-full items-center mb-2">
-							<article className="w-full text-md font-semibold">
+						<div className="flex w-full items-center justify-between mb-2">
+							<article className="w-2/3 text-md">
 								{`Filters: ${[
 									selectedSite === "all"
 										? "All Sites"
 										: FormatName(selectedSite),
-									userEnteredQuery.diagnosis_cardiac,
-									userEnteredQuery.diagnosis_resp,
+									Array.isArray(
+										userEnteredQuery.diagnosis_cardiac
+									)
+										? userEnteredQuery.diagnosis_cardiac.join(
+												", "
+										  )
+										: userEnteredQuery.diagnosis_cardiac,
+									Array.isArray(
+										userEnteredQuery.diagnosis_resp
+									)
+										? userEnteredQuery.diagnosis_resp.join(
+												", "
+										  )
+										: userEnteredQuery.diagnosis_resp,
 									userEnteredQuery.ecmo_mode,
 									userEnteredQuery.ecmo_indication,
 								]
-									.filter((v) => v)
+									.filter((v) => v && v.length > 0)
 									.join(", ")}`}
 							</article>
-							<div className="flex items-center">
-								<article className="text-sm w-24 mr-4">
-									Rows Per Page:
-								</article>
-								<select
-									className="select select-sm select-ghost w-20"
-									value={state.rowsPerPage}
-									onChange={(event) => {
-										dispatch({
-											type: ACTION.UPDATE_ROWSPERPAGE,
-											payload: parseInt(
-												event.target.value
-											),
-										})
-									}}
-								>
-									<option>10</option>
-									<option>25</option>
-									<option>50</option>
-									<option>100</option>
-								</select>
-							</div>
+							{!showingVis && (
+								<div className="flex items-center">
+									<article className="text-sm w-24 mr-4">
+										Rows Per Page:
+									</article>
+									<select
+										className="select select-sm select-ghost w-20"
+										value={state.rowsPerPage}
+										onChange={(event) => {
+											dispatch({
+												type: ACTION.UPDATE_ROWSPERPAGE,
+												payload: parseInt(
+													event.target.value
+												),
+											})
+										}}
+									>
+										<option>10</option>
+										<option>25</option>
+										<option>50</option>
+										<option>100</option>
+									</select>
+								</div>
+							)}
 						</div>
 
 						{showingVis ? (
