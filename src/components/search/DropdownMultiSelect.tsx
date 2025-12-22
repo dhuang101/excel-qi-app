@@ -80,9 +80,9 @@ function DropdownMultiSelect({
 									checked={selectedValues.includes(option)}
 									onChange={() => onSelect(option, queryKey)}
 								/>
-								<span className="label-text text-left">
+								<article className="text-left text-base-content">
 									{option}
-								</span>
+								</article>
 							</label>
 						</li>
 					))}
