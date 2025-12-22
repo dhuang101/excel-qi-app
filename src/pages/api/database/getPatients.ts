@@ -8,15 +8,18 @@ async function GetPatients(params: SearchQuery) {
 
 	// Build text-based filters
 	let query: any = {
-		...(params.userEnteredQuery.diagnosis_resp && {
-			diagnosis_resp: params.userEnteredQuery.diagnosis_resp,
+		...(params.userEnteredQuery.diagnosis_resp.length > 0 && {
+			diagnosis_resp: { $in: params.userEnteredQuery.diagnosis_resp },
 		}),
-		...(params.userEnteredQuery.diagnosis_cardiac && {
-			diagnosis_cardiac: params.userEnteredQuery.diagnosis_cardiac,
+		...(params.userEnteredQuery.diagnosis_cardiac.length > 0 && {
+			diagnosis_cardiac: {
+				$in: params.userEnteredQuery.diagnosis_cardiac,
+			},
 		}),
-		...(params.userEnteredQuery.outcm_hosp_discharge_loc && {
-			outcm_hosp_discharge_loc:
-				params.userEnteredQuery.outcm_hosp_discharge_loc,
+		...(params.userEnteredQuery.outcm_hosp_discharge_loc.length > 0 && {
+			outcm_hosp_discharge_loc: {
+				$in: params.userEnteredQuery.outcm_hosp_discharge_loc,
+			},
 		}),
 		...(params.userEnteredQuery.ecmo_mode && {
 			ecmo_mode: params.userEnteredQuery.ecmo_mode,
@@ -51,7 +54,8 @@ async function GetPatients(params: SearchQuery) {
 
 	for (const [userField, mongoField] of dateFields) {
 		const val = params.userEnteredQuery[userField]
-		if (!val) continue
+		// properly type check val
+		if (!val || Array.isArray(val)) continue
 
 		if (!dateConditions[mongoField]) {
 			dateConditions[mongoField] = {}
