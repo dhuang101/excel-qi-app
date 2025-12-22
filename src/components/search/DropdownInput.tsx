@@ -1,10 +1,10 @@
 import {
 	DIAGNOSIS_RESP_OPTIONS,
+	DIAGNOSIS_CARDIAC_OPTIONS,
+	OUTCM_HOSP_DISCHARGE_LOC_OPTIONS,
 	ECMO_INDICIATION_OPTIONS,
 	ECMO_MODE_OPTIONS,
 } from "@/constants/search/selectOptions"
-import { DIAGNOSIS_CARDIAC_OPTIONS } from "@/constants/search/selectOptions"
-import { OUTCM_HOSP_DISCHARGE_LOC_OPTIONS } from "@/constants/search/selectOptions"
 import { ChangeEventHandler } from "react"
 
 interface Props {

@@ -14,6 +14,11 @@ import { FormatName } from "@/utilities/FormatName"
 import { UserEnteredQuery } from "@/types/searchTypes"
 import { useRouter } from "next/router"
 import { SITE_NAMES } from "@/constants/sitesNames"
+import {
+	DIAGNOSIS_CARDIAC_OPTIONS,
+	DIAGNOSIS_RESP_OPTIONS,
+	OUTCM_HOSP_DISCHARGE_LOC_OPTIONS,
+} from "@/constants/search/selectOptions"
 
 // component
 function SearchPage() {
@@ -35,9 +40,11 @@ function SearchPage() {
 	})
 
 	// presearch state
-	const [userEnteredQuery, setUserEnteredQuery] = useState<UserEnteredQuery>(
-		{}
-	)
+	const [userEnteredQuery, setUserEnteredQuery] = useState<UserEnteredQuery>({
+		diagnosis_resp: [],
+		diagnosis_cardiac: [],
+		outcm_hosp_discharge_loc: [],
+	})
 	// selected site
 	const [selectedSite, setSelectedSite] = useState(
 		(session?.user.sites?.at(0) as string) || "all"
@@ -58,7 +65,11 @@ function SearchPage() {
 		setErrorMessage("")
 		setShowingVis(false)
 		setSelectedSite((session?.user.sites?.at(0) as string) || "all")
-		setUserEnteredQuery({})
+		setUserEnteredQuery({
+			diagnosis_resp: [],
+			diagnosis_cardiac: [],
+			outcm_hosp_discharge_loc: [],
+		})
 		// dispatch to reset search state
 		dispatch({ type: ACTION.RESET_RESULTS })
 	}
@@ -74,14 +85,7 @@ function SearchPage() {
 
 	// arrow function used to pipe input into event handler
 	const handleSelectChange =
-		(
-			area:
-				| "diagnosis_resp"
-				| "diagnosis_cardiac"
-				| "outcm_hosp_discharge_loc"
-				| "ecmo_mode"
-				| "ecmo_indication"
-		) =>
+		(area: "ecmo_mode" | "ecmo_indication") =>
 		(event: React.ChangeEvent<HTMLSelectElement>) => {
 			if ((event.target as HTMLSelectElement).value === "Any") {
 				setUserEnteredQuery((oldState) => {
@@ -221,6 +225,34 @@ function SearchPage() {
 			resizeObserver.disconnect()
 		}
 	}, [showingVis, width])
+
+	function handleMultiSelect(option: string, key: keyof UserEnteredQuery) {
+		setUserEnteredQuery((prev) => {
+			const currentValues = (prev[key] as string[]) || []
+			const newValues = currentValues.includes(option)
+				? currentValues.filter((v) => v !== option)
+				: [...currentValues, option]
+
+			return { ...prev, [key]: newValues }
+		})
+	}
+
+	const handleSelectAll = (
+		key: keyof UserEnteredQuery,
+		options: string[]
+	) => {
+		setUserEnteredQuery((prev) => ({
+			...prev,
+			[key]: [...options],
+		}))
+	}
+
+	const handleClearAll = (key: keyof UserEnteredQuery) => {
+		setUserEnteredQuery((prev) => ({
+			...prev,
+			[key]: [],
+		}))
+	}
 
 	return (
 		<div className="flex flex-col grow w-full items-center">
@@ -466,15 +498,83 @@ function SearchPage() {
 							<div className="flex flex-col w-full">
 								<div className="flex w-full justify-between mb-4">
 									<div className="flex flex-col w-1/4 gap-y-2">
-										<DropdownInput
-											title={
-												"Primary Respiratory Diagnosis"
-											}
-											handleSelectChange={
-												handleSelectChange
-											}
-											queryAttribute={"diagnosis_resp"}
-										/>
+										<div className="form-control w-full">
+											<div className="pb-2">
+												<span className="label-text">
+													Primary Respiratory
+													Diagnosis
+												</span>
+											</div>
+											<div className="dropdown w-full">
+												<div
+													tabIndex={0}
+													role="button"
+													className="select select-bordered w-full flex items-center justify-between overflow-hidden"
+												>
+													<span className="truncate">
+														{userEnteredQuery
+															.diagnosis_resp
+															.length === 0
+															? "Select options..."
+															: `${userEnteredQuery.diagnosis_resp.length} selected`}
+													</span>
+												</div>
+												<ul
+													tabIndex={0}
+													className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
+												>
+													<div className="flex justify-between px-2 py-1 mb-2 border-b border-base-200">
+														<button
+															type="button"
+															className="text-xs font-bold text-primary hover:underline"
+															onClick={() =>
+																handleSelectAll(
+																	"diagnosis_resp",
+																	DIAGNOSIS_RESP_OPTIONS
+																)
+															}
+														>
+															Select All
+														</button>
+														<button
+															type="button"
+															className="text-xs font-bold text-error hover:underline"
+															onClick={() =>
+																handleClearAll(
+																	"diagnosis_resp"
+																)
+															}
+														>
+															Clear All
+														</button>
+													</div>
+													{DIAGNOSIS_RESP_OPTIONS.map(
+														(option) => (
+															<li key={option}>
+																<label className="label cursor-pointer justify-start gap-3 py-2">
+																	<input
+																		type="checkbox"
+																		className="checkbox checkbox-primary checkbox-sm"
+																		checked={userEnteredQuery.diagnosis_resp.includes(
+																			option
+																		)}
+																		onChange={() =>
+																			handleMultiSelect(
+																				option,
+																				"diagnosis_resp"
+																			)
+																		}
+																	/>
+																	<span className="label-text">
+																		{option}
+																	</span>
+																</label>
+															</li>
+														)
+													)}
+												</ul>
+											</div>
+										</div>
 										<DropdownInput
 											title={"ECMO Mode"}
 											handleSelectChange={
@@ -484,13 +584,82 @@ function SearchPage() {
 										/>
 									</div>
 									<div className="flex flex-col w-1/4 gap-y-2">
-										<DropdownInput
-											title={"Primary Cardiac Diagnosis"}
-											handleSelectChange={
-												handleSelectChange
-											}
-											queryAttribute={"diagnosis_cardiac"}
-										/>
+										<div className="form-control w-full">
+											<div className="pb-2">
+												<span className="label-text">
+													Primary Cardiac Diagnosis
+												</span>
+											</div>
+											<div className="dropdown w-full">
+												<div
+													tabIndex={0}
+													role="button"
+													className="select select-bordered w-full flex items-center justify-between overflow-hidden"
+												>
+													<span className="truncate">
+														{userEnteredQuery
+															.diagnosis_cardiac
+															.length === 0
+															? "Select options..."
+															: `${userEnteredQuery.diagnosis_cardiac.length} selected`}
+													</span>
+												</div>
+												<ul
+													tabIndex={0}
+													className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
+												>
+													<div className="flex justify-between px-2 py-1 mb-2 border-b border-base-200">
+														<button
+															type="button"
+															className="text-xs font-bold text-primary hover:underline"
+															onClick={() =>
+																handleSelectAll(
+																	"diagnosis_cardiac",
+																	DIAGNOSIS_CARDIAC_OPTIONS
+																)
+															}
+														>
+															Select All
+														</button>
+														<button
+															type="button"
+															className="text-xs font-bold text-error hover:underline"
+															onClick={() =>
+																handleClearAll(
+																	"diagnosis_cardiac"
+																)
+															}
+														>
+															Clear All
+														</button>
+													</div>
+													{DIAGNOSIS_CARDIAC_OPTIONS.map(
+														(option) => (
+															<li key={option}>
+																<label className="label cursor-pointer justify-start gap-3 py-2">
+																	<input
+																		type="checkbox"
+																		className="checkbox checkbox-primary checkbox-sm"
+																		checked={userEnteredQuery.diagnosis_cardiac.includes(
+																			option
+																		)}
+																		onChange={() =>
+																			handleMultiSelect(
+																				option,
+																				"diagnosis_cardiac"
+																			)
+																		}
+																	/>
+																	<span className="label-text">
+																		{option}
+																	</span>
+																</label>
+															</li>
+														)
+													)}
+												</ul>
+											</div>
+										</div>
 										<DropdownInput
 											title={"ECMO Indication"}
 											handleSelectChange={
@@ -500,15 +669,82 @@ function SearchPage() {
 										/>
 									</div>
 									<div className="flex flex-col w-1/4 gap-y-2">
-										<DropdownInput
-											title={"Discharge Outcome"}
-											handleSelectChange={
-												handleSelectChange
-											}
-											queryAttribute={
-												"outcm_hosp_discharge_loc"
-											}
-										/>
+										<div className="form-control w-full">
+											<div className="pb-2">
+												<span className="label-text">
+													Discharge Outcome
+												</span>
+											</div>
+											<div className="dropdown w-full">
+												<div
+													tabIndex={0}
+													role="button"
+													className="select select-bordered w-full flex items-center justify-between overflow-hidden"
+												>
+													<span className="truncate">
+														{userEnteredQuery
+															.outcm_hosp_discharge_loc
+															.length === 0
+															? "Select options..."
+															: `${userEnteredQuery.outcm_hosp_discharge_loc.length} selected`}
+													</span>
+												</div>
+												<ul
+													tabIndex={0}
+													className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
+												>
+													<div className="flex justify-between px-2 py-1 mb-2 border-b border-base-200">
+														<button
+															type="button"
+															className="text-xs font-bold text-primary hover:underline"
+															onClick={() =>
+																handleSelectAll(
+																	"outcm_hosp_discharge_loc",
+																	OUTCM_HOSP_DISCHARGE_LOC_OPTIONS
+																)
+															}
+														>
+															Select All
+														</button>
+														<button
+															type="button"
+															className="text-xs font-bold text-error hover:underline"
+															onClick={() =>
+																handleClearAll(
+																	"outcm_hosp_discharge_loc"
+																)
+															}
+														>
+															Clear All
+														</button>
+													</div>
+													{OUTCM_HOSP_DISCHARGE_LOC_OPTIONS.map(
+														(option) => (
+															<li key={option}>
+																<label className="label cursor-pointer justify-start gap-3 py-2">
+																	<input
+																		type="checkbox"
+																		className="checkbox checkbox-primary checkbox-sm"
+																		checked={userEnteredQuery.outcm_hosp_discharge_loc.includes(
+																			option
+																		)}
+																		onChange={() =>
+																			handleMultiSelect(
+																				option,
+																				"outcm_hosp_discharge_loc"
+																			)
+																		}
+																	/>
+																	<span className="label-text">
+																		{option}
+																	</span>
+																</label>
+															</li>
+														)
+													)}
+												</ul>
+											</div>
+										</div>
 									</div>
 								</div>
 								<div className="flex flex-col gap-y-3">

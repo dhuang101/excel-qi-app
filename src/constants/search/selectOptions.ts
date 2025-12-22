@@ -1,6 +1,5 @@
 //contains the options for the select inputs on the search page
 export const DIAGNOSIS_RESP_OPTIONS = [
-	"Any",
 	"ARDS (risk factor)",
 	"Post lung transplant",
 	"Direct lung trauma",
@@ -13,7 +12,6 @@ export const DIAGNOSIS_RESP_OPTIONS = [
 ]
 
 export const DIAGNOSIS_CARDIAC_OPTIONS = [
-	"Any",
 	"Acute myocardial infarction (AMI)",
 	"Myocarditis",
 	"Toxic",
@@ -30,7 +28,6 @@ export const DIAGNOSIS_CARDIAC_OPTIONS = [
 ]
 
 export const OUTCM_HOSP_DISCHARGE_LOC_OPTIONS = [
-	"Any",
 	"Home",
 	"Transferred to another hospital",
 	"Transfer to LTAC or rehab",
