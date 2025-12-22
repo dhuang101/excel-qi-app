@@ -25,15 +25,15 @@ interface Props {
 	): ChangeEventHandler<HTMLSelectElement> | undefined
 }
 
-function DropdownInput({ title, queryAttribute, handleSelectChange }: Props) {
-	const optionsMap = {
-		diagnosis_resp: DIAGNOSIS_RESP_OPTIONS,
-		diagnosis_cardiac: DIAGNOSIS_CARDIAC_OPTIONS,
-		outcm_hosp_discharge_loc: OUTCM_HOSP_DISCHARGE_LOC_OPTIONS,
-		ecmo_mode: ECMO_MODE_OPTIONS,
-		ecmo_indication: ECMO_INDICIATION_OPTIONS,
-	}
+const optionsMap = {
+	diagnosis_resp: DIAGNOSIS_RESP_OPTIONS,
+	diagnosis_cardiac: DIAGNOSIS_CARDIAC_OPTIONS,
+	outcm_hosp_discharge_loc: OUTCM_HOSP_DISCHARGE_LOC_OPTIONS,
+	ecmo_mode: ECMO_MODE_OPTIONS,
+	ecmo_indication: ECMO_INDICIATION_OPTIONS,
+}
 
+function DropdownInput({ title, queryAttribute, handleSelectChange }: Props) {
 	return (
 		<label className="form-control w-full">
 			<div className="pb-2">
