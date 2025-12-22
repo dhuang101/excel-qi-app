@@ -38,7 +38,7 @@ export default function App({
 								<NavBar />
 								<Component {...pageProps} />
 								<article className="font-light fixed bottom-0 right-0">
-									v0.05
+									v0.06
 								</article>
 							</div>
 						)}
