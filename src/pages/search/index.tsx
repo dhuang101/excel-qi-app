@@ -14,11 +14,7 @@ import { FormatName } from "@/utilities/FormatName"
 import { UserEnteredQuery } from "@/types/searchTypes"
 import { useRouter } from "next/router"
 import { SITE_NAMES } from "@/constants/sitesNames"
-import {
-	DIAGNOSIS_CARDIAC_OPTIONS,
-	DIAGNOSIS_RESP_OPTIONS,
-	OUTCM_HOSP_DISCHARGE_LOC_OPTIONS,
-} from "@/constants/search/selectOptions"
+import DropdownMultiSelect from "@/components/search/DropdownMultiSelect"
 
 // component
 function SearchPage() {
@@ -498,83 +494,16 @@ function SearchPage() {
 							<div className="flex flex-col w-full">
 								<div className="flex w-full justify-between mb-4">
 									<div className="flex flex-col w-1/4 gap-y-2">
-										<div className="form-control w-full">
-											<div className="pb-2">
-												<span className="label-text">
-													Primary Respiratory
-													Diagnosis
-												</span>
-											</div>
-											<div className="dropdown w-full">
-												<div
-													tabIndex={0}
-													role="button"
-													className="select select-bordered w-full flex items-center justify-between overflow-hidden"
-												>
-													<span className="truncate">
-														{userEnteredQuery
-															.diagnosis_resp
-															.length === 0
-															? "Select options..."
-															: `${userEnteredQuery.diagnosis_resp.length} selected`}
-													</span>
-												</div>
-												<ul
-													tabIndex={0}
-													className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
-												>
-													<div className="flex justify-between px-2 py-1 mb-2 border-b border-base-200">
-														<button
-															type="button"
-															className="text-xs font-bold text-primary hover:underline"
-															onClick={() =>
-																handleSelectAll(
-																	"diagnosis_resp",
-																	DIAGNOSIS_RESP_OPTIONS
-																)
-															}
-														>
-															Select All
-														</button>
-														<button
-															type="button"
-															className="text-xs font-bold text-error hover:underline"
-															onClick={() =>
-																handleClearAll(
-																	"diagnosis_resp"
-																)
-															}
-														>
-															Clear All
-														</button>
-													</div>
-													{DIAGNOSIS_RESP_OPTIONS.map(
-														(option) => (
-															<li key={option}>
-																<label className="label cursor-pointer justify-start gap-3 py-2">
-																	<input
-																		type="checkbox"
-																		className="checkbox checkbox-primary checkbox-sm"
-																		checked={userEnteredQuery.diagnosis_resp.includes(
-																			option
-																		)}
-																		onChange={() =>
-																			handleMultiSelect(
-																				option,
-																				"diagnosis_resp"
-																			)
-																		}
-																	/>
-																	<span className="label-text">
-																		{option}
-																	</span>
-																</label>
-															</li>
-														)
-													)}
-												</ul>
-											</div>
-										</div>
+										<DropdownMultiSelect
+											title="Primary Respiratory Diagnosis"
+											selectedValues={
+												userEnteredQuery.diagnosis_resp as string[]
+											}
+											queryKey="diagnosis_resp"
+											onSelect={handleMultiSelect}
+											onSelectAll={handleSelectAll}
+											onClearAll={handleClearAll}
+										/>
 										<DropdownInput
 											title={"ECMO Mode"}
 											handleSelectChange={
@@ -584,82 +513,16 @@ function SearchPage() {
 										/>
 									</div>
 									<div className="flex flex-col w-1/4 gap-y-2">
-										<div className="form-control w-full">
-											<div className="pb-2">
-												<span className="label-text">
-													Primary Cardiac Diagnosis
-												</span>
-											</div>
-											<div className="dropdown w-full">
-												<div
-													tabIndex={0}
-													role="button"
-													className="select select-bordered w-full flex items-center justify-between overflow-hidden"
-												>
-													<span className="truncate">
-														{userEnteredQuery
-															.diagnosis_cardiac
-															.length === 0
-															? "Select options..."
-															: `${userEnteredQuery.diagnosis_cardiac.length} selected`}
-													</span>
-												</div>
-												<ul
-													tabIndex={0}
-													className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
-												>
-													<div className="flex justify-between px-2 py-1 mb-2 border-b border-base-200">
-														<button
-															type="button"
-															className="text-xs font-bold text-primary hover:underline"
-															onClick={() =>
-																handleSelectAll(
-																	"diagnosis_cardiac",
-																	DIAGNOSIS_CARDIAC_OPTIONS
-																)
-															}
-														>
-															Select All
-														</button>
-														<button
-															type="button"
-															className="text-xs font-bold text-error hover:underline"
-															onClick={() =>
-																handleClearAll(
-																	"diagnosis_cardiac"
-																)
-															}
-														>
-															Clear All
-														</button>
-													</div>
-													{DIAGNOSIS_CARDIAC_OPTIONS.map(
-														(option) => (
-															<li key={option}>
-																<label className="label cursor-pointer justify-start gap-3 py-2">
-																	<input
-																		type="checkbox"
-																		className="checkbox checkbox-primary checkbox-sm"
-																		checked={userEnteredQuery.diagnosis_cardiac.includes(
-																			option
-																		)}
-																		onChange={() =>
-																			handleMultiSelect(
-																				option,
-																				"diagnosis_cardiac"
-																			)
-																		}
-																	/>
-																	<span className="label-text">
-																		{option}
-																	</span>
-																</label>
-															</li>
-														)
-													)}
-												</ul>
-											</div>
-										</div>
+										<DropdownMultiSelect
+											title="Primary Cardiac Diagnosis"
+											selectedValues={
+												userEnteredQuery.diagnosis_cardiac as string[]
+											}
+											queryKey="diagnosis_cardiac"
+											onSelect={handleMultiSelect}
+											onSelectAll={handleSelectAll}
+											onClearAll={handleClearAll}
+										/>
 										<DropdownInput
 											title={"ECMO Indication"}
 											handleSelectChange={
@@ -669,82 +532,16 @@ function SearchPage() {
 										/>
 									</div>
 									<div className="flex flex-col w-1/4 gap-y-2">
-										<div className="form-control w-full">
-											<div className="pb-2">
-												<span className="label-text">
-													Discharge Outcome
-												</span>
-											</div>
-											<div className="dropdown w-full">
-												<div
-													tabIndex={0}
-													role="button"
-													className="select select-bordered w-full flex items-center justify-between overflow-hidden"
-												>
-													<span className="truncate">
-														{userEnteredQuery
-															.outcm_hosp_discharge_loc
-															.length === 0
-															? "Select options..."
-															: `${userEnteredQuery.outcm_hosp_discharge_loc.length} selected`}
-													</span>
-												</div>
-												<ul
-													tabIndex={0}
-													className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
-												>
-													<div className="flex justify-between px-2 py-1 mb-2 border-b border-base-200">
-														<button
-															type="button"
-															className="text-xs font-bold text-primary hover:underline"
-															onClick={() =>
-																handleSelectAll(
-																	"outcm_hosp_discharge_loc",
-																	OUTCM_HOSP_DISCHARGE_LOC_OPTIONS
-																)
-															}
-														>
-															Select All
-														</button>
-														<button
-															type="button"
-															className="text-xs font-bold text-error hover:underline"
-															onClick={() =>
-																handleClearAll(
-																	"outcm_hosp_discharge_loc"
-																)
-															}
-														>
-															Clear All
-														</button>
-													</div>
-													{OUTCM_HOSP_DISCHARGE_LOC_OPTIONS.map(
-														(option) => (
-															<li key={option}>
-																<label className="label cursor-pointer justify-start gap-3 py-2">
-																	<input
-																		type="checkbox"
-																		className="checkbox checkbox-primary checkbox-sm"
-																		checked={userEnteredQuery.outcm_hosp_discharge_loc.includes(
-																			option
-																		)}
-																		onChange={() =>
-																			handleMultiSelect(
-																				option,
-																				"outcm_hosp_discharge_loc"
-																			)
-																		}
-																	/>
-																	<span className="label-text">
-																		{option}
-																	</span>
-																</label>
-															</li>
-														)
-													)}
-												</ul>
-											</div>
-										</div>
+										<DropdownMultiSelect
+											title="Hospital Discharge Location"
+											selectedValues={
+												userEnteredQuery.outcm_hosp_discharge_loc as string[]
+											}
+											queryKey="outcm_hosp_discharge_loc"
+											onSelect={handleMultiSelect}
+											onSelectAll={handleSelectAll}
+											onClearAll={handleClearAll}
+										/>
 									</div>
 								</div>
 								<div className="flex flex-col gap-y-3">
