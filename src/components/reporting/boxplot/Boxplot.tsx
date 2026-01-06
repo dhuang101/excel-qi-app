@@ -4,14 +4,14 @@ import { AxisLeft } from "./AxisLeftCategoric"
 
 import { HorizontalBox } from "./HorizontalBox"
 import { AxisBottom } from "./AxisBottom"
-import { LosStats } from "@/reducers/reportReducer"
+import { BoxplotStats } from "@/reducers/reportReducer"
 
 const MARGIN = { top: 30, right: 30, bottom: 70, left: 120 }
 
 interface BoxplotProps {
 	width: number
 	height: number
-	data: LosStats[]
+	data: BoxplotStats[]
 }
 
 export const Boxplot = ({ width, height, data }: BoxplotProps) => {
@@ -48,7 +48,7 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 	const allShapes = groups.map((group, i) => {
 		const { min, q1, median, q3, max } = data.find(
 			(d) => d.name === group
-		) as LosStats
+		) as BoxplotStats
 
 		return (
 			<g key={i} transform={`translate(0,${yScale(group)})`}>

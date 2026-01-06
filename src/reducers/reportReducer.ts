@@ -19,7 +19,7 @@ export interface CountDataItem {
 	counts: Counts
 }
 
-export interface LosStats {
+export interface BoxplotStats {
 	name: string
 	count: number
 	min: number
@@ -29,14 +29,14 @@ export interface LosStats {
 	max: number
 }
 
-export interface LosEntry {
+export interface BoxplotEntry {
 	site: string
-	stats: LosStats[]
+	stats: BoxplotStats[]
 }
 
 export interface ReportReducer {
 	countData: CountDataItem[]
-	losData: LosEntry[]
+	losData: BoxplotEntry[]
 }
 
 export enum ACTION {

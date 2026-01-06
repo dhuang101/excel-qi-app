@@ -15,7 +15,7 @@ export async function middleware(req: NextRequest) {
 		"/resources",
 		"/reporting",
 		"/api/database/getCounts",
-		"/api/database/getLosValues",
+		"/api/database/getBoxplotValues",
 	]
 	if (publicPaths.includes(pathname)) {
 		return NextResponse.next()

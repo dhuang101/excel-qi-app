@@ -55,13 +55,14 @@ function quantile(sortedArr: number[], q: number): number {
 }
 
 // this api fetches the length of stay values for each site
-async function GetLosValues(params: ParamsType) {
+async function GetBoxplotValues(params: ParamsType) {
 	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
 	const collection = client.db("main").collection<DocumentType>("excel-data")
 	const attributes = [
 		"outcm_ecmo_days_2",
 		"outcm_icu_days",
 		"outcm_hosp_days",
+		// "outcm_mv_days_2",
 	]
 
 	const projection = attributes.reduce(
@@ -132,10 +133,10 @@ export default async function handler(
 	const params = req.body as ParamsType
 
 	try {
-		const results = await GetLosValues(params)
+		const results = await GetBoxplotValues(params)
 		res.status(200).json(results)
 	} catch (err) {
-		console.error("Error at database/getLosValues :", err)
+		console.error("Error at database/getBoxplotValues :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

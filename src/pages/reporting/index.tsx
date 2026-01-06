@@ -36,7 +36,7 @@ function ReportingPage() {
 			})
 			.then(() => {
 				return Promise.resolve(
-					axios.post("/api/database/getLosValues", {
+					axios.post("/api/database/getBoxplotValues", {
 						role: session?.user.role || "public",
 						sites: session?.user.sites || [],
 					})

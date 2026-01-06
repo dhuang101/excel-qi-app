@@ -1,4 +1,8 @@
-import { CountEntry, LosStats, ReportReducer } from "@/reducers/reportReducer"
+import {
+	CountEntry,
+	BoxplotStats,
+	ReportReducer,
+} from "@/reducers/reportReducer"
 import Barplot from "./Barplot"
 import { Boxplot } from "./boxplot/Boxplot"
 
@@ -17,7 +21,6 @@ function GraphRenderer({
 	width,
 	height,
 }: PropType) {
-	console.log(state.losData)
 	switch (displayedGraph) {
 		case "Hospital Outcomes":
 			return (
@@ -112,7 +115,7 @@ function GraphRenderer({
 						data={
 							state.losData.find(
 								(site) => site.site === displayedSite
-							)?.stats as LosStats[]
+							)?.stats as BoxplotStats[]
 						}
 					/>
 				</div>
@@ -127,7 +130,7 @@ function GraphRenderer({
 						data={
 							state.losData.find(
 								(site) => site.site === displayedSite
-							)?.stats as LosStats[]
+							)?.stats as BoxplotStats[]
 						}
 					/>
 				</div>
