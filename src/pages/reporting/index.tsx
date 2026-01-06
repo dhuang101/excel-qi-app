@@ -18,12 +18,11 @@ function ReportingPage() {
 	// state
 	const [state, dispatch] = useReducer(reportReducer, {
 		countData: [],
-		losData: [],
+		boxplotData: [],
 	})
 	const [currentView, setCurrentView] = useState<displayViews>("Single")
 
 	// sequentially fetch the data
-	// TODO: fetch them in parallel?
 	useEffect(() => {
 		const controller = new AbortController()
 
@@ -48,7 +47,7 @@ function ReportingPage() {
 					type: ACTION.SET_SUMMARY,
 					payload: {
 						countData: countsRes.data,
-						losData: boxplotRes.data,
+						boxplotData: boxplotRes.data,
 					},
 				})
 			} catch (error) {

@@ -113,7 +113,7 @@ function GraphRenderer({
 						width={width}
 						height={height}
 						data={
-							state.losData
+							state.boxplotData
 								.find((site) => site.site === displayedSite)
 								?.stats.filter(
 									(obj) => obj.name !== "outcm_mv_days_2"
@@ -130,7 +130,7 @@ function GraphRenderer({
 						width={width}
 						height={height}
 						data={
-							state.losData
+							state.boxplotData
 								.find((site) => site.site === displayedSite)
 								?.stats.filter(
 									(obj) => obj.name === "outcm_mv_days_2"
@@ -149,7 +149,7 @@ function GraphRenderer({
 						data={
 							state.countData.find(
 								(site) => site.site === displayedSite
-							)?.counts.ecmo_indication as CountEntry[]
+							)?.counts.ards_outcomes as CountEntry[]
 						}
 					/>
 				</div>

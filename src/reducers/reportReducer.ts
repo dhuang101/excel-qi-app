@@ -36,7 +36,7 @@ export interface BoxplotEntry {
 
 export interface ReportReducer {
 	countData: CountDataItem[]
-	losData: BoxplotEntry[]
+	boxplotData: BoxplotEntry[]
 }
 
 export enum ACTION {
