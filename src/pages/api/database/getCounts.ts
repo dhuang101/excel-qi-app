@@ -202,10 +202,12 @@ async function GetCounts(params: ParamsType) {
 					),
 				])
 			),
-			ards_outcomes: ardsKeys.map((key) => ({
-				value: key,
-				count: allSitesCounts.ards_outcomes[key] || 0,
-			})),
+			ards_outcomes: Object.entries(allSitesCounts.ards_outcomes).map(
+				([label, count]) => ({
+					value: label,
+					count: count as number,
+				})
+			),
 		},
 	}
 
