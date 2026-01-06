@@ -21,15 +21,16 @@ export const AxisBottom = ({
 		const width = range[1] - range[0]
 		const numberOfTicksTarget = Math.floor(width / pixelsPerTick)
 
-		return [{ value: 0, xOffset: 0 }].concat(
-			xScale.ticks(numberOfTicksTarget).map((value) => ({
+		const d3Ticks = xScale.ticks(numberOfTicksTarget)
+		const filteredD3Ticks = d3Ticks.filter((v) => v !== 0)
+
+		return [{ value: 0, xOffset: xScale(0) }].concat(
+			filteredD3Ticks.map((value) => ({
 				value,
 				xOffset: xScale(value),
 			}))
 		)
-		// disabled as d3 does not correctly handle dependencies
-		// eslint-disable-next-line
-	}, [xScale])
+	}, [xScale, pixelsPerTick, range])
 
 	return (
 		<>
@@ -48,7 +49,6 @@ export const AxisBottom = ({
 						opacity={0.25}
 					/>
 					<text
-						key={value}
 						style={{
 							fontSize: "12px",
 							textAnchor: "middle",
