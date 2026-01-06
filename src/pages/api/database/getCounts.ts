@@ -178,7 +178,7 @@ async function GetCounts(params: ParamsType) {
 		if (siteResultsMap[site]) {
 			ardsKeys.forEach((key) => {
 				const count = siteData[key] || 0
-				const displayName = ARDS_OUTCOMES_MAP[key] // Use the renamed label
+				const displayName = ARDS_OUTCOMES_MAP[key]
 
 				siteResultsMap[site].counts.ards_outcomes.push({
 					value: displayName,

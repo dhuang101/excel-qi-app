@@ -33,6 +33,7 @@ export const AxisLeft = ({ yScale }: AxisLeftProps) => {
 					outcm_ecmo_days_2: "Days on ECMO",
 					outcm_icu_days: "Days in ICU",
 					outcm_hosp_days: "Days in Hospital",
+					outcm_mv_days_2: "Days on IMV",
 				}
 				return (
 					<g key={value} transform={`translate(0, ${yOffset})`}>
