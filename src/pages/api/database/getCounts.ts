@@ -27,6 +27,7 @@ async function getClient() {
 async function GetCounts(params: ParamsType) {
 	const client = await getClient()
 	const collection = client.db("main").collection("excel-data")
+
 	const attributes = [
 		"outcm_hosp_discharge_loc",
 		"diagnosis_cardiac",
@@ -35,156 +36,114 @@ async function GetCounts(params: ParamsType) {
 		"ecmo_indication",
 	]
 
-	// Initialize objects to hold results
-	const siteResultsMap: Record<
-		string,
-		{
-			totalDocuments: number
-			counts: Record<string, ValueCount[]>
-		}
-	> = {}
+	const facetStages: Record<string, any[]> = {}
 
-	const allSitesCounts: {
-		totalDocuments: number
-		counts: Record<string, Record<string, number>>
-	} = {
-		totalDocuments: 0,
-		counts: {},
-	}
-
-	// Aggregate attribute counts grouped by site and attribute value
-	for (const attribute of attributes) {
-		const matchStage = {
-			[attribute]: { $nin: [null, "N/A"] },
-			redcap_data_access_group: { $nin: [null, ""] },
-		}
-
-		const groupStage = {
-			_id: {
-				site: "$redcap_data_access_group",
-				value: `$${attribute}`,
-			},
-			count: { $sum: 1 },
-		}
-
-		const projectStage = {
-			$project: {
-				site: "$_id.site",
-				value: "$_id.value",
-				count: 1,
-			},
-		}
-
-		const pipeline: any[] = [
-			{ $match: matchStage },
-			{ $group: groupStage },
-			projectStage,
-			{ $sort: { count: -1 } },
-		]
-
-		if (attribute === "outcm_hosp_discharge_loc") {
-			pipeline.splice(3, 0, {
-				$addFields: {
-					value: {
-						$cond: {
-							if: { $eq: ["$value", "Dead"] },
-							then: "Deceased",
-							else: "$value",
-						},
-					},
-				},
-			})
-		}
-
-		const rawValues = await collection.aggregate(pipeline).toArray()
-
-		for (const { site, value, count } of rawValues) {
-			if (!siteResultsMap[site]) {
-				siteResultsMap[site] = {
-					totalDocuments: 0,
-					counts: {},
-				}
-			}
-			if (!siteResultsMap[site].counts[attribute]) {
-				siteResultsMap[site].counts[attribute] = []
-			}
-			siteResultsMap[site].counts[attribute].push({ value, count })
-
-			if (!allSitesCounts.counts[attribute]) {
-				allSitesCounts.counts[attribute] = {}
-			}
-			allSitesCounts.counts[attribute][value] =
-				(allSitesCounts.counts[attribute][value] || 0) + count
-		}
-	}
-
-	// Calculate total documents per site
-	const siteDocCounts = await collection
-		.aggregate([
+	attributes.forEach((attr) => {
+		facetStages[attr] = [
 			{
 				$match: {
+					[attr]: { $nin: [null, "N/A"] },
 					redcap_data_access_group: { $nin: [null, ""] },
 				},
 			},
 			{
 				$group: {
-					_id: "$redcap_data_access_group",
+					_id: {
+						site: "$redcap_data_access_group",
+						value: `$${attr}`,
+					},
 					count: { $sum: 1 },
 				},
 			},
-		])
+			{
+				$project: {
+					_id: 0,
+					site: "$_id.site",
+					count: 1,
+					value:
+						attr === "outcm_hosp_discharge_loc"
+							? {
+									$cond: [
+										{ $eq: ["$_id.value", "Dead"] },
+										"Deceased",
+										"$_id.value",
+									],
+							  }
+							: "$_id.value",
+				},
+			},
+			{ $sort: { count: -1 } },
+		]
+	})
+
+	facetStages["siteTotals"] = [
+		{ $match: { redcap_data_access_group: { $nin: [null, ""] } } },
+		{ $group: { _id: "$redcap_data_access_group", count: { $sum: 1 } } },
+	]
+
+	const [rawResults] = await collection
+		.aggregate([{ $facet: facetStages }])
 		.toArray()
 
-	for (const { _id: site, count } of siteDocCounts) {
-		if (siteResultsMap[site]) {
-			siteResultsMap[site].totalDocuments = count
-		}
-	}
+	const siteResultsMap: Record<
+		string,
+		{ totalDocuments: number; counts: Record<string, ValueCount[]> }
+	> = {}
+	const allSitesCounts: Record<string, Record<string, number>> = {}
+	let globalTotal = 0
 
-	allSitesCounts.totalDocuments = siteDocCounts.reduce(
-		(sum, s) => sum + s.count,
-		0
-	)
+	rawResults.siteTotals.forEach((s: any) => {
+		siteResultsMap[s._id] = { totalDocuments: s.count, counts: {} }
+		globalTotal += s.count
+	})
 
-	client.close()
+	attributes.forEach((attr) => {
+		allSitesCounts[attr] = {}
+		rawResults[attr].forEach((item: any) => {
+			const { site, value, count } = item
 
-	const siteResultsArray = Object.entries(siteResultsMap).map(
-		([site, data]) => ({
-			site,
-			...data,
+			if (siteResultsMap[site]) {
+				if (!siteResultsMap[site].counts[attr])
+					siteResultsMap[site].counts[attr] = []
+				siteResultsMap[site].counts[attr].push({ value, count })
+			}
+
+			allSitesCounts[attr][value] =
+				(allSitesCounts[attr][value] || 0) + count
 		})
-	)
+	})
 
-	// Build the all_sites entry
 	const allSitesEntry = {
 		site: "all_sites",
-		totalDocuments: allSitesCounts.totalDocuments,
+		totalDocuments: globalTotal,
 		counts: Object.fromEntries(
-			Object.entries(allSitesCounts.counts).map(
-				([attribute, valueCounts]) => [
-					attribute,
-					Object.entries(valueCounts).map(([value, count]) => ({
-						value,
-						count,
-					})),
-				]
-			)
+			Object.entries(allSitesCounts).map(([attr, values]) => [
+				attr,
+				Object.entries(values).map(([value, count]) => ({
+					value,
+					count: count as number,
+				})),
+			])
 		),
 	}
 
-	// If role is public, return only all_sites
-	if (params.role === "public") {
-		return [allSitesEntry]
-	}
+	if (params.role === "public") return [allSitesEntry]
 
-	// Filter results based on user role and sites
-	let filteredSites = siteResultsArray
-	if (params.role === "site-viewer" && params.sites.length > 0) {
-		filteredSites = siteResultsArray.filter((r) =>
-			params.sites.includes(r.site)
-		)
-	} else if (!["global-viewer", "admin"].includes(params.role)) {
-		throw new Error("Server Error: in GetCounts - Unauthorized role")
+	const filteredSites = Object.entries(siteResultsMap)
+		.map(([site, data]) => ({ site, ...data }))
+		.filter((r) => {
+			if (["global-viewer", "admin"].includes(params.role)) return true
+			if (params.role === "site-viewer")
+				return params.sites.includes(r.site)
+			return false
+		})
+
+	if (
+		params.role === "site-viewer" &&
+		filteredSites.length === 0 &&
+		params.sites.length > 0
+	) {
+		throw new Error("Unauthorized role or site access")
 	}
 
 	return [allSitesEntry, ...filteredSites]

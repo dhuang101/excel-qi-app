@@ -25,34 +25,44 @@ function ReportingPage() {
 	// sequentially fetch the data
 	// TODO: fetch them in parallel?
 	useEffect(() => {
-		let payload = {}
-		axios
-			.post("/api/database/getCounts", {
-				role: session?.user.role || "public",
-				sites: session?.user.sites || [],
-			})
-			.then((result) => {
-				payload = { countData: result.data }
-			})
-			.then(() => {
-				return Promise.resolve(
-					axios.post("/api/database/getBoxplotValues", {
-						role: session?.user.role || "public",
-						sites: session?.user.sites || [],
-					})
-				)
-			})
-			.then((result) => {
-				payload = { ...payload, losData: result.data }
-			})
-			.then(() => {
-				dispatch({ type: ACTION.SET_SUMMARY, payload: payload })
-			})
-			.catch((error) => {
+		const controller = new AbortController()
+
+		if (status === "loading" || !session) return
+
+		const fetchData = async () => {
+			try {
+				const body = {
+					role: session.user.role || "public",
+					sites: session.user.sites || [],
+				}
+				const [countsRes, boxplotRes] = await Promise.all([
+					axios.post("/api/database/getCounts", body, {
+						signal: controller.signal,
+					}),
+					axios.post("/api/database/getBoxplotValues", body, {
+						signal: controller.signal,
+					}),
+				])
+
+				dispatch({
+					type: ACTION.SET_SUMMARY,
+					payload: {
+						countData: countsRes.data,
+						losData: boxplotRes.data,
+					},
+				})
+			} catch (error) {
+				if (axios.isCancel(error)) return
+
 				console.error("Error fetching data:", error)
 				router.push("/error")
-			})
-	}, [status, router, session?.user.role, session?.user.sites])
+			}
+		}
+
+		fetchData()
+
+		return () => controller.abort()
+	}, [status, router, session])
 
 	function switchView() {
 		setCurrentView((current) => {
