@@ -113,9 +113,11 @@ function GraphRenderer({
 						width={width}
 						height={height}
 						data={
-							state.losData.find(
-								(site) => site.site === displayedSite
-							)?.stats as BoxplotStats[]
+							state.losData
+								.find((site) => site.site === displayedSite)
+								?.stats.filter(
+									(obj) => obj.name !== "outcm_mv_days_2"
+								) as BoxplotStats[]
 						}
 					/>
 				</div>
@@ -128,9 +130,11 @@ function GraphRenderer({
 						width={width}
 						height={height}
 						data={
-							state.losData.find(
-								(site) => site.site === displayedSite
-							)?.stats as BoxplotStats[]
+							state.losData
+								.find((site) => site.site === displayedSite)
+								?.stats.filter(
+									(obj) => obj.name === "outcm_mv_days_2"
+								) as BoxplotStats[]
 						}
 					/>
 				</div>

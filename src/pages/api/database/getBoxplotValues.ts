@@ -62,7 +62,7 @@ async function GetBoxplotValues(params: ParamsType) {
 		"outcm_ecmo_days_2",
 		"outcm_icu_days",
 		"outcm_hosp_days",
-		// "outcm_mv_days_2",
+		"outcm_mv_days_2",
 	]
 
 	const projection = attributes.reduce(
