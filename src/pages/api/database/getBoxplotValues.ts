@@ -94,7 +94,6 @@ async function GetBoxplotValues(params: ParamsType) {
 	) {
 		sites = await collection.distinct("redcap_data_access_group")
 	}
-	client.close()
 
 	const siteStats: Record<string, SummaryStats[]> = {}
 

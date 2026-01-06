@@ -72,7 +72,6 @@ async function UpdatePerms({
 	// apply update
 	await permissions.updateOne({ email }, updateDoc)
 
-	await client.close()
 	return { message: "Permissions updated successfully." }
 }
 

@@ -24,7 +24,6 @@ async function GetAllPerms() {
 	const results = await collection
 		.find({}, { projection: { _id: 0 } }) // Omit the _id field
 		.toArray()
-	client.close()
 	return results
 }
 

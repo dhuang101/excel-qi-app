@@ -30,7 +30,6 @@ async function PostLoginDate(params: ParamsType) {
 		{ $set: { loginDate: loginDate } },
 		{ upsert: false }
 	)
-	await client.close()
 	return { message: "Login time saved successfully" }
 }
 

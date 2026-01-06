@@ -20,32 +20,28 @@ async function getClient() {
 
 async function GetFilesMetadata(params: ParamsType) {
 	const client = await getClient()
-	try {
-		await client.connect()
-		const db = client.db("main")
-		const collection = db.collection("file-repository")
+	await client.connect()
+	const db = client.db("main")
+	const collection = db.collection("file-repository")
 
-		let sites: string[] = params.sites
-		if (
-			(!sites || sites.length === 0) &&
-			(params.role === "admin" || params.role === "global-viewer")
-		) {
-			sites = await collection.distinct("redcap_data_access_group")
-		}
-
-		const query = { redcap_data_access_group: { $in: sites } }
-		const results = await collection
-			.find(query, {
-				projection: {
-					_id: 0,
-				},
-			})
-			.toArray()
-
-		return results
-	} finally {
-		await client.close()
+	let sites: string[] = params.sites
+	if (
+		(!sites || sites.length === 0) &&
+		(params.role === "admin" || params.role === "global-viewer")
+	) {
+		sites = await collection.distinct("redcap_data_access_group")
 	}
+
+	const query = { redcap_data_access_group: { $in: sites } }
+	const results = await collection
+		.find(query, {
+			projection: {
+				_id: 0,
+			},
+		})
+		.toArray()
+
+	return results
 }
 
 // handler for any calls to this endpoint
