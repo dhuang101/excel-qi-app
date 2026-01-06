@@ -17,6 +17,7 @@ function GraphRenderer({
 	width,
 	height,
 }: PropType) {
+	console.log(state.losData)
 	switch (displayedGraph) {
 		case "Hospital Outcomes":
 			return (
@@ -112,6 +113,36 @@ function GraphRenderer({
 							state.losData.find(
 								(site) => site.site === displayedSite
 							)?.stats as LosStats[]
+						}
+					/>
+				</div>
+			)
+		case "IMV Duration":
+			return (
+				<div className="flex items-center flex-col">
+					<article className="font-semibold">IMV Duration</article>
+					<Boxplot
+						width={width}
+						height={height}
+						data={
+							state.losData.find(
+								(site) => site.site === displayedSite
+							)?.stats as LosStats[]
+						}
+					/>
+				</div>
+			)
+		case "ARDS Outcomes":
+			return (
+				<div className="flex items-center flex-col">
+					<article className="font-semibold">ARDS Outcomes</article>
+					<Barplot
+						width={width}
+						height={height}
+						data={
+							state.countData.find(
+								(site) => site.site === displayedSite
+							)?.counts.ecmo_indication as CountEntry[]
 						}
 					/>
 				</div>
