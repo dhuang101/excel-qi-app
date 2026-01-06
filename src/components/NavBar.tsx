@@ -56,6 +56,11 @@ function NavBar() {
 								Reporting
 							</article>
 						</Link>
+						<Link href={"/summary"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								Summary Statistics
+							</article>
+						</Link>
 						<Link href={"/ecmo-pal"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								ECMO Prediction
