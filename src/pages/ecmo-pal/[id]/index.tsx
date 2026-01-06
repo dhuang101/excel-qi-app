@@ -1,4 +1,4 @@
-import { testEcmo } from "@/test-data/ecmo"
+import { TEST_ECMO } from "@/test-data/ecmo"
 import axios from "axios"
 import React, { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
@@ -7,7 +7,7 @@ import { CircularProgress } from "@mui/material"
 import router from "next/router"
 
 function EcmoPalPage() {
-	const testVars = testEcmo
+	const testVars = TEST_ECMO
 	const id = usePathname().split("/").pop()
 
 	const [modelDetails, setModelDetails]: any = useState({})

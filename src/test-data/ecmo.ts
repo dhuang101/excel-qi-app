@@ -1,4 +1,4 @@
-export const testEcmo: any = {
+export const TEST_ECMO: any = {
 	"17fcd7ecc2ade010dc499366734d456e": {
 		model_name: "Full",
 		variables: {
