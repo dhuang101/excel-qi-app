@@ -16,13 +16,16 @@ export const config = {
 	},
 }
 
-let client: MongoClient | null = null
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
 async function getClient() {
-	if (!client) {
-		client = new MongoClient(process.env.DB_CONNECTION_URI as string)
-		await client.connect()
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
 	}
-	return client
+	return cachedClient
 }
 
 // utility to check if arrays overlap

@@ -11,9 +11,21 @@ type ParamsType = {
 	sites: string[]
 }
 
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
+async function getClient() {
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
+	}
+	return cachedClient
+}
+
 // this api fetches each the count of unique value of each attribute in the attributes list
 async function GetCounts(params: ParamsType) {
-	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
+	const client = await getClient()
 	const collection = client.db("main").collection("excel-data")
 	const attributes = [
 		"outcm_hosp_discharge_loc",

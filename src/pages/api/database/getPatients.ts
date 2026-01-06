@@ -2,8 +2,20 @@ import { SearchQuery, UserEnteredQuery } from "@/types/searchTypes"
 import { FindOptions, MongoClient } from "mongodb"
 import { NextApiRequest, NextApiResponse } from "next"
 
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
+async function getClient() {
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
+	}
+	return cachedClient
+}
+
 async function GetPatients(params: SearchQuery) {
-	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
+	const client = await getClient()
 	const collection = client.db("main").collection("excel-data")
 
 	// Build text-based filters

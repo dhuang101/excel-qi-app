@@ -25,6 +25,18 @@ const VALID_SITES = [
 	"townsville_hospital",
 ]
 
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
+async function getClient() {
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
+	}
+	return cachedClient
+}
+
 async function UpdatePerms({
 	email,
 	addSites,
@@ -32,7 +44,7 @@ async function UpdatePerms({
 	changedRole,
 }: ParamsType) {
 	// connect to db
-	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
+	const client = await getClient()
 	const permissions = client.db("main").collection<Permission>("permissions")
 
 	// validate input

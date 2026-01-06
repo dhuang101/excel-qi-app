@@ -6,8 +6,20 @@ type ParamsType = {
 	sites: string[]
 }
 
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
+async function getClient() {
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
+	}
+	return cachedClient
+}
+
 async function GetFilesMetadata(params: ParamsType) {
-	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
+	const client = await getClient()
 	try {
 		await client.connect()
 		const db = client.db("main")

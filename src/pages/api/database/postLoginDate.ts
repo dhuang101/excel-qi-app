@@ -7,8 +7,20 @@ type ParamsType = {
 	loginDate: string
 }
 
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
+async function getClient() {
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
+	}
+	return cachedClient
+}
+
 async function PostLoginDate(params: ParamsType) {
-	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
+	const client = await getClient()
 	const permissions = client.db("main").collection<Permission>("permissions")
 	// ensure the date is in the correct timezone
 	// no need for dayjs here, we can use native Date methods

@@ -14,6 +14,18 @@ const dateFields = [
 	"outcm_hosp_discharge",
 ]
 
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
+async function getClient() {
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
+	}
+	return cachedClient
+}
+
 // Helper to convert string numbers to numbers, except for date fields
 function preProcessRow(row: excelImportRow): excelImportRow {
 	const returnVal: Record<string, any> = { ...row }
@@ -41,7 +53,7 @@ function preProcessRow(row: excelImportRow): excelImportRow {
 }
 
 async function PostCsv(params: excelImportRow[]) {
-	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
+	const client = await getClient()
 	const collection = client
 		.db("main")
 		.collection<excelImportRow>("excel-data")

@@ -6,9 +6,19 @@ import OktaProvider from "next-auth/providers/okta"
 import { CreateAccountProvisionedEmail } from "@/utilities/ProvisionEmailTemplate"
 // import Auth0Provider from "next-auth/providers/auth0"
 
-const client = await MongoClient.connect(
-	process.env.DB_CONNECTION_URI as string
-)
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
+async function getClient() {
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
+	}
+	return cachedClient
+}
+
+const client = await getClient()
 const db = client.db("main")
 const rolesCollection = db.collection("permissions")
 
