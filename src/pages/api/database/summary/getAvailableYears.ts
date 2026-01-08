@@ -16,9 +16,31 @@ async function getClient() {
 	return cachedClient
 }
 
+// this api fetches all the unique years in the column ecmo_start_date_time for the summary statistics page
 async function GetAvailableYears() {
-	// connect to db
 	const client = await getClient()
+	const collection = client.db("main").collection("excel-data")
+
+	const years = await collection
+		.aggregate([
+			{
+				$project: {
+					year: { $year: "$ecmo_start_date_time" },
+				},
+			},
+			{
+				$group: {
+					_id: "$year",
+				},
+			},
+			{
+				$sort: { _id: 1 },
+			},
+		])
+		.toArray()
+
+	const yearList = years.map((item) => item._id).filter((y) => y !== null)
+	return yearList
 }
 
 // handler for any calls to this endpoint
