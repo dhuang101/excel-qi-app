@@ -16,14 +16,9 @@ async function getClient() {
 	return cachedClient
 }
 
-async function GetAllPerms() {
+async function GetAvailableYears() {
 	// connect to db
 	const client = await getClient()
-	const collection = client.db("main").collection("permissions")
-	const results = await collection
-		.find({}, { projection: { _id: 0 } }) // Omit the _id field
-		.toArray()
-	return results
 }
 
 // handler for any calls to this endpoint
@@ -32,10 +27,10 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	try {
-		const results = await GetAllPerms()
+		const results = await GetAvailableYears()
 		res.status(200).json(results)
 	} catch (err) {
-		console.error("Error at database/permissions/getAllPerms :", err)
+		console.error("Error at database/summary/getAvailableYears :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }
