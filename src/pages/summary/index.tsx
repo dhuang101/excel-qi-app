@@ -1,17 +1,29 @@
+import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
 import { useEffect, useState } from "react"
 
 interface QueryAttributes {
 	selectedYear: number
-	ecmoMode: "total" | "VV" | "VA"
+	ecmoMode: "total" | "V-V" | "V-A"
+}
+
+interface SummaryData {
+	cards: {
+		total: { count: number; mortalityRate: number }
+		va: { count: number; mortalityRate: number }
+		vv: { count: number; mortalityRate: number }
+	}
 }
 
 function SummaryPage() {
+	// state attributes for query
 	const [availableYears, setAvailableYears] = useState([])
 	const [queryAttributes, setQueryAttributes] = useState<QueryAttributes>({
 		selectedYear: 0,
 		ecmoMode: "total",
 	})
+	// state attributes for returned data
+	const [data, setData] = useState<SummaryData | null>(null)
 
 	useEffect(() => {
 		axios.get("/api/database/summary/getAvailableYears").then((result) => {
@@ -23,6 +35,17 @@ function SummaryPage() {
 		})
 	}, [])
 
+	useEffect(() => {
+		if (queryAttributes.selectedYear === 0) return
+
+		axios
+			.post("api/database/summary/getSummaryStats", queryAttributes)
+			.then((result) => {
+				console.log(result.data)
+				setData(result.data)
+			})
+	}, [queryAttributes])
+
 	function handleButtonClick(mode: QueryAttributes["ecmoMode"]) {
 		setQueryAttributes((prev) => ({
 			...prev,
@@ -30,7 +53,14 @@ function SummaryPage() {
 		}))
 	}
 
-	return (
+	return !data ? (
+		<div className="flex flex-col justify-center items-center h-[83vh]">
+			<CircularProgress size={80} />
+			<article className="text-lg font-semibold pt-4">
+				Fetching Data...
+			</article>
+		</div>
+	) : (
 		<div className="flex flex-col w-full items-center justify-center">
 			<div className="flex flex-col w-4/5 mt-2">
 				<article className="text-lg w-full">Available Years</article>
@@ -68,35 +98,41 @@ function SummaryPage() {
 							</article>
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
-							<article className="text-3xl">10000</article>
+							<article className="text-3xl">
+								{data.cards.total.count}
+							</article>
 							<article className="mt-2">
-								Mortality: 10.00%
+								{`Mortality: ${data.cards.total.mortalityRate}%`}
 							</article>
 						</div>
 					</div>
 					<div className="flex flex-col w-[30%]">
 						<div className="flex min-h-12 items-center justify-center rounded-t-md bg-primary  outline outline-primary">
 							<article className="font-semibold text-primary-content text-xl">
-								VA Cases
+								V-A Cases
 							</article>
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
-							<article className="text-3xl">10000</article>
+							<article className="text-3xl">
+								{data.cards.va.count}
+							</article>
 							<article className="mt-2">
-								Mortality: 10.00%
+								{`Mortality: ${data.cards.va.mortalityRate}%`}
 							</article>
 						</div>
 					</div>
 					<div className="flex flex-col w-[30%]">
 						<div className="flex min-h-12 items-center justify-center rounded-t-md bg-primary  outline outline-primary">
 							<article className="font-semibold text-primary-content text-xl">
-								VV Cases
+								V-V Cases
 							</article>
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
-							<article className="text-3xl">10000</article>
+							<article className="text-3xl">
+								{data.cards.vv.count}
+							</article>
 							<article className="mt-2">
-								Mortality: 10.00%
+								{`Mortality: ${data.cards.vv.mortalityRate}%`}
 							</article>
 						</div>
 					</div>
@@ -116,27 +152,27 @@ function SummaryPage() {
 					</button>
 					<button
 						className={`btn w-[30%] ${
-							queryAttributes.ecmoMode === "VA"
+							queryAttributes.ecmoMode === "V-A"
 								? "btn-primary"
 								: ""
 						}`}
 						onClick={() => {
-							handleButtonClick("VA")
+							handleButtonClick("V-A")
 						}}
 					>
-						VA Cases
+						V-A Cases
 					</button>
 					<button
 						className={`btn w-[30%] ${
-							queryAttributes.ecmoMode === "VV"
+							queryAttributes.ecmoMode === "V-V"
 								? "btn-primary"
 								: ""
 						}`}
 						onClick={() => {
-							handleButtonClick("VV")
+							handleButtonClick("V-V")
 						}}
 					>
-						VV Cases
+						V-V Cases
 					</button>
 				</div>
 			</div>
