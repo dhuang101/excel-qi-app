@@ -181,8 +181,6 @@ async function GetSummaryStats(params: ParamsType) {
 
 	const [results] = await collection.aggregate(pipeline).toArray()
 
-	console.log(results)
-
 	const finalData = {
 		cards: results,
 	}

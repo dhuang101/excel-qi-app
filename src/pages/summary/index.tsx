@@ -41,7 +41,6 @@ function SummaryPage() {
 		axios
 			.post("api/database/summary/getSummaryStats", queryAttributes)
 			.then((result) => {
-				console.log(result.data)
 				setData(result.data)
 			})
 	}, [queryAttributes])

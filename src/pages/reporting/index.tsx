@@ -24,7 +24,6 @@ function ReportingPage() {
 
 	// sequentially fetch the data
 	useEffect(() => {
-		console.log(session)
 		const controller = new AbortController()
 
 		if (status === "loading") return
