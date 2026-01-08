@@ -24,16 +24,18 @@ function ReportingPage() {
 
 	// sequentially fetch the data
 	useEffect(() => {
+		console.log(session)
 		const controller = new AbortController()
 
-		if (status === "loading" || !session) return
+		if (status === "loading") return
 
 		const fetchData = async () => {
 			try {
 				const body = {
-					role: session.user.role || "public",
-					sites: session.user.sites || [],
+					role: session?.user?.role ?? "public",
+					sites: session?.user?.sites ?? [],
 				}
+
 				const [countsRes, boxplotRes] = await Promise.all([
 					axios.post("/api/database/getCounts", body, {
 						signal: controller.signal,
