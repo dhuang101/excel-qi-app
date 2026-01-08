@@ -14,6 +14,9 @@ export async function middleware(req: NextRequest) {
 		"/auth/signin",
 		"/resources",
 		"/reporting",
+		"/summary",
+		"/api/database/summary/getAvailableYears",
+		"/api/database/summary/getSummaryStats",
 		"/api/database/getCounts",
 		"/api/database/getBoxplotValues",
 	]
