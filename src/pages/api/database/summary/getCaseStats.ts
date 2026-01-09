@@ -21,7 +21,7 @@ async function getClient() {
 }
 
 // this api fetches all the unique years in the column ecmo_start_date_time for the summary statistics page
-async function GetSummaryStats(params: ParamsType) {
+async function GetCaseStats(params: ParamsType) {
 	const client = await getClient()
 	const collection = client.db("main").collection("excel-data")
 
@@ -194,9 +194,10 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	try {
+		console.log(req.body)
 		const params = req.body as ParamsType
 
-		const results = await GetSummaryStats(params)
+		const results = await GetCaseStats(params)
 		res.status(200).json(results)
 	} catch (err) {
 		console.error("Error at database/summary/getSummaryStats  :", err)

@@ -2,11 +2,6 @@ import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
 import { useEffect, useState } from "react"
 
-interface QueryAttributes {
-	selectedYear: number
-	ecmoMode: "total" | "V-V" | "V-A"
-}
-
 interface SummaryData {
 	cards: {
 		total: { count: number; mortalityRate: number }
@@ -15,41 +10,37 @@ interface SummaryData {
 	}
 }
 
+type EcmoMode = "total" | "V-V" | "V-A"
+
 function SummaryPage() {
 	// state attributes for query
 	const [availableYears, setAvailableYears] = useState([])
-	const [queryAttributes, setQueryAttributes] = useState<QueryAttributes>({
-		selectedYear: 0,
-		ecmoMode: "total",
-	})
+	const [selectedYear, setSelectedYear] = useState(0)
+	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
 	// state attributes for returned data
 	const [data, setData] = useState<SummaryData | null>(null)
 
 	useEffect(() => {
 		axios.get("/api/database/summary/getAvailableYears").then((result) => {
 			setAvailableYears(result.data)
-			setQueryAttributes((prev) => ({
-				...prev,
-				selectedYear: result.data.at(-1),
-			}))
+			setSelectedYear(result.data.at(-1))
 		})
 	}, [])
 
 	useEffect(() => {
-		if (queryAttributes.selectedYear === 0) return
+		if (selectedYear === 0) return
 
 		axios
-			.post("api/database/summary/getSummaryStats", queryAttributes)
+			.post("api/database/summary/getCaseStats", {
+				selectedYear: selectedYear,
+			})
 			.then((result) => {
 				setData(result.data)
 			})
-	}, [queryAttributes])
+	}, [selectedYear])
 
-	function handleButtonClick(mode: QueryAttributes["ecmoMode"]) {
-		setQueryAttributes((prev) => ({
-			...prev,
-			ecmoMode: mode,
-		}))
+	function handleButtonClick(mode: EcmoMode) {
+		setEcmoMode(mode)
 	}
 
 	return !data ? (
@@ -68,12 +59,9 @@ function SummaryPage() {
 						type="range"
 						min={availableYears[0]}
 						max={availableYears.at(-1)}
-						value={queryAttributes.selectedYear}
+						value={selectedYear}
 						onChange={(e) =>
-							setQueryAttributes((prev) => ({
-								...prev,
-								selectedYear: Number(e.target.value),
-							}))
+							setSelectedYear(Number(e.target.value))
 						}
 						className="range range-primary [--range-fill:0] w-full"
 						step={1}
@@ -139,9 +127,7 @@ function SummaryPage() {
 				<div className="flex justify-between w-full mt-4 outline outline-primary p-2 shadow-2xl">
 					<button
 						className={`btn w-[30%] ${
-							queryAttributes.ecmoMode === "total"
-								? "btn-primary"
-								: ""
+							ecmoMode === "total" ? "btn-primary" : ""
 						}`}
 						onClick={() => {
 							handleButtonClick("total")
@@ -151,9 +137,7 @@ function SummaryPage() {
 					</button>
 					<button
 						className={`btn w-[30%] ${
-							queryAttributes.ecmoMode === "V-A"
-								? "btn-primary"
-								: ""
+							ecmoMode === "V-A" ? "btn-primary" : ""
 						}`}
 						onClick={() => {
 							handleButtonClick("V-A")
@@ -163,9 +147,7 @@ function SummaryPage() {
 					</button>
 					<button
 						className={`btn w-[30%] ${
-							queryAttributes.ecmoMode === "V-V"
-								? "btn-primary"
-								: ""
+							ecmoMode === "V-V" ? "btn-primary" : ""
 						}`}
 						onClick={() => {
 							handleButtonClick("V-V")
