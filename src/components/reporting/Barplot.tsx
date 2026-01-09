@@ -114,7 +114,7 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 					}
 					y={y + yScale.bandwidth() / 2}
 					textAnchor={xScale(d.count) > 30 ? "end" : "start"}
-					alignmentBaseline="central"
+					dominantBaseline="middle"
 					fill="var(--color-base-content)"
 					fontSize={12}
 				>
