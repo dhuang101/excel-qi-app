@@ -194,7 +194,6 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	try {
-		console.log(req.body)
 		const params = req.body as ParamsType
 
 		const results = await GetCaseStats(params)

@@ -22,7 +22,7 @@ function ReportingPage() {
 	})
 	const [currentView, setCurrentView] = useState<displayViews>("Single")
 
-	// sequentially fetch the data
+	// fetch the data
 	useEffect(() => {
 		const controller = new AbortController()
 
