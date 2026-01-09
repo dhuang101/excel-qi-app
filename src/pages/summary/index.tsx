@@ -2,7 +2,7 @@ import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
 import { useEffect, useState } from "react"
 
-interface SummaryData {
+interface CaseData {
 	cards: {
 		total: { count: number; mortalityRate: number }
 		va: { count: number; mortalityRate: number }
@@ -18,7 +18,8 @@ function SummaryPage() {
 	const [selectedYear, setSelectedYear] = useState(0)
 	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
 	// state attributes for returned data
-	const [data, setData] = useState<SummaryData | null>(null)
+	const [caseData, setCaseData] = useState<CaseData | null>(null)
+	const [graphData, setGraphData] = useState()
 
 	useEffect(() => {
 		axios.get("/api/database/summary/getAvailableYears").then((result) => {
@@ -35,15 +36,28 @@ function SummaryPage() {
 				selectedYear: selectedYear,
 			})
 			.then((result) => {
-				setData(result.data)
+				setCaseData(result.data)
 			})
 	}, [selectedYear])
+
+	useEffect(() => {
+		if (selectedYear === 0) return
+
+		axios
+			.post("api/database/summary/getGraphData", {
+				selectedYear: selectedYear,
+				ecmoMode: ecmoMode,
+			})
+			.then((result) => {
+				setGraphData(result.data)
+			})
+	}, [selectedYear, ecmoMode])
 
 	function handleButtonClick(mode: EcmoMode) {
 		setEcmoMode(mode)
 	}
 
-	return !data ? (
+	return !caseData ? (
 		<div className="flex flex-col justify-center items-center h-[83vh]">
 			<CircularProgress size={80} />
 			<article className="text-lg font-semibold pt-4">
@@ -86,10 +100,10 @@ function SummaryPage() {
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
 							<article className="text-3xl">
-								{data.cards.total.count}
+								{caseData.cards.total.count}
 							</article>
 							<article className="mt-2">
-								{`Mortality: ${data.cards.total.mortalityRate}%`}
+								{`Mortality: ${caseData.cards.total.mortalityRate}%`}
 							</article>
 						</div>
 					</div>
@@ -101,10 +115,10 @@ function SummaryPage() {
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
 							<article className="text-3xl">
-								{data.cards.va.count}
+								{caseData.cards.va.count}
 							</article>
 							<article className="mt-2">
-								{`Mortality: ${data.cards.va.mortalityRate}%`}
+								{`Mortality: ${caseData.cards.va.mortalityRate}%`}
 							</article>
 						</div>
 					</div>
@@ -116,10 +130,10 @@ function SummaryPage() {
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
 							<article className="text-3xl">
-								{data.cards.vv.count}
+								{caseData.cards.vv.count}
 							</article>
 							<article className="mt-2">
-								{`Mortality: ${data.cards.vv.mortalityRate}%`}
+								{`Mortality: ${caseData.cards.vv.mortalityRate}%`}
 							</article>
 						</div>
 					</div>
