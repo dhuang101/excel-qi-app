@@ -4,7 +4,7 @@ import * as d3 from "d3"
 const MARGIN = { top: 30, right: 30, bottom: 70, left: 140 }
 const BAR_PADDING = 0.3
 
-interface BarplotProps {
+interface HorizontalBarplotProps {
 	width: number
 	height: number
 	data: { value: string; count: number }[]
@@ -59,7 +59,11 @@ const SvgWrapText = (
 	})
 }
 
-export const Barplot = ({ width, height, data }: BarplotProps) => {
+export const HorizontalBarplot = ({
+	width,
+	height,
+	data,
+}: HorizontalBarplotProps) => {
 	const boundsWidth = width - MARGIN.right - MARGIN.left
 	const boundsHeight = height - MARGIN.top - MARGIN.bottom
 
@@ -186,4 +190,4 @@ export const Barplot = ({ width, height, data }: BarplotProps) => {
 	)
 }
 
-export default Barplot
+export default HorizontalBarplot

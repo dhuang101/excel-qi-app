@@ -138,7 +138,7 @@ function SummaryPage() {
 						</div>
 					</div>
 				</div>
-				<div className="flex justify-between w-full mt-4 outline outline-primary p-2 shadow-2xl">
+				<div className="flex justify-between w-full mt-4 outline outline-primary p-2 shadow-2xl rounded">
 					<button
 						className={`btn w-[30%] ${
 							ecmoMode === "total" ? "btn-primary" : ""
@@ -169,6 +169,12 @@ function SummaryPage() {
 					>
 						V-V Cases
 					</button>
+				</div>
+				<div className="flex justify-between w-full mt-4 outline outline-primary shadow-2xl rounded">
+					<div className="flex items-center w-full bg-primary">
+						<article className="text-primary-content text-2xl font-semibold">{`Total (${selectedYear}) - Mortality distribution by age group`}</article>
+						<div></div>
+					</div>
 				</div>
 			</div>
 		</div>

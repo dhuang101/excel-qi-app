@@ -3,7 +3,7 @@ import {
 	BoxplotStats,
 	ReportReducer,
 } from "@/reducers/reportReducer"
-import Barplot from "./Barplot"
+import HorizontalBarplot from "./HorizontalBarplot"
 import { Boxplot } from "./boxplot/Boxplot"
 
 type PropType = {
@@ -28,7 +28,7 @@ function GraphRenderer({
 					<article className="font-semibold">
 						Hospital Outcomes
 					</article>
-					<Barplot
+					<HorizontalBarplot
 						width={width}
 						height={height}
 						data={
@@ -45,7 +45,7 @@ function GraphRenderer({
 					<article className="font-semibold">
 						Primary Cardiac Diagnosis
 					</article>
-					<Barplot
+					<HorizontalBarplot
 						width={width}
 						height={height}
 						data={
@@ -62,7 +62,7 @@ function GraphRenderer({
 					<article className="font-semibold">
 						Primary Respiratory Diagnosis
 					</article>
-					<Barplot
+					<HorizontalBarplot
 						width={width}
 						height={height}
 						data={
@@ -77,7 +77,7 @@ function GraphRenderer({
 			return (
 				<div className="flex items-center flex-col">
 					<article className="font-semibold">ECMO Mode</article>
-					<Barplot
+					<HorizontalBarplot
 						width={width}
 						height={height}
 						data={
@@ -92,7 +92,7 @@ function GraphRenderer({
 			return (
 				<div className="flex items-center flex-col">
 					<article className="font-semibold">ECMO Indication</article>
-					<Barplot
+					<HorizontalBarplot
 						width={width}
 						height={height}
 						data={
@@ -143,7 +143,7 @@ function GraphRenderer({
 			return (
 				<div className="flex items-center flex-col">
 					<article className="font-semibold">ARDS Outcomes</article>
-					<Barplot
+					<HorizontalBarplot
 						width={width}
 						height={height}
 						data={
