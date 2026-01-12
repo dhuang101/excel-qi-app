@@ -1,7 +1,7 @@
 import VerticalBarplot from "@/components/summary/VerticalBarplot"
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useCallback, useState } from "react"
 
 interface CaseData {
 	cards: {
@@ -29,6 +29,18 @@ function SummaryPage() {
 	// state attributes for returned data
 	const [caseData, setCaseData] = useState<CaseData | null>(null)
 	const [graphData, setGraphData] = useState<GraphData | null>(null)
+	const [width, setWidth] = useState(500)
+
+	// dynamically assigns width variable to create responsive d3 graphs
+	const graphRef = useCallback((node: HTMLDivElement | null) => {
+		if (node !== null) {
+			const resizeObserver = new ResizeObserver((entries) => {
+				setWidth(entries[0].contentRect.width)
+			})
+
+			resizeObserver.observe(node)
+		}
+	}, [])
 
 	useEffect(() => {
 		axios.get("/api/database/summary/getAvailableYears").then((result) => {
@@ -58,7 +70,6 @@ function SummaryPage() {
 				ecmoMode: ecmoMode,
 			})
 			.then((result) => {
-				console.log(result.data)
 				setGraphData(result.data)
 			})
 	}, [selectedYear, ecmoMode])
@@ -76,7 +87,7 @@ function SummaryPage() {
 		</div>
 	) : (
 		<div className="flex flex-col w-full items-center justify-center">
-			<div className="flex flex-col w-4/5 mt-2">
+			<div className="flex flex-col w-2/3 mt-2">
 				<article className="text-lg w-full">Available Years</article>
 				<div className="w-full">
 					<input
@@ -184,11 +195,14 @@ function SummaryPage() {
 					<div className="flex justify-center w-full bg-primary py-2">
 						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Mortality distribution by age group`}</article>
 					</div>
-					<div className="flex justify-center">
+					<div
+						ref={graphRef}
+						className="flex w-full justify-center p-4"
+					>
 						<VerticalBarplot
 							data={graphData.mortalityDist}
-							width={800}
-							height={500}
+							width={width}
+							height={600}
 						/>
 					</div>
 				</div>
