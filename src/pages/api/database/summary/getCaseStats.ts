@@ -5,7 +5,6 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 type ParamsType = {
 	selectedYear: number
-	ecmoMode: "total" | "VV" | "VA"
 }
 
 const uri = process.env.DB_CONNECTION_URI as string

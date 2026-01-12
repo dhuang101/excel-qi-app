@@ -3,6 +3,12 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 // this api fetches the data required for the graphs on the summary page
 
+type ParamsType = {
+	selectedYear: number
+	ecmoMode: "total" | "V-V" | "V-A"
+	// | "V-VA" | "A-VCO2R" | "V-VECCO2R" | "VP"
+}
+
 const uri = process.env.DB_CONNECTION_URI as string
 let cachedClient: MongoClient | null = null
 
@@ -16,10 +22,24 @@ async function getClient() {
 }
 
 // this api fetches all the unique years in the column ecmo_start_date_time for the summary statistics page
-async function GetGraphData() {
+async function GetGraphData(params: ParamsType) {
 	const client = await getClient()
 	const collection = client.db("main").collection("excel-data")
+
+	const matchStage: Record<string, any> = {
+		ecmo_start_date_time: {
+			$gte: new Date(`${params.selectedYear}-01-01T00:00:00.000Z`),
+			$lte: new Date(`${params.selectedYear}-12-31T23:59:59.999Z`),
+		},
+	}
+
+	// 2. Only add ecmo_mode filter if the input is NOT "total"
+	if (params.ecmoMode !== "total") {
+		matchStage.ecmo_mode = params.ecmoMode
+	}
+
 	const pipeline = [
+		{ $match: matchStage },
 		{
 			$project: {
 				age: "$birthdate",
@@ -96,7 +116,7 @@ export default async function handler(
 	try {
 		const params = req.body
 
-		const results = await GetGraphData()
+		const results = await GetGraphData(params)
 		res.status(200).json(results)
 	} catch (err) {
 		console.error("Error at database/summary/getSummaryStats  :", err)

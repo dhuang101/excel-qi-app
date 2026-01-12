@@ -12,6 +12,10 @@ interface CaseData {
 }
 
 type EcmoMode = "total" | "V-V" | "V-A"
+// | "V-VA"
+// | "A-VCO2R"
+// | "V-VECCO2R"
+// | "VP"
 
 function SummaryPage() {
 	// state attributes for query
