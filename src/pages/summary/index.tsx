@@ -1,3 +1,4 @@
+import VerticalBarplot from "@/components/summary/VerticalBarplot"
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
 import { useEffect, useState } from "react"
@@ -49,6 +50,7 @@ function SummaryPage() {
 				ecmoMode: ecmoMode,
 			})
 			.then((result) => {
+				console.log(result.data)
 				setGraphData(result.data)
 			})
 	}, [selectedYear, ecmoMode])
@@ -171,9 +173,11 @@ function SummaryPage() {
 					</button>
 				</div>
 				<div className="flex justify-between w-full mt-4 outline outline-primary shadow-2xl rounded">
-					<div className="flex items-center w-full bg-primary">
-						<article className="text-primary-content text-2xl font-semibold">{`Total (${selectedYear}) - Mortality distribution by age group`}</article>
-						<div></div>
+					<div className="flex justify-center w-full bg-primary py-2">
+						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Mortality distribution by age group`}</article>
+						<div>
+							<VerticalBarplot />
+						</div>
 					</div>
 				</div>
 			</div>

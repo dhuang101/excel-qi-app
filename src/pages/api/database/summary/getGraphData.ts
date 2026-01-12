@@ -19,6 +19,73 @@ async function getClient() {
 async function GetGraphData() {
 	const client = await getClient()
 	const collection = client.db("main").collection("excel-data")
+	const pipeline = [
+		{
+			$project: {
+				age: "$birthdate",
+				isDead: {
+					$cond: [
+						{ $eq: ["$outcm_hosp_discharge_loc", "Dead"] },
+						1,
+						0,
+					],
+				},
+			},
+		},
+		{
+			$bucket: {
+				groupBy: "$age",
+				boundaries: [0, 18, 30, 40, 50, 55, 60, 65, 75, 80],
+				default: 80,
+				output: {
+					totalCount: { $sum: 1 },
+					deadCount: { $sum: "$isDead" },
+				},
+			},
+		},
+		{
+			$project: {
+				_id: 0,
+				ageRange: {
+					$switch: {
+						branches: [
+							{ case: { $eq: ["$_id", 0] }, then: "0-17" },
+							{ case: { $eq: ["$_id", 18] }, then: "18-29" },
+							{ case: { $eq: ["$_id", 30] }, then: "30-39" },
+							{ case: { $eq: ["$_id", 40] }, then: "40-49" },
+							{ case: { $eq: ["$_id", 50] }, then: "50-54" },
+							{ case: { $eq: ["$_id", 55] }, then: "55-59" },
+							{ case: { $eq: ["$_id", 60] }, then: "60-64" },
+							{ case: { $eq: ["$_id", 65] }, then: "65-74" },
+							{ case: { $eq: ["$_id", 75] }, then: "75-79" },
+							{ case: { $eq: ["$_id", 80] }, then: "80+" },
+						],
+						default: "Unknown",
+					},
+				},
+				mortalityDist: {
+					$cond: [
+						{ $eq: ["$totalCount", 0] },
+						0,
+						{
+							$multiply: [
+								{ $divide: ["$deadCount", "$totalCount"] },
+								100,
+							],
+						},
+					],
+				},
+			},
+		},
+		{
+			$sort: { ageRange: 1 },
+		},
+	]
+
+	const results = await collection.aggregate(pipeline).toArray()
+	return {
+		mortalityDist: results,
+	}
 }
 
 // handler for any calls to this endpoint
