@@ -33,7 +33,6 @@ async function GetGraphData(params: ParamsType) {
 		},
 	}
 
-	// 2. Only add ecmo_mode filter if the input is NOT "total"
 	if (params.ecmoMode !== "total") {
 		matchStage.ecmo_mode = params.ecmoMode
 	}
@@ -60,6 +59,13 @@ async function GetGraphData(params: ParamsType) {
 				output: {
 					totalCount: { $sum: 1 },
 					deadCount: { $sum: "$isDead" },
+				},
+			},
+		},
+		{
+			$setWindowFields: {
+				output: {
+					grandTotalCases: { $sum: "$totalCount" },
 				},
 			},
 		},
@@ -95,16 +101,39 @@ async function GetGraphData(params: ParamsType) {
 						},
 					],
 				},
+				caseDistribution: {
+					$cond: [
+						{ $eq: ["$grandTotalCases", 0] },
+						0,
+						{
+							$multiply: [
+								{
+									$divide: [
+										"$totalCount",
+										"$grandTotalCases",
+									],
+								},
+								100,
+							],
+						},
+					],
+				},
 			},
 		},
-		{
-			$sort: { ageRange: 1 },
-		},
+		{ $sort: { ageRange: 1 } },
 	]
 
 	const results = await collection.aggregate(pipeline).toArray()
+
 	return {
-		mortalityDist: results,
+		mortalityDist: results.map((r) => ({
+			ageRange: r.ageRange,
+			value: r.mortalityDist,
+		})),
+		caseDist: results.map((r) => ({
+			ageRange: r.ageRange,
+			value: r.caseDistribution,
+		})),
 	}
 }
 

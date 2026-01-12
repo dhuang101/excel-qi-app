@@ -12,7 +12,8 @@ interface CaseData {
 }
 
 interface GraphData {
-	mortalityDist: { ageRange: string; mortalityDist: number }[]
+	mortalityDist: { ageRange: string; value: number }[]
+	caseDist: { ageRange: string; value: number }[]
 }
 
 type EcmoMode = "total" | "V-V" | "V-A"
@@ -202,7 +203,22 @@ function SummaryPage() {
 						<VerticalBarplot
 							data={graphData.mortalityDist}
 							width={width}
-							height={600}
+							height={500}
+						/>
+					</div>
+				</div>
+				<div className="flex flex-col w-full mt-4 outline outline-primary shadow-2xl rounded">
+					<div className="flex justify-center w-full bg-primary py-2">
+						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Age distribution of cases`}</article>
+					</div>
+					<div
+						ref={graphRef}
+						className="flex w-full justify-center p-4"
+					>
+						<VerticalBarplot
+							data={graphData.caseDist}
+							width={width}
+							height={500}
 						/>
 					</div>
 				</div>

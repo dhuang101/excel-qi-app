@@ -6,7 +6,7 @@ const BAR_PADDING = 0.3
 
 interface DataItem {
 	ageRange: string
-	mortalityDist: number
+	value: number
 }
 
 interface VerticalBarplotProps {
@@ -33,7 +33,7 @@ export const VerticalBarplot = ({
 	}, [data, boundsWidth])
 
 	const yScale = useMemo(() => {
-		const max = d3.max(data, (d) => d.mortalityDist)
+		const max = d3.max(data, (d) => d.value)
 		return d3
 			.scaleLinear()
 			.domain([0, max || 10])
@@ -73,13 +73,13 @@ export const VerticalBarplot = ({
 		const x = xScale(d.ageRange)
 		if (x === undefined) return null
 
-		const barHeight = boundsHeight - yScale(d.mortalityDist)
+		const barHeight = boundsHeight - yScale(d.value)
 
 		return (
 			<g key={i}>
 				<rect
 					x={x}
-					y={yScale(d.mortalityDist)}
+					y={yScale(d.value)}
 					width={xScale.bandwidth()}
 					height={barHeight}
 					opacity={0.7}
@@ -92,12 +92,12 @@ export const VerticalBarplot = ({
 				{/* Value Label (Top of Bar) */}
 				<text
 					x={x + xScale.bandwidth() / 2}
-					y={yScale(d.mortalityDist) - 7}
+					y={yScale(d.value) - 7}
 					textAnchor="middle"
 					fill="var(--color-base-content)"
 					fontSize={12}
 				>
-					{d.mortalityDist.toFixed(1)}%
+					{d.value.toFixed(1)}%
 				</text>
 			</g>
 		)
