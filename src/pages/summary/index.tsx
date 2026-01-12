@@ -1,7 +1,7 @@
 import VerticalBarplot from "@/components/summary/VerticalBarplot"
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 interface CaseData {
 	cards: {
@@ -9,6 +9,10 @@ interface CaseData {
 		va: { count: number; mortalityRate: number }
 		vv: { count: number; mortalityRate: number }
 	}
+}
+
+interface GraphData {
+	mortalityDist: { ageRange: string; mortalityDist: number }[]
 }
 
 type EcmoMode = "total" | "V-V" | "V-A"
@@ -24,7 +28,7 @@ function SummaryPage() {
 	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
 	// state attributes for returned data
 	const [caseData, setCaseData] = useState<CaseData | null>(null)
-	const [graphData, setGraphData] = useState()
+	const [graphData, setGraphData] = useState<GraphData | null>(null)
 
 	useEffect(() => {
 		axios.get("/api/database/summary/getAvailableYears").then((result) => {
@@ -63,7 +67,7 @@ function SummaryPage() {
 		setEcmoMode(mode)
 	}
 
-	return !caseData ? (
+	return !caseData || !graphData ? (
 		<div className="flex flex-col justify-center items-center h-[83vh]">
 			<CircularProgress size={80} />
 			<article className="text-lg font-semibold pt-4">
@@ -176,15 +180,21 @@ function SummaryPage() {
 						V-V Cases
 					</button>
 				</div>
-				<div className="flex justify-between w-full mt-4 outline outline-primary shadow-2xl rounded">
+				<div className="flex flex-col w-full mt-4 outline outline-primary shadow-2xl rounded">
 					<div className="flex justify-center w-full bg-primary py-2">
 						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Mortality distribution by age group`}</article>
-						<div>
-							<VerticalBarplot />
-						</div>
+					</div>
+					<div className="flex justify-center">
+						<VerticalBarplot
+							data={graphData.mortalityDist}
+							width={800}
+							height={500}
+						/>
 					</div>
 				</div>
 			</div>
+			{/* footer */}
+			<div className="h-8" />
 		</div>
 	)
 }
