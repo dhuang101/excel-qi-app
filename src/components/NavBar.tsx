@@ -46,6 +46,11 @@ function NavBar() {
 						</article>
 					</Link>
 					<div className="flex ml-36 gap-x-2">
+						<Link href={"/summary"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								Summary Statistics
+							</article>
+						</Link>
 						<Link href={"/search"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								Registry Search
@@ -54,11 +59,6 @@ function NavBar() {
 						<Link href={"/reporting"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								Reporting
-							</article>
-						</Link>
-						<Link href={"/summary"}>
-							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								Summary Statistics
 							</article>
 						</Link>
 						<Link href={"/ecmo-pal"}>
