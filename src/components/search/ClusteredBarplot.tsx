@@ -177,9 +177,11 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.enter()
 			.append("rect")
 			.attr("x", (d) => x1(d.key) || 0)
-			.attr("y", (d) => y(d.value))
+			.attr("y", (d) => (d.value === 0 ? chartHeight - 3 : y(d.value)))
 			.attr("width", x1.bandwidth())
-			.attr("height", (d) => chartHeight - y(d.value))
+			.attr("height", (d) =>
+				d.value === 0 ? 3 : chartHeight - y(d.value)
+			)
 			.attr("stroke", "var(--color-base-content)")
 			.attr("stroke-width", "1")
 			.attr("fill", (d) => color(d.key) || "#000")
@@ -199,11 +201,12 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 				})
 			})
 			.enter()
-			.filter((d) => d.value > 0) // <-- correct placement!
 			.append("text")
 			.attr("class", "bar-label")
 			.attr("x", (d) => (x1(d.key) || 0) + x1.bandwidth() / 2)
-			.attr("y", (d) => y(d.value) - 5)
+			.attr("y", (d) =>
+				d.value === 0 ? chartHeight - 7 : y(d.value) - 5
+			)
 			.attr("text-anchor", "middle")
 			.attr("font-size", "10px")
 			.attr("fill", "var(--color-base-content)")
