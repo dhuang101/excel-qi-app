@@ -37,7 +37,7 @@ async function GetGraphData(params: ParamsType) {
 		matchStage.ecmo_mode = params.ecmoMode
 	}
 
-	const pipeline = [
+	const agePipeline = [
 		{ $match: matchStage },
 		{
 			$project: {
@@ -141,22 +141,87 @@ async function GetGraphData(params: ParamsType) {
 		{ $sort: { ageRange: 1 } },
 	]
 
-	const results = await collection.aggregate(pipeline).toArray()
+	// 2. Gender Distribution Pipeline
+	const genderPipeline = [
+		{ $match: matchStage },
+		{
+			$group: {
+				_id: "$sex",
+				count: { $sum: 1 },
+				deaths: {
+					$sum: {
+						$cond: [
+							{ $eq: ["$outcm_hosp_discharge_loc", "Dead"] },
+							1,
+							0,
+						],
+					},
+				},
+			},
+		},
+		{
+			$setWindowFields: {
+				output: { totalOverall: { $sum: "$count" } },
+			},
+		},
+		{
+			$project: {
+				_id: 0,
+				gender: {
+					$switch: {
+						branches: [
+							{ case: { $eq: ["$_id", 1] }, then: "Male" },
+							{ case: { $eq: ["$_id", 2] }, then: "Female" },
+						],
+						default: "Unknown",
+					},
+				},
+				percentOfTotal: {
+					$round: [
+						{
+							$multiply: [
+								{ $divide: ["$count", "$totalOverall"] },
+								100,
+							],
+						},
+						2,
+					],
+				},
+				mortalityRate: {
+					$round: [
+						{
+							$multiply: [
+								{ $divide: ["$deaths", "$count"] },
+								100,
+							],
+						},
+						2,
+					],
+				},
+			},
+		},
+	]
+
+	const [ageResults, genderResults] = await Promise.all([
+		collection.aggregate(agePipeline).toArray(),
+		collection.aggregate(genderPipeline).toArray(),
+	])
 
 	return {
-		mortalityDist: results.map((r) => ({
+		mortalityDist: ageResults.map((r) => ({
 			ageRange: r.ageRange,
 			value: r.mortalityDist,
 		})),
-		caseDist: results.map((r) => ({
+		caseDist: ageResults.map((r) => ({
 			ageRange: r.ageRange,
 			value: r.caseDistribution,
 		})),
-		caseDeathDist: results.map((r) => ({
+		caseDeathDist: ageResults.map((r) => ({
 			ageRange: r.ageRange,
 			totalCases: r.totalCount,
 			totalDeaths: r.deadCount,
 		})),
+		genderDist: genderResults,
 	}
 }
 
