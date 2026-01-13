@@ -1,6 +1,17 @@
 import { useMemo } from "react"
 import * as d3 from "d3"
 
+const MARGIN = { top: 40, right: 150, bottom: 40, left: 40 }
+
+const THEME_COLORS = [
+	"var(--color-primary)",
+	"var(--color-secondary)",
+	"var(--color-accent)",
+	"var(--color-error)",
+	"var(--color-neutral)",
+	"var(--color-info)",
+]
+
 interface PieChartProps<T> {
 	width: number
 	height: number
@@ -16,19 +27,15 @@ export const PieChart = <T,>({
 	categoryKey,
 	valueKey,
 }: PieChartProps<T>) => {
-	const MARGIN = { top: 40, right: 150, bottom: 40, left: 40 }
-	const chartWidth = width - MARGIN.right - MARGIN.left
-	const chartHeight = height - MARGIN.top - MARGIN.bottom
-	const radius = Math.min(chartWidth, chartHeight) / 2
-
-	const themeColors = [
-		"var(--color-primary)",
-		"var(--color-secondary)",
-		"var(--color-accent)",
-		"var(--color-error)",
-		"var(--color-neutral)",
-		"var(--color-info)",
-	]
+	const { chartWidth, chartHeight, radius } = useMemo(() => {
+		const innerW = width - MARGIN.right - MARGIN.left
+		const innerH = height - MARGIN.top - MARGIN.bottom
+		return {
+			chartWidth: innerW,
+			chartHeight: innerH,
+			radius: Math.min(innerW, innerH) / 2,
+		}
+	}, [width, height])
 
 	const pieGenerator = useMemo(() => {
 		return d3
@@ -37,26 +44,28 @@ export const PieChart = <T,>({
 			.sort(null)
 	}, [valueKey])
 
-	const arcGenerator = d3
-		.arc<d3.PieArcDatum<T>>()
-		.innerRadius(0)
-		.outerRadius(radius)
-
-	const labelArcGenerator = d3
-		.arc<d3.PieArcDatum<T>>()
-		.innerRadius(radius * 0.6)
-		.outerRadius(radius * 0.9)
+	const { arcGenerator, labelArcGenerator } = useMemo(() => {
+		return {
+			arcGenerator: d3
+				.arc<d3.PieArcDatum<T>>()
+				.innerRadius(0)
+				.outerRadius(radius),
+			labelArcGenerator: d3
+				.arc<d3.PieArcDatum<T>>()
+				.innerRadius(radius * 0.6)
+				.outerRadius(radius * 0.9),
+		}
+	}, [radius])
 
 	const arcs = useMemo(() => pieGenerator(data), [data, pieGenerator])
 
 	const colorScale = useMemo(() => {
 		const categories = data.map((d) => String(d[categoryKey]))
-		return d3.scaleOrdinal().domain(categories).range(themeColors)
-	}, [data, categoryKey, themeColors])
+		return d3.scaleOrdinal().domain(categories).range(THEME_COLORS)
+	}, [data, categoryKey])
 
 	return (
 		<svg width={width} height={height}>
-			{/* Pie Slices */}
 			<g
 				transform={`translate(${MARGIN.left + radius}, ${
 					MARGIN.top + radius
@@ -76,6 +85,7 @@ export const PieChart = <T,>({
 								fill={colorScale(label) as string}
 								fillOpacity={0.5}
 							/>
+							{/* Hide labels for very small slices */}
 							{arc.endAngle - arc.startAngle > 0.25 && (
 								<text
 									transform={`translate(${labelArcGenerator.centroid(
@@ -95,6 +105,7 @@ export const PieChart = <T,>({
 				})}
 			</g>
 
+			{/* Legend Section */}
 			<g
 				transform={`translate(${MARGIN.left + radius * 2 + 40}, ${
 					MARGIN.top

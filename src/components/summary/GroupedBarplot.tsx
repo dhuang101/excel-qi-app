@@ -4,6 +4,7 @@ import * as d3 from "d3"
 const MARGIN = { top: 30, right: 30, bottom: 70, left: 70 }
 const BAR_PADDING = 0.3
 const GROUP_PADDING = 0.1
+const KEYS = ["totalCases", "totalDeaths"] as const
 
 interface DataItem {
 	ageRange: string
@@ -22,10 +23,13 @@ export const GroupedBarplot = ({
 	height,
 	data,
 }: GroupedBarplotProps) => {
-	const boundsWidth = width - MARGIN.right - MARGIN.left
-	const boundsHeight = height - MARGIN.top - MARGIN.bottom
-
-	const keys = ["totalCases", "totalDeaths"] as const
+	const { boundsWidth, boundsHeight } = useMemo(
+		() => ({
+			boundsWidth: width - MARGIN.right - MARGIN.left,
+			boundsHeight: height - MARGIN.top - MARGIN.bottom,
+		}),
+		[width, height]
+	)
 
 	const x0Scale = useMemo(() => {
 		return d3
@@ -38,7 +42,7 @@ export const GroupedBarplot = ({
 	const x1Scale = useMemo(() => {
 		return d3
 			.scaleBand()
-			.domain(keys)
+			.domain(KEYS)
 			.range([0, x0Scale.bandwidth()])
 			.padding(GROUP_PADDING)
 	}, [x0Scale])
@@ -54,45 +58,48 @@ export const GroupedBarplot = ({
 			.range([boundsHeight, 0])
 	}, [data, boundsHeight])
 
-	const grid = yScale
-		.ticks(5)
-		.slice(1)
-		.map((value, i) => (
-			<g key={i}>
-				<line
-					x1={0}
-					x2={boundsWidth}
-					y1={yScale(value)}
-					y2={yScale(value)}
-					stroke="var(--color-base-content)"
-					opacity={0.1}
-				/>
-				<text
-					x={-10}
-					y={yScale(value)}
-					textAnchor="end"
-					alignmentBaseline="middle"
-					fontSize={12}
-					fill="var(--color-base-content)"
-					opacity={0.8}
-				>
-					{value}
-				</text>
-			</g>
-		))
+	const gridElements = useMemo(() => {
+		return yScale
+			.ticks(5)
+			.slice(1)
+			.map((value, i) => (
+				<g key={i}>
+					<line
+						x1={0}
+						x2={boundsWidth}
+						y1={yScale(value)}
+						y2={yScale(value)}
+						stroke="var(--color-base-content)"
+						opacity={0.1}
+					/>
+					<text
+						x={-10}
+						y={yScale(value)}
+						textAnchor="end"
+						alignmentBaseline="middle"
+						fontSize={12}
+						fill="var(--color-base-content)"
+						opacity={0.8}
+					>
+						{value}
+					</text>
+				</g>
+			))
+	}, [yScale, boundsWidth])
 
 	return (
 		<svg width={width} height={height}>
 			<g transform={`translate(${MARGIN.left},${MARGIN.top})`}>
-				{grid}
+				{gridElements}
 
-				{data.map((d, i) => (
+				{/* Bars Rendering */}
+				{data.map((group, i) => (
 					<g
-						key={i}
-						transform={`translate(${x0Scale(d.ageRange)}, 0)`}
+						key={group.ageRange}
+						transform={`translate(${x0Scale(group.ageRange)}, 0)`}
 					>
-						{keys.map((key) => {
-							const val = d[key]
+						{KEYS.map((key) => {
+							const val = group[key]
 							const isDeath = key === "totalDeaths"
 
 							return (
@@ -101,15 +108,18 @@ export const GroupedBarplot = ({
 										x={x1Scale(key)}
 										y={yScale(val)}
 										width={x1Scale.bandwidth()}
-										height={boundsHeight - yScale(val)}
+										height={Math.max(
+											0,
+											boundsHeight - yScale(val)
+										)}
 										fill={
 											isDeath
 												? "var(--color-secondary)"
 												: "var(--color-primary)"
 										}
-										opacity={0.7}
-										stroke="var(--color-base-content)"
 										fillOpacity={0.5}
+										stroke="var(--color-base-content)"
+										strokeWidth={1}
 										rx={1}
 									/>
 									<text
@@ -127,7 +137,8 @@ export const GroupedBarplot = ({
 								</g>
 							)
 						})}
-						{/* Age Label */}
+
+						{/* Age Label beneath group */}
 						<text
 							x={x0Scale.bandwidth() / 2}
 							y={boundsHeight + 20}
@@ -135,7 +146,7 @@ export const GroupedBarplot = ({
 							fontSize={12}
 							fill="var(--color-base-content)"
 						>
-							{d.ageRange}
+							{group.ageRange}
 						</text>
 					</g>
 				))}
@@ -154,7 +165,7 @@ export const GroupedBarplot = ({
 				</text>
 
 				{/* Legend */}
-				<g transform={`translate(${boundsWidth - 100}, -20)`}>
+				<g transform={`translate(${boundsWidth - 120}, -20)`}>
 					<rect
 						width={12}
 						height={12}
@@ -171,8 +182,9 @@ export const GroupedBarplot = ({
 					>
 						Cases
 					</text>
+
 					<rect
-						x={60}
+						x={70}
 						width={12}
 						height={12}
 						fill="var(--color-secondary)"
@@ -181,7 +193,7 @@ export const GroupedBarplot = ({
 						strokeWidth={0.7}
 					/>
 					<text
-						x={75}
+						x={85}
 						y={10}
 						fontSize={12}
 						fill="var(--color-base-content)"
