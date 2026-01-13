@@ -1,4 +1,5 @@
 import { GroupedBarplot } from "@/components/summary/GroupedBarplot"
+import { PieChart } from "@/components/summary/PieChart"
 import VerticalBarplot from "@/components/summary/VerticalBarplot"
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
@@ -19,6 +20,11 @@ interface GraphData {
 		ageRange: string
 		totalCases: number
 		totalDeaths: number
+	}[]
+	genderDist: {
+		gender: "Male" | "Female"
+		percentOfTotal: number
+		mortalityRate: number
 	}[]
 }
 
@@ -77,7 +83,6 @@ function SummaryPage() {
 				ecmoMode: ecmoMode,
 			})
 			.then((result) => {
-				console.log(result.data)
 				setGraphData(result.data)
 			})
 	}, [selectedYear, ecmoMode])
@@ -236,6 +241,36 @@ function SummaryPage() {
 							width={width}
 							height={500}
 						/>
+					</div>
+				</div>
+				<div className="flex justify-between mt-4">
+					<div className="flex flex-col w-[49%] outline outline-primary shadow-2xl rounded">
+						<div className="flex justify-center w-full bg-primary py-2">
+							<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Gender distribution of cases`}</article>
+						</div>
+						<div className="flex w-full justify-center p-4">
+							<PieChart
+								data={graphData.genderDist}
+								categoryKey={"gender"}
+								valueKey={"percentOfTotal"}
+								width={width / 2.5}
+								height={400}
+							/>
+						</div>
+					</div>
+					<div className="flex flex-col w-[49%] outline outline-primary shadow-2xl rounded">
+						<div className="flex justify-center w-full bg-primary py-2">
+							<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Gender distribution of deaths`}</article>
+						</div>
+						<div className="flex w-full justify-center p-4">
+							<PieChart
+								data={graphData.genderDist}
+								categoryKey={"gender"}
+								valueKey={"mortalityRate"}
+								width={width / 2.5}
+								height={400}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>
