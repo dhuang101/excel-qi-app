@@ -1,7 +1,9 @@
 import { useMemo } from "react"
 import * as d3 from "d3"
 
-const MARGIN = { top: 40, right: 150, bottom: 40, left: 40 }
+const MARGIN = { top: 40, right: 40, bottom: 40, left: 40 }
+const LEGEND_WIDTH = 120 // Width reserved for legend text
+const GAP = 40 // Space between the pie and the legend
 
 const THEME_COLORS = [
 	"var(--color-primary)",
@@ -27,15 +29,26 @@ export const PieChart = <T,>({
 	categoryKey,
 	valueKey,
 }: PieChartProps<T>) => {
-	const { chartWidth, chartHeight, radius } = useMemo(() => {
-		const innerW = width - MARGIN.right - MARGIN.left
+	const { radius, centerX, centerY, legendX, legendY } = useMemo(() => {
+		const innerW = width - MARGIN.left - MARGIN.right
 		const innerH = height - MARGIN.top - MARGIN.bottom
+
+		const r = Math.min(innerW - LEGEND_WIDTH - GAP, innerH) / 2
+
+		const totalContentWidth = r * 2 + GAP + LEGEND_WIDTH
+		const totalContentHeight = Math.max(r * 2, data.length * 25)
+
+		const horizontalCenteringOffset =
+			MARGIN.left + (innerW - totalContentWidth) / 2
+
 		return {
-			chartWidth: innerW,
-			chartHeight: innerH,
-			radius: Math.min(innerW, innerH) / 2,
+			radius: r,
+			centerX: horizontalCenteringOffset + r,
+			centerY: height / 2,
+			legendX: horizontalCenteringOffset + r * 2 + GAP,
+			legendY: (height - data.length * 25) / 10,
 		}
-	}, [width, height])
+	}, [width, height, data.length])
 
 	const pieGenerator = useMemo(() => {
 		return d3
@@ -66,11 +79,8 @@ export const PieChart = <T,>({
 
 	return (
 		<svg width={width} height={height}>
-			<g
-				transform={`translate(${MARGIN.left + radius}, ${
-					MARGIN.top + radius
-				})`}
-			>
+			{/* Pie Chart Group */}
+			<g transform={`translate(${centerX}, ${centerY})`}>
 				{arcs.map((arc, i) => {
 					const label = String(arc.data[categoryKey])
 					const percentage = (
@@ -85,7 +95,6 @@ export const PieChart = <T,>({
 								fill={colorScale(label) as string}
 								fillOpacity={0.5}
 							/>
-							{/* Hide labels for very small slices */}
 							{arc.endAngle - arc.startAngle > 0.25 && (
 								<text
 									transform={`translate(${labelArcGenerator.centroid(
@@ -105,12 +114,8 @@ export const PieChart = <T,>({
 				})}
 			</g>
 
-			{/* Legend Section */}
-			<g
-				transform={`translate(${MARGIN.left + radius * 2 + 40}, ${
-					MARGIN.top
-				})`}
-			>
+			{/* Legend Group */}
+			<g transform={`translate(${legendX}, ${legendY})`}>
 				{data.map((d, i) => {
 					const label = String(d[categoryKey])
 					return (
