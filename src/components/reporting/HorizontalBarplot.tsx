@@ -12,17 +12,12 @@ interface HorizontalBarplotProps {
 
 const SvgWrapText = (
 	textElement: d3.Selection<SVGTextElement, unknown, null, undefined>,
-	width: number
+	width: number,
+	textContent: string
 ): void => {
 	const lineHeight = 1.1
 	const x = textElement.attr("x")
 	const y = textElement.attr("y")
-
-	let textContent = textElement.attr("data-original-text")
-	if (!textContent) {
-		textContent = textElement.text()
-		textElement.attr("data-original-text", textContent)
-	}
 
 	textElement.text(null)
 	const words = textContent.split(/\s+/).reverse()
@@ -133,7 +128,11 @@ export const HorizontalBarplot = ({
 					fontSize={12}
 					ref={(node: SVGTextElement) => {
 						if (node) {
-							SvgWrapText(d3.select(node), availableWidthForLabel)
+							SvgWrapText(
+								d3.select(node),
+								availableWidthForLabel,
+								d.value
+							)
 						}
 					}}
 				>
