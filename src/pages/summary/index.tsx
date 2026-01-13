@@ -1,3 +1,4 @@
+import { GroupedBarplot } from "@/components/summary/GroupedBarplot"
 import VerticalBarplot from "@/components/summary/VerticalBarplot"
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
@@ -14,6 +15,11 @@ interface CaseData {
 interface GraphData {
 	mortalityDist: { ageRange: string; value: number }[]
 	caseDist: { ageRange: string; value: number }[]
+	caseDeathDist: {
+		ageRange: string
+		totalCases: number
+		totalDeaths: number
+	}[]
 }
 
 type EcmoMode = "total" | "V-V" | "V-A"
@@ -71,6 +77,7 @@ function SummaryPage() {
 				ecmoMode: ecmoMode,
 			})
 			.then((result) => {
+				console.log(result.data)
 				setGraphData(result.data)
 			})
 	}, [selectedYear, ecmoMode])
@@ -209,12 +216,21 @@ function SummaryPage() {
 				</div>
 				<div className="flex flex-col w-full mt-4 outline outline-primary shadow-2xl rounded">
 					<div className="flex justify-center w-full bg-primary py-2">
+						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Age distribution of cases vs deaths`}</article>
+					</div>
+					<div className="flex w-full justify-center p-4">
+						<GroupedBarplot
+							data={graphData.caseDeathDist}
+							width={width}
+							height={500}
+						/>
+					</div>
+				</div>
+				<div className="flex flex-col w-full mt-4 outline outline-primary shadow-2xl rounded">
+					<div className="flex justify-center w-full bg-primary py-2">
 						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Age distribution of cases`}</article>
 					</div>
-					<div
-						ref={graphRef}
-						className="flex w-full justify-center p-4"
-					>
+					<div className="flex w-full justify-center p-4">
 						<VerticalBarplot
 							data={graphData.caseDist}
 							width={width}

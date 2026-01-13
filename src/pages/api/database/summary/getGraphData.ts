@@ -94,9 +94,19 @@ async function GetGraphData(params: ParamsType) {
 						{ $eq: ["$totalCount", 0] },
 						0,
 						{
-							$multiply: [
-								{ $divide: ["$deadCount", "$totalCount"] },
-								100,
+							$round: [
+								{
+									$multiply: [
+										{
+											$divide: [
+												"$deadCount",
+												"$totalCount",
+											],
+										},
+										100,
+									],
+								},
+								2,
 							],
 						},
 					],
@@ -106,18 +116,26 @@ async function GetGraphData(params: ParamsType) {
 						{ $eq: ["$grandTotalCases", 0] },
 						0,
 						{
-							$multiply: [
+							$round: [
 								{
-									$divide: [
-										"$totalCount",
-										"$grandTotalCases",
+									$multiply: [
+										{
+											$divide: [
+												"$totalCount",
+												"$grandTotalCases",
+											],
+										},
+										100,
 									],
 								},
-								100,
+								2,
 							],
 						},
 					],
 				},
+				// Pass raw counts through for the third key
+				totalCount: "$totalCount",
+				deadCount: "$deadCount",
 			},
 		},
 		{ $sort: { ageRange: 1 } },
@@ -133,6 +151,11 @@ async function GetGraphData(params: ParamsType) {
 		caseDist: results.map((r) => ({
 			ageRange: r.ageRange,
 			value: r.caseDistribution,
+		})),
+		caseDeathDist: results.map((r) => ({
+			ageRange: r.ageRange,
+			totalCases: r.totalCount,
+			totalDeaths: r.deadCount,
 		})),
 	}
 }
