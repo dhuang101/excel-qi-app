@@ -17,6 +17,7 @@ export async function middleware(req: NextRequest) {
 		"/summary",
 		"/api/database/summary/getAvailableYears",
 		"/api/database/summary/getCaseStats",
+		"/api/database/summary/getGraphData",
 		"/api/database/getCounts",
 		"/api/database/getBoxplotValues",
 	]
