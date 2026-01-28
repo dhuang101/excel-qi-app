@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer"
 import { MongoClient } from "mongodb"
-import NextAuth, { User } from "next-auth"
+import NextAuth, { Session, User } from "next-auth"
 import { JWT } from "next-auth/jwt"
 import OktaProvider from "next-auth/providers/okta"
 import { CreateAccountProvisionedEmail } from "@/utilities/ProvisionEmailTemplate"
@@ -82,7 +82,7 @@ export const authOptions = {
 							subject: "EXCEL QI Account Provision Notification",
 							html: CreateAccountProvisionedEmail(
 								email,
-								user?.name || ""
+								user?.name || "",
 							),
 						}
 						await transporter.sendMail(mailOptions)
@@ -94,7 +94,7 @@ export const authOptions = {
 			token.email = email
 			return token
 		},
-		session({ session, token }: any) {
+		session({ session, token }: { session: Session; token: JWT }) {
 			session.user.role = token.role
 			session.user.sites = token.sites
 			return session

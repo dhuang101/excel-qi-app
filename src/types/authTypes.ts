@@ -19,7 +19,7 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
 	interface JWT {
-		role?: string
+		role?: "admin" | "global-viewer" | "site-viewer" | "public"
 		email?: string
 		sites: string[]
 	}
