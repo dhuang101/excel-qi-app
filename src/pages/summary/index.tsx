@@ -312,7 +312,7 @@ function SummaryPage() {
 								data={graphData.genderDist}
 								categoryKey={"gender"}
 								valueKey={"percentOfTotal"}
-								width={width / 2.5}
+								width={width / 1.75}
 								height={400}
 							/>
 						</div>
@@ -326,7 +326,7 @@ function SummaryPage() {
 								data={graphData.genderDist}
 								categoryKey={"gender"}
 								valueKey={"mortalityRate"}
-								width={width / 2.5}
+								width={width / 1.75}
 								height={400}
 							/>
 						</div>
