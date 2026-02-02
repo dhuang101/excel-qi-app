@@ -1,9 +1,12 @@
 import { GroupedBarplot } from "@/components/summary/GroupedBarplot"
 import { PieChart } from "@/components/summary/PieChart"
 import VerticalBarplot from "@/components/summary/VerticalBarplot"
+import { FormatName } from "@/utilities/FormatName"
+import SummaryReducer, { ACTION } from "@/reducers/summaryReducer"
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
-import { useEffect, useCallback, useState } from "react"
+import { useSession } from "next-auth/react"
+import { useEffect, useCallback, useState, useReducer } from "react"
 
 interface CaseData {
 	cards: {
@@ -35,11 +38,21 @@ type EcmoMode = "total" | "V-V" | "V-A"
 // | "VP"
 
 function SummaryPage() {
+	// auth session
+	const { data: session, status } = useSession()
+
+	const [state, dispatch] = useReducer(SummaryReducer, {
+		sites: [],
+		years: {},
+		ecmo_data: {},
+		graph_data: {},
+	})
 	// state attributes for query
 	const [availableYears, setAvailableYears] = useState([])
 	const [selectedYear, setSelectedYear] = useState(0)
 	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
 	// state attributes for returned data
+	const [displayedSite, setDisplayedSite] = useState("all_sites")
 	const [caseData, setCaseData] = useState<CaseData | null>(null)
 	const [graphData, setGraphData] = useState<GraphData | null>(null)
 	const [width, setWidth] = useState(500)
@@ -56,17 +69,30 @@ function SummaryPage() {
 	}, [])
 
 	useEffect(() => {
-		axios.get("/api/database/summary/getAvailableYears").then((result) => {
-			setAvailableYears(result.data)
-			setSelectedYear(result.data.at(-1))
-		})
-	}, [])
+		if (!session) return
+
+		axios
+			.post("/api/database/summary/getAvailableYears", {
+				role: session.user.role,
+				sites: session.user.sites,
+			})
+			.then((result) => {
+				dispatch({
+					type: ACTION.SET_SITES,
+					payload: Object.keys(result.data),
+				})
+				setAvailableYears(result.data["all_sites"])
+				setSelectedYear(result.data["all_sites"].at(-1))
+			})
+	}, [session])
 
 	useEffect(() => {
 		if (selectedYear === 0) return
 
 		axios
 			.post("api/database/summary/getCaseStats", {
+				role: session?.user.role,
+				sites: session?.user.sites,
 				selectedYear: selectedYear,
 			})
 			.then((result) => {
@@ -79,10 +105,13 @@ function SummaryPage() {
 
 		axios
 			.post("api/database/summary/getGraphData", {
+				role: session?.user.role,
+				sites: session?.user.sites,
 				selectedYear: selectedYear,
 				ecmoMode: ecmoMode,
 			})
 			.then((result) => {
+				console.log(result.data)
 				setGraphData(result.data)
 			})
 	}, [selectedYear, ecmoMode])
@@ -101,7 +130,31 @@ function SummaryPage() {
 	) : (
 		<div className="flex flex-col w-full items-center justify-center">
 			<div className="flex flex-col w-2/3 mt-2">
-				<article className="text-lg w-full">Available Years</article>
+				{status === "authenticated" && (
+					<fieldset className="fieldset w-1/3">
+						<legend className="fieldset-legend">
+							Select Site to Display
+						</legend>
+						<select
+							defaultValue={Object.keys(availableYears)[0]}
+							className="select"
+							onChange={(event) => {
+								setDisplayedSite(event.target.value)
+							}}
+						>
+							{state.sites.map((site: string) => {
+								return (
+									<option key={site} value={site}>
+										{FormatName(site)}
+									</option>
+								)
+							})}
+						</select>
+					</fieldset>
+				)}
+				<article className="text-lg w-full mt-2">
+					Available Years
+				</article>
 				<div className="w-full">
 					<input
 						type="range"
