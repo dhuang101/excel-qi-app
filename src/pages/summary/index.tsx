@@ -9,11 +9,9 @@ import { useSession } from "next-auth/react"
 import { useEffect, useCallback, useState, useReducer } from "react"
 
 interface CaseData {
-	cards: {
-		total: { count: number; mortalityRate: number }
-		va: { count: number; mortalityRate: number }
-		vv: { count: number; mortalityRate: number }
-	}
+	total: { count: number; mortalityRate: number }
+	va: { count: number; mortalityRate: number }
+	vv: { count: number; mortalityRate: number }
 }
 
 interface GraphData {
@@ -99,7 +97,8 @@ function SummaryPage() {
 				selectedYear: selectedYear,
 			})
 			.then((result) => {
-				setCaseData(result.data)
+				dispatch({ type: ACTION.SET_ECMO_STATS, payload: result.data })
+				setCaseData(result.data[selectedSite])
 			})
 	}, [selectedYear])
 
@@ -120,6 +119,7 @@ function SummaryPage() {
 
 	useEffect(() => {
 		setAvailableYears(state.years[selectedSite])
+		setCaseData(state.ecmo_data[selectedSite])
 	}, [selectedSite])
 
 	function handleButtonClick(mode: EcmoMode) {
@@ -193,10 +193,10 @@ function SummaryPage() {
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
 							<article className="text-3xl">
-								{caseData.cards.total.count}
+								{caseData.total.count}
 							</article>
 							<article className="mt-2">
-								{`Mortality: ${caseData.cards.total.mortalityRate}%`}
+								{`Mortality: ${caseData.total.mortalityRate}%`}
 							</article>
 						</div>
 					</div>
@@ -208,10 +208,10 @@ function SummaryPage() {
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
 							<article className="text-3xl">
-								{caseData.cards.va.count}
+								{caseData.va.count}
 							</article>
 							<article className="mt-2">
-								{`Mortality: ${caseData.cards.va.mortalityRate}%`}
+								{`Mortality: ${caseData.va.mortalityRate}%`}
 							</article>
 						</div>
 					</div>
@@ -223,10 +223,10 @@ function SummaryPage() {
 						</div>
 						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
 							<article className="text-3xl">
-								{caseData.cards.vv.count}
+								{caseData.vv.count}
 							</article>
 							<article className="mt-2">
-								{`Mortality: ${caseData.cards.vv.mortalityRate}%`}
+								{`Mortality: ${caseData.vv.mortalityRate}%`}
 							</article>
 						</div>
 					</div>

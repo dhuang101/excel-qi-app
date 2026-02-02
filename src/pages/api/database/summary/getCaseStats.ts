@@ -1,9 +1,11 @@
 import { MongoClient } from "mongodb"
 import { NextApiRequest, NextApiResponse } from "next"
 
-// this api fetches the summary statistics based on the attributes provided by the user
+// this api fetches the case stats in the cards at the top of the summary statistics page
 
 type ParamsType = {
+	role: string
+	sites: string[]
 	selectedYear: number
 }
 
@@ -19,25 +21,35 @@ async function getClient() {
 	return cachedClient
 }
 
-// this api fetches all the unique years in the column ecmo_start_date_time for the summary statistics page
 async function GetCaseStats(params: ParamsType) {
 	const client = await getClient()
 	const collection = client.db("main").collection("excel-data")
 
+	const isPowerUser = ["admin", "global_viewer"].includes(params.role)
+	const siteMatch = isPowerUser
+		? {}
+		: { redcap_data_access_group: { $in: params.sites } }
+
 	const pipeline = [
 		{
 			$match: {
-				$expr: {
-					$eq: [
-						{ $year: "$ecmo_start_date_time" },
-						params.selectedYear,
-					],
-				},
+				$and: [
+					siteMatch,
+					{
+						$expr: {
+							$eq: [
+								{ $year: "$ecmo_start_date_time" },
+								params.selectedYear,
+							],
+						},
+					},
+				],
 			},
 		},
 		{
+			// Group by site to get stats for each individual site
 			$group: {
-				_id: null,
+				_id: "$redcap_data_access_group",
 				totalCount: { $sum: 1 },
 				totalDeaths: {
 					$sum: {
@@ -48,7 +60,6 @@ async function GetCaseStats(params: ParamsType) {
 						],
 					},
 				},
-
 				vaCount: {
 					$sum: { $cond: [{ $eq: ["$ecmo_mode", "V-A"] }, 1, 0] },
 				},
@@ -71,7 +82,6 @@ async function GetCaseStats(params: ParamsType) {
 						],
 					},
 				},
-
 				vvCount: {
 					$sum: { $cond: [{ $eq: ["$ecmo_mode", "V-V"] }, 1, 0] },
 				},
@@ -97,108 +107,296 @@ async function GetCaseStats(params: ParamsType) {
 			},
 		},
 		{
+			// Project the mortality rates per site
 			$project: {
+				site: "$_id",
 				_id: 0,
-				total: {
-					count: "$totalCount",
-					mortalityRate: {
-						$round: [
-							{
-								$cond: [
-									{ $gt: ["$totalCount", 0] },
-									{
-										$multiply: [
-											{
-												$divide: [
-													"$totalDeaths",
-													"$totalCount",
-												],
-											},
-											100,
-										],
-									},
-									0,
-								],
-							},
-							2,
-						],
+				stats: {
+					total: {
+						count: "$totalCount",
+						mortalityRate: {
+							$round: [
+								{
+									$cond: [
+										{ $gt: ["$totalCount", 0] },
+										{
+											$multiply: [
+												{
+													$divide: [
+														"$totalDeaths",
+														"$totalCount",
+													],
+												},
+												100,
+											],
+										},
+										0,
+									],
+								},
+								2,
+							],
+						},
 					},
-				},
-				va: {
-					count: "$vaCount",
-					mortalityRate: {
-						$round: [
-							{
-								$cond: [
-									{ $gt: ["$vaCount", 0] },
-									{
-										$multiply: [
-											{
-												$divide: [
-													"$vaDeaths",
-													"$vaCount",
-												],
-											},
-											100,
-										],
-									},
-									0,
-								],
-							},
-							2,
-						],
+					va: {
+						count: "$vaCount",
+						mortalityRate: {
+							$round: [
+								{
+									$cond: [
+										{ $gt: ["$vaCount", 0] },
+										{
+											$multiply: [
+												{
+													$divide: [
+														"$vaDeaths",
+														"$vaCount",
+													],
+												},
+												100,
+											],
+										},
+										0,
+									],
+								},
+								2,
+							],
+						},
 					},
-				},
-				vv: {
-					count: "$vvCount",
-					mortalityRate: {
-						$round: [
-							{
-								$cond: [
-									{ $gt: ["$vvCount", 0] },
-									{
-										$multiply: [
-											{
-												$divide: [
-													"$vvDeaths",
-													"$vvCount",
-												],
-											},
-											100,
-										],
-									},
-									0,
-								],
-							},
-							2,
-						],
+					vv: {
+						count: "$vvCount",
+						mortalityRate: {
+							$round: [
+								{
+									$cond: [
+										{ $gt: ["$vvCount", 0] },
+										{
+											$multiply: [
+												{
+													$divide: [
+														"$vvDeaths",
+														"$vvCount",
+													],
+												},
+												100,
+											],
+										},
+										0,
+									],
+								},
+								2,
+							],
+						},
 					},
 				},
 			},
 		},
 	]
 
-	const [results] = await collection.aggregate(pipeline).toArray()
+	const results = await collection.aggregate(pipeline).toArray()
 
-	const finalData = {
-		cards: results,
+	const finalData: Record<string, any> = {}
+
+	if (!isPowerUser) {
+		params.sites.forEach((site) => {
+			finalData[site] = null
+		})
 	}
+
+	results.forEach((item) => {
+		if (item.site) finalData[item.site] = item.stats
+	})
+
+	const allSitesAgg = results.reduce(
+		(acc, curr) => {
+			acc.totalCount += curr.stats.total.count
+			acc.totalDeaths +=
+				(curr.stats.total.count * curr.stats.total.mortalityRate) / 100
+			return acc
+		},
+		{
+			totalCount: 0,
+			totalDeaths: 0,
+			vaCount: 0,
+			vaDeaths: 0,
+			vvCount: 0,
+			vvDeaths: 0,
+		},
+	)
+
+	const [globalTotal] = await collection
+		.aggregate([
+			{
+				$match: {
+					$and: [
+						siteMatch,
+						{
+							$expr: {
+								$eq: [
+									{ $year: "$ecmo_start_date_time" },
+									params.selectedYear,
+								],
+							},
+						},
+					],
+				},
+			},
+			{
+				$group: {
+					_id: null,
+					totalCount: { $sum: 1 },
+					totalDeaths: {
+						$sum: {
+							$cond: [
+								{ $eq: ["$outcm_hosp_discharge_loc", "Dead"] },
+								1,
+								0,
+							],
+						},
+					},
+					vaCount: {
+						$sum: { $cond: [{ $eq: ["$ecmo_mode", "V-A"] }, 1, 0] },
+					},
+					vaDeaths: {
+						$sum: {
+							$cond: [
+								{
+									$and: [
+										{ $eq: ["$ecmo_mode", "V-A"] },
+										{
+											$eq: [
+												"$outcm_hosp_discharge_loc",
+												"Dead",
+											],
+										},
+									],
+								},
+								1,
+								0,
+							],
+						},
+					},
+					vvCount: {
+						$sum: { $cond: [{ $eq: ["$ecmo_mode", "V-V"] }, 1, 0] },
+					},
+					vvDeaths: {
+						$sum: {
+							$cond: [
+								{
+									$and: [
+										{ $eq: ["$ecmo_mode", "V-V"] },
+										{
+											$eq: [
+												"$outcm_hosp_discharge_loc",
+												"Dead",
+											],
+										},
+									],
+								},
+								1,
+								0,
+							],
+						},
+					},
+				},
+			},
+			{
+				$project: {
+					_id: 0,
+					total: {
+						count: "$totalCount",
+						mortalityRate: {
+							$round: [
+								{
+									$cond: [
+										{ $gt: ["$totalCount", 0] },
+										{
+											$multiply: [
+												{
+													$divide: [
+														"$totalDeaths",
+														"$totalCount",
+													],
+												},
+												100,
+											],
+										},
+										0,
+									],
+								},
+								2,
+							],
+						},
+					},
+					va: {
+						count: "$vaCount",
+						mortalityRate: {
+							$round: [
+								{
+									$cond: [
+										{ $gt: ["$vaCount", 0] },
+										{
+											$multiply: [
+												{
+													$divide: [
+														"$vaDeaths",
+														"$vaCount",
+													],
+												},
+												100,
+											],
+										},
+										0,
+									],
+								},
+								2,
+							],
+						},
+					},
+					vv: {
+						count: "$vvCount",
+						mortalityRate: {
+							$round: [
+								{
+									$cond: [
+										{ $gt: ["$vvCount", 0] },
+										{
+											$multiply: [
+												{
+													$divide: [
+														"$vvDeaths",
+														"$vvCount",
+													],
+												},
+												100,
+											],
+										},
+										0,
+									],
+								},
+								2,
+							],
+						},
+					},
+				},
+			},
+		])
+		.toArray()
+
+	finalData["all_sites"] = globalTotal || null
 
 	return finalData
 }
 
-// handler for any calls to this endpoint
 export default async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse
+	res: NextApiResponse,
 ) {
 	try {
 		const params = req.body as ParamsType
-
 		const results = await GetCaseStats(params)
 		res.status(200).json(results)
 	} catch (err) {
-		console.error("Error at database/summary/getSummaryStats  :", err)
+		console.error("Error at database/summary/getSummaryStats :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

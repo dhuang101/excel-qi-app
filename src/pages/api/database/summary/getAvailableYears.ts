@@ -38,7 +38,6 @@ async function GetAvailableYears(params: ParamsType): Promise<YearsResponse> {
 			{ $match: matchQuery },
 			{
 				$facet: {
-					// Pipeline 1: Get years per site
 					bySite: [
 						{
 							$group: {
@@ -55,7 +54,6 @@ async function GetAvailableYears(params: ParamsType): Promise<YearsResponse> {
 							},
 						},
 					],
-					// Pipeline 2: Get unique years for ALL sites
 					allSites: [
 						{
 							$group: {
@@ -76,20 +74,17 @@ async function GetAvailableYears(params: ParamsType): Promise<YearsResponse> {
 
 	const formattedResponse: YearsResponse = {}
 
-	// 1. Handle "all_sites" (Master list)
 	const allYearsRaw = facetResult.allSites[0]?.years || []
 	formattedResponse["all_sites"] = allYearsRaw
 		.filter((y: any) => y !== null)
 		.sort((a: number, b: number) => a - b)
 
-	// 2. Initialize requested sites for standard users (to ensure keys exist)
 	if (!isPowerUser) {
 		params.sites.forEach((site) => {
 			formattedResponse[site] = []
 		})
 	}
 
-	// 3. Fill in the data from the bySite facet
 	facetResult.bySite.forEach((item: any) => {
 		if (item._id) {
 			formattedResponse[item._id] = item.years
