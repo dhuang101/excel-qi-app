@@ -79,7 +79,7 @@ export const HorizontalBarplot = ({
 							? xScale(d.count) - 7
 							: xScale(d.count) + 12
 					}
-					y={barCenterY + 4}
+					y={barCenterY}
 					textAnchor={xScale(d.count) > 60 ? "end" : "start"}
 					dominantBaseline="middle"
 					fill="var(--color-base-content)"
