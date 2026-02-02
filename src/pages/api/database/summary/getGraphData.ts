@@ -28,30 +28,26 @@ async function GetGraphData(params: ParamsType) {
 	const collection = client.db("main").collection("excel-data")
 
 	const isPowerUser = ["admin", "global_viewer"].includes(params.role)
-	const siteMatch = isPowerUser
-		? {}
-		: { redcap_data_access_group: { $in: params.sites } }
 
-	const matchStage: Record<string, any> = {
-		...siteMatch,
+	const baseFilters: Record<string, any> = {
 		ecmo_start_date_time: {
 			$gte: new Date(`${params.selectedYear}-01-01T00:00:00.000Z`),
 			$lte: new Date(`${params.selectedYear}-12-31T23:59:59.999Z`),
 		},
 	}
-
 	if (params.ecmoMode !== "total") {
-		matchStage.ecmo_mode = params.ecmoMode
+		baseFilters.ecmo_mode = params.ecmoMode
 	}
 
 	const rawData = await collection
 		.aggregate([
-			{ $match: matchStage },
+			{ $match: baseFilters },
 			{
 				$group: {
 					_id: {
 						site: "$redcap_data_access_group",
 						ageStr: "$birthdate",
+						sex: "$sex",
 					},
 					count: { $sum: 1 },
 					deaths: {
@@ -68,7 +64,7 @@ async function GetGraphData(params: ParamsType) {
 		])
 		.toArray()
 
-	const bucketData = (dataPoints: any[]) => {
+	const processDistributions = (dataPoints: any[]) => {
 		const ranges = [
 			{ label: "18-29", min: 18, max: 29 },
 			{ label: "30-39", min: 30, max: 39 },
@@ -81,75 +77,99 @@ async function GetGraphData(params: ParamsType) {
 			{ label: "80+", min: 80, max: 999 },
 		]
 
-		const totalCases = dataPoints.reduce((sum, d) => sum + d.count, 0)
+		const totalOverall = dataPoints.reduce((sum, d) => sum + d.count, 0)
 
-		const results = ranges.map((range) => {
+		const ageResults = ranges.map((range) => {
 			const matches = dataPoints.filter((d) => {
 				const age = parseInt(d.ageStr)
 				return age >= range.min && age <= range.max
 			})
-
 			const count = matches.reduce((sum, m) => sum + m.count, 0)
 			const deaths = matches.reduce((sum, m) => sum + m.deaths, 0)
 
 			return {
 				ageRange: range.label,
 				totalCount: count,
-				deadCount: deaths,
+				totalDeaths: deaths,
 				mortalityDist:
 					count > 0
 						? Math.round((deaths / count) * 100 * 100) / 100
 						: 0,
 				caseDistribution:
-					totalCases > 0
-						? Math.round((count / totalCases) * 100 * 100) / 100
+					totalOverall > 0
+						? Math.round((count / totalOverall) * 100 * 100) / 100
 						: 0,
 			}
 		})
 
+		const genderMap: Record<string, { count: number; deaths: number }> = {
+			Male: { count: 0, deaths: 0 },
+			Female: { count: 0, deaths: 0 },
+		}
+
+		dataPoints.forEach((d) => {
+			const label =
+				d.sex === 1 ? "Male" : d.sex === 2 ? "Female" : "Unknown"
+			genderMap[label].count += d.count
+			genderMap[label].deaths += d.deaths
+		})
+
+		const genderDist = Object.entries(genderMap).map(([gender, stats]) => ({
+			gender,
+			percentOfTotal:
+				totalOverall > 0
+					? Math.round((stats.count / totalOverall) * 100 * 100) / 100
+					: 0,
+			mortalityRate:
+				stats.count > 0
+					? Math.round((stats.deaths / stats.count) * 100 * 100) / 100
+					: 0,
+		}))
+
 		return {
-			mortalityDist: results.map((r) => ({
+			mortalityDist: ageResults.map((r) => ({
 				ageRange: r.ageRange,
 				value: r.mortalityDist,
 			})),
-			caseDist: results.map((r) => ({
+			caseDist: ageResults.map((r) => ({
 				ageRange: r.ageRange,
 				value: r.caseDistribution,
 			})),
-			caseDeathDist: results.map((r) => ({
+			caseDeathDist: ageResults.map((r) => ({
 				ageRange: r.ageRange,
 				totalCases: r.totalCount,
-				totalDeaths: r.deadCount,
+				totalDeaths: r.totalDeaths,
 			})),
-			genderDist: [], // Placeholder for your gender logic
+			genderDist,
 		}
 	}
 
 	const response: Record<string, any> = {}
 
-	response["all_sites"] = bucketData(
+	response["all_sites"] = processDistributions(
 		rawData.map((d) => ({
 			ageStr: d._id.ageStr,
+			sex: d._id.sex,
 			count: d.count,
 			deaths: d.deaths,
 		})),
 	)
 
-	const uniqueSites = isPowerUser
+	const allowedSites = isPowerUser
 		? Array.from(new Set(rawData.map((d) => d._id.site)))
 		: params.sites
 
-	uniqueSites.forEach((site) => {
+	allowedSites.forEach((site) => {
 		const siteData = rawData
 			.filter((d) => d._id.site === site)
 			.map((d) => ({
 				ageStr: d._id.ageStr,
+				sex: d._id.sex,
 				count: d.count,
 				deaths: d.deaths,
 			}))
-
 		response[site as string] =
-			siteData.length > 0 ? bucketData(siteData) : null
+			siteData.length > 0 ? processDistributions(siteData) : null
 	})
 
 	return response

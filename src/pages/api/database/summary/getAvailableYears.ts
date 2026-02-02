@@ -35,10 +35,10 @@ async function GetAvailableYears(params: ParamsType): Promise<YearsResponse> {
 
 	const [facetResult] = await collection
 		.aggregate([
-			{ $match: matchQuery },
 			{
 				$facet: {
 					bySite: [
+						{ $match: matchQuery },
 						{
 							$group: {
 								_id: {
@@ -95,6 +95,7 @@ async function GetAvailableYears(params: ParamsType): Promise<YearsResponse> {
 
 	return formattedResponse
 }
+
 // handler for any calls to this endpoint
 export default async function handler(
 	req: NextApiRequest,

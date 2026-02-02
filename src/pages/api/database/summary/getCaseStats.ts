@@ -30,24 +30,17 @@ async function GetCaseStats(params: ParamsType) {
 		? {}
 		: { redcap_data_access_group: { $in: params.sites } }
 
-	const pipeline = [
-		{
-			$match: {
-				$and: [
-					siteMatch,
-					{
-						$expr: {
-							$eq: [
-								{ $year: "$ecmo_start_date_time" },
-								params.selectedYear,
-							],
-						},
-					},
-				],
-			},
+	// Common year filter used by both queries
+	const yearMatch = {
+		$expr: {
+			$eq: [{ $year: "$ecmo_start_date_time" }, params.selectedYear],
 		},
+	}
+
+	// 1. Pipeline for individual sites (Restricted by siteMatch)
+	const pipeline = [
+		{ $match: { $and: [siteMatch, yearMatch] } },
 		{
-			// Group by site to get stats for each individual site
 			$group: {
 				_id: "$redcap_data_access_group",
 				totalCount: { $sum: 1 },
@@ -107,7 +100,6 @@ async function GetCaseStats(params: ParamsType) {
 			},
 		},
 		{
-			// Project the mortality rates per site
 			$project: {
 				site: "$_id",
 				_id: 0,
@@ -193,9 +185,9 @@ async function GetCaseStats(params: ParamsType) {
 	]
 
 	const results = await collection.aggregate(pipeline).toArray()
-
 	const finalData: Record<string, any> = {}
 
+	// Initialize requested sites
 	if (!isPowerUser) {
 		params.sites.forEach((site) => {
 			finalData[site] = null
@@ -206,40 +198,9 @@ async function GetCaseStats(params: ParamsType) {
 		if (item.site) finalData[item.site] = item.stats
 	})
 
-	const allSitesAgg = results.reduce(
-		(acc, curr) => {
-			acc.totalCount += curr.stats.total.count
-			acc.totalDeaths +=
-				(curr.stats.total.count * curr.stats.total.mortalityRate) / 100
-			return acc
-		},
-		{
-			totalCount: 0,
-			totalDeaths: 0,
-			vaCount: 0,
-			vaDeaths: 0,
-			vvCount: 0,
-			vvDeaths: 0,
-		},
-	)
-
 	const [globalTotal] = await collection
 		.aggregate([
-			{
-				$match: {
-					$and: [
-						siteMatch,
-						{
-							$expr: {
-								$eq: [
-									{ $year: "$ecmo_start_date_time" },
-									params.selectedYear,
-								],
-							},
-						},
-					],
-				},
-			},
+			{ $match: yearMatch },
 			{
 				$group: {
 					_id: null,
