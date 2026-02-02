@@ -33,7 +33,7 @@ function GraphRenderer({
 						height={height}
 						data={
 							state.countData.find(
-								(site) => site.site === displayedSite
+								(site) => site.site === displayedSite,
 							)?.counts.outcm_hosp_discharge_loc as CountEntry[]
 						}
 					/>
@@ -50,7 +50,7 @@ function GraphRenderer({
 						height={height}
 						data={
 							state.countData.find(
-								(site) => site.site === displayedSite
+								(site) => site.site === displayedSite,
 							)?.counts.diagnosis_cardiac as CountEntry[]
 						}
 					/>
@@ -67,7 +67,7 @@ function GraphRenderer({
 						height={height}
 						data={
 							state.countData.find(
-								(site) => site.site === displayedSite
+								(site) => site.site === displayedSite,
 							)?.counts.diagnosis_resp as CountEntry[]
 						}
 					/>
@@ -82,7 +82,7 @@ function GraphRenderer({
 						height={height}
 						data={
 							state.countData.find(
-								(site) => site.site === displayedSite
+								(site) => site.site === displayedSite,
 							)?.counts.ecmo_mode as CountEntry[]
 						}
 					/>
@@ -97,7 +97,7 @@ function GraphRenderer({
 						height={height}
 						data={
 							state.countData.find(
-								(site) => site.site === displayedSite
+								(site) => site.site === displayedSite,
 							)?.counts.ecmo_indication as CountEntry[]
 						}
 					/>
@@ -116,7 +116,7 @@ function GraphRenderer({
 							state.boxplotData
 								.find((site) => site.site === displayedSite)
 								?.stats.filter(
-									(obj) => obj.name !== "outcm_mv_days_2"
+									(obj) => obj.name !== "outcm_mv_days_2",
 								) as BoxplotStats[]
 						}
 					/>
@@ -133,22 +133,24 @@ function GraphRenderer({
 							state.boxplotData
 								.find((site) => site.site === displayedSite)
 								?.stats.filter(
-									(obj) => obj.name === "outcm_mv_days_2"
+									(obj) => obj.name === "outcm_mv_days_2",
 								) as BoxplotStats[]
 						}
 					/>
 				</div>
 			)
-		case "ARDS Outcomes":
+		case "ARDS Complications":
 			return (
 				<div className="flex items-center flex-col">
-					<article className="font-semibold">ARDS Outcomes</article>
+					<article className="font-semibold">
+						ARDS Complications
+					</article>
 					<HorizontalBarplot
 						width={width}
 						height={height}
 						data={
 							state.countData.find(
-								(site) => site.site === displayedSite
+								(site) => site.site === displayedSite,
 							)?.counts.ards_outcomes as CountEntry[]
 						}
 					/>

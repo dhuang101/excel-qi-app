@@ -16,7 +16,7 @@ function SingleView({ state }: PropType) {
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
 	const [displayedSite, setDisplayedSite] = useState<string>(
-		state.countData.length > 1 ? state.countData[1].site : "all_sites"
+		state.countData.length > 1 ? state.countData[1].site : "all_sites",
 	)
 	const [width, setWidth] = useState(0)
 
@@ -67,7 +67,7 @@ function SingleView({ state }: PropType) {
 						<option>ECMO Indication</option>
 						<option>Length of Stay Distribution</option>
 						<option>IMV Duration</option>
-						<option>ARDS Outcomes</option>
+						<option>ARDS Complications</option>
 					</select>
 				</fieldset>
 				{status === "authenticated" && (

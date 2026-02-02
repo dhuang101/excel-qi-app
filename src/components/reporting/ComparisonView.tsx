@@ -10,7 +10,7 @@ function ComparisonView({ state }: PropType) {
 	const [displayedGraph, setDisplayedGraph] =
 		useState<GraphType>("Hospital Outcomes")
 	const [leftDisplayedSite, setLeftDisplayedSite] = useState<string>(
-		state.countData.map((item) => item.site)[1]
+		state.countData.map((item) => item.site)[1],
 	)
 	const [rightDisplayedSite, setRightDisplayedSite] =
 		useState<string>("all_sites")
@@ -63,7 +63,7 @@ function ComparisonView({ state }: PropType) {
 						<option>ECMO Indication</option>
 						<option>Length of Stay Distribution</option>
 						<option>IMV Duration</option>
-						<option>ARDS Outcomes</option>
+						<option>ARDS Complications</option>
 					</select>
 				</fieldset>
 			</div>

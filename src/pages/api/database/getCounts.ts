@@ -51,7 +51,7 @@ async function GetCounts(params: ParamsType) {
 		"ecmo_indication",
 	]
 
-	// attributes for ards outcomes graph
+	// attributes for ARDS Complications graph
 	const ardsKeys = [
 		"form11_mech_oxygenator",
 		"form11_mech_pump",
@@ -104,7 +104,7 @@ async function GetCounts(params: ParamsType) {
 										"Deceased",
 										"$_id.value",
 									],
-							  }
+								}
 							: "$_id.value",
 				},
 			},
@@ -129,7 +129,7 @@ async function GetCounts(params: ParamsType) {
 							},
 						},
 					}),
-					{}
+					{},
 				),
 			},
 		},
@@ -172,7 +172,7 @@ async function GetCounts(params: ParamsType) {
 		})
 	})
 
-	// fill attributes for ards outcomes
+	// fill attributes for ARDS Complications
 	rawResults.ards_outcomes.forEach((siteData: any) => {
 		const site = siteData._id
 		if (siteResultsMap[site]) {
@@ -198,15 +198,15 @@ async function GetCounts(params: ParamsType) {
 				attributes.map((attr) => [
 					attr,
 					Object.entries(allSitesCounts[attr]).map(
-						([value, count]) => ({ value, count: count as number })
+						([value, count]) => ({ value, count: count as number }),
 					),
-				])
+				]),
 			),
 			ards_outcomes: Object.entries(allSitesCounts.ards_outcomes).map(
 				([label, count]) => ({
 					value: label,
 					count: count as number,
-				})
+				}),
 			),
 		},
 	}
@@ -228,7 +228,7 @@ async function GetCounts(params: ParamsType) {
 // handler for any calls to this endpoint
 export default async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse
+	res: NextApiResponse,
 ) {
 	const params = req.body as ParamsType
 
