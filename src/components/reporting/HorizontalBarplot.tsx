@@ -19,6 +19,11 @@ export const HorizontalBarplot = ({
 	const boundsWidth = width - MARGIN.right - MARGIN.left
 	const boundsHeight = height - MARGIN.top - MARGIN.bottom
 
+	// 1. Calculate Total for percentages
+	const totalCount = useMemo(() => {
+		return d3.sum(data, (d) => d.count)
+	}, [data])
+
 	const sortedData = useMemo(() => {
 		return [...data].sort((a, b) => b.count - a.count)
 	}, [data])
@@ -47,6 +52,10 @@ export const HorizontalBarplot = ({
 
 		const availableWidthForLabel = MARGIN.left - 20
 
+		// 2. Compute the percentage string
+		const percentage =
+			totalCount > 0 ? ((d.count / totalCount) * 100).toFixed(1) : 0
+
 		return (
 			<g key={i}>
 				<rect
@@ -61,21 +70,21 @@ export const HorizontalBarplot = ({
 					strokeWidth={1}
 					rx={1}
 				/>
-				{/* Count Label (End of Bar) */}
 				<text
 					x={
-						xScale(d.count) > 30
+						xScale(d.count) > 60 // Increased threshold slightly for longer text
 							? xScale(d.count) - 7
 							: xScale(d.count) + 12
 					}
 					y={y + yScale.bandwidth() / 2}
-					textAnchor={xScale(d.count) > 30 ? "end" : "start"}
+					textAnchor={xScale(d.count) > 60 ? "end" : "start"}
 					dominantBaseline="middle"
 					fill="var(--color-base-content)"
 					fontSize={12}
 				>
-					{d.count}
+					{`${d.count} (${percentage}%)`}
 				</text>
+
 				{/* Y-Axis Wrapped Label */}
 				<text
 					x={xScale(0) - 10}
@@ -88,7 +97,7 @@ export const HorizontalBarplot = ({
 							SvgWrapText(
 								d3.select(node),
 								availableWidthForLabel,
-								d.value
+								d.value,
 							)
 						}
 					}}
