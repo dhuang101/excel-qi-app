@@ -4,6 +4,8 @@ import { NextApiRequest, NextApiResponse } from "next"
 // this api fetches the data required for the graphs on the summary page
 
 type ParamsType = {
+	role: string
+	sites: string[]
 	selectedYear: number
 	ecmoMode: "total" | "V-V" | "V-A"
 	// | "V-VA" | "A-VCO2R" | "V-VECCO2R" | "VP"
@@ -21,12 +23,17 @@ async function getClient() {
 	return cachedClient
 }
 
-// this api fetches all the unique years in the column ecmo_start_date_time for the summary statistics page
 async function GetGraphData(params: ParamsType) {
 	const client = await getClient()
 	const collection = client.db("main").collection("excel-data")
 
+	const isPowerUser = ["admin", "global_viewer"].includes(params.role)
+	const siteMatch = isPowerUser
+		? {}
+		: { redcap_data_access_group: { $in: params.sites } }
+
 	const matchStage: Record<string, any> = {
+		...siteMatch,
 		ecmo_start_date_time: {
 			$gte: new Date(`${params.selectedYear}-01-01T00:00:00.000Z`),
 			$lte: new Date(`${params.selectedYear}-12-31T23:59:59.999Z`),
@@ -37,206 +44,127 @@ async function GetGraphData(params: ParamsType) {
 		matchStage.ecmo_mode = params.ecmoMode
 	}
 
-	const agePipeline = [
-		{ $match: matchStage },
-		{
-			$project: {
-				age: "$birthdate",
-				isDead: {
-					$cond: [
-						{ $eq: ["$outcm_hosp_discharge_loc", "Dead"] },
-						1,
-						0,
-					],
-				},
-			},
-		},
-		{
-			$bucket: {
-				groupBy: "$age",
-				boundaries: [0, 18, 30, 40, 50, 55, 60, 65, 75, 80],
-				default: 80,
-				output: {
-					totalCount: { $sum: 1 },
-					deadCount: { $sum: "$isDead" },
-				},
-			},
-		},
-		{
-			$setWindowFields: {
-				output: {
-					grandTotalCases: { $sum: "$totalCount" },
-				},
-			},
-		},
-		{
-			$project: {
-				_id: 0,
-				ageRange: {
-					$switch: {
-						branches: [
-							{ case: { $eq: ["$_id", 0] }, then: "0-17" },
-							{ case: { $eq: ["$_id", 18] }, then: "18-29" },
-							{ case: { $eq: ["$_id", 30] }, then: "30-39" },
-							{ case: { $eq: ["$_id", 40] }, then: "40-49" },
-							{ case: { $eq: ["$_id", 50] }, then: "50-54" },
-							{ case: { $eq: ["$_id", 55] }, then: "55-59" },
-							{ case: { $eq: ["$_id", 60] }, then: "60-64" },
-							{ case: { $eq: ["$_id", 65] }, then: "65-74" },
-							{ case: { $eq: ["$_id", 75] }, then: "75-79" },
-							{ case: { $eq: ["$_id", 80] }, then: "80+" },
-						],
-						default: "Unknown",
+	const rawData = await collection
+		.aggregate([
+			{ $match: matchStage },
+			{
+				$group: {
+					_id: {
+						site: "$redcap_data_access_group",
+						ageStr: "$birthdate",
 					},
-				},
-				mortalityDist: {
-					$cond: [
-						{ $eq: ["$totalCount", 0] },
-						0,
-						{
-							$round: [
-								{
-									$multiply: [
-										{
-											$divide: [
-												"$deadCount",
-												"$totalCount",
-											],
-										},
-										100,
-									],
-								},
-								2,
+					count: { $sum: 1 },
+					deaths: {
+						$sum: {
+							$cond: [
+								{ $eq: ["$outcm_hosp_discharge_loc", "Dead"] },
+								1,
+								0,
 							],
 						},
-					],
-				},
-				caseDistribution: {
-					$cond: [
-						{ $eq: ["$grandTotalCases", 0] },
-						0,
-						{
-							$round: [
-								{
-									$multiply: [
-										{
-											$divide: [
-												"$totalCount",
-												"$grandTotalCases",
-											],
-										},
-										100,
-									],
-								},
-								2,
-							],
-						},
-					],
-				},
-				// Pass raw counts through for the third key
-				totalCount: "$totalCount",
-				deadCount: "$deadCount",
-			},
-		},
-		{ $sort: { ageRange: 1 } },
-	]
-
-	// 2. Gender Distribution Pipeline
-	const genderPipeline = [
-		{ $match: matchStage },
-		{
-			$group: {
-				_id: "$sex",
-				count: { $sum: 1 },
-				deaths: {
-					$sum: {
-						$cond: [
-							{ $eq: ["$outcm_hosp_discharge_loc", "Dead"] },
-							1,
-							0,
-						],
 					},
 				},
 			},
-		},
-		{
-			$setWindowFields: {
-				output: { totalOverall: { $sum: "$count" } },
-			},
-		},
-		{
-			$project: {
-				_id: 0,
-				gender: {
-					$switch: {
-						branches: [
-							{ case: { $eq: ["$_id", 1] }, then: "Male" },
-							{ case: { $eq: ["$_id", 2] }, then: "Female" },
-						],
-						default: "Unknown",
-					},
-				},
-				percentOfTotal: {
-					$round: [
-						{
-							$multiply: [
-								{ $divide: ["$count", "$totalOverall"] },
-								100,
-							],
-						},
-						2,
-					],
-				},
-				mortalityRate: {
-					$round: [
-						{
-							$multiply: [
-								{ $divide: ["$deaths", "$count"] },
-								100,
-							],
-						},
-						2,
-					],
-				},
-			},
-		},
-	]
+		])
+		.toArray()
 
-	const [ageResults, genderResults] = await Promise.all([
-		collection.aggregate(agePipeline).toArray(),
-		collection.aggregate(genderPipeline).toArray(),
-	])
+	const bucketData = (dataPoints: any[]) => {
+		const ranges = [
+			{ label: "18-29", min: 18, max: 29 },
+			{ label: "30-39", min: 30, max: 39 },
+			{ label: "40-49", min: 40, max: 49 },
+			{ label: "50-54", min: 50, max: 54 },
+			{ label: "55-59", min: 55, max: 59 },
+			{ label: "60-64", min: 60, max: 64 },
+			{ label: "65-74", min: 65, max: 74 },
+			{ label: "75-79", min: 75, max: 79 },
+			{ label: "80+", min: 80, max: 999 },
+		]
 
-	return {
-		mortalityDist: ageResults.map((r) => ({
-			ageRange: r.ageRange,
-			value: r.mortalityDist,
-		})),
-		caseDist: ageResults.map((r) => ({
-			ageRange: r.ageRange,
-			value: r.caseDistribution,
-		})),
-		caseDeathDist: ageResults.map((r) => ({
-			ageRange: r.ageRange,
-			totalCases: r.totalCount,
-			totalDeaths: r.deadCount,
-		})),
-		genderDist: genderResults,
+		const totalCases = dataPoints.reduce((sum, d) => sum + d.count, 0)
+
+		const results = ranges.map((range) => {
+			const matches = dataPoints.filter((d) => {
+				const age = parseInt(d.ageStr)
+				return age >= range.min && age <= range.max
+			})
+
+			const count = matches.reduce((sum, m) => sum + m.count, 0)
+			const deaths = matches.reduce((sum, m) => sum + m.deaths, 0)
+
+			return {
+				ageRange: range.label,
+				totalCount: count,
+				deadCount: deaths,
+				mortalityDist:
+					count > 0
+						? Math.round((deaths / count) * 100 * 100) / 100
+						: 0,
+				caseDistribution:
+					totalCases > 0
+						? Math.round((count / totalCases) * 100 * 100) / 100
+						: 0,
+			}
+		})
+
+		return {
+			mortalityDist: results.map((r) => ({
+				ageRange: r.ageRange,
+				value: r.mortalityDist,
+			})),
+			caseDist: results.map((r) => ({
+				ageRange: r.ageRange,
+				value: r.caseDistribution,
+			})),
+			caseDeathDist: results.map((r) => ({
+				ageRange: r.ageRange,
+				totalCases: r.totalCount,
+				totalDeaths: r.deadCount,
+			})),
+			genderDist: [], // Placeholder for your gender logic
+		}
 	}
+
+	const response: Record<string, any> = {}
+
+	response["all_sites"] = bucketData(
+		rawData.map((d) => ({
+			ageStr: d._id.ageStr,
+			count: d.count,
+			deaths: d.deaths,
+		})),
+	)
+
+	const uniqueSites = isPowerUser
+		? Array.from(new Set(rawData.map((d) => d._id.site)))
+		: params.sites
+
+	uniqueSites.forEach((site) => {
+		const siteData = rawData
+			.filter((d) => d._id.site === site)
+			.map((d) => ({
+				ageStr: d._id.ageStr,
+				count: d.count,
+				deaths: d.deaths,
+			}))
+
+		response[site as string] =
+			siteData.length > 0 ? bucketData(siteData) : null
+	})
+
+	return response
 }
 
-// handler for any calls to this endpoint
 export default async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse
+	res: NextApiResponse,
 ) {
 	try {
-		const params = req.body
-
+		const params = req.body as ParamsType
 		const results = await GetGraphData(params)
 		res.status(200).json(results)
 	} catch (err) {
-		console.error("Error at database/summary/getSummaryStats  :", err)
+		console.error("Error at database/summary/getGraphData :", err)
 		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

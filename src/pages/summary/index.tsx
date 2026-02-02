@@ -45,12 +45,12 @@ function SummaryPage() {
 		ecmo_data: {},
 		graph_data: {},
 	})
-	// state attributes for query
+	// state attributes selector at the top
+	const [availableYears, setAvailableYears] = useState([])
 	const [selectedYear, setSelectedYear] = useState(0)
 	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
-	// state attributes for returned data
+	// state attributes for displayed data
 	const [selectedSite, setSelectedSite] = useState("all_sites")
-	const [availableYears, setAvailableYears] = useState([])
 	const [caseData, setCaseData] = useState<CaseData | null>(null)
 	const [graphData, setGraphData] = useState<GraphData | null>(null)
 	const [width, setWidth] = useState(500)
@@ -67,12 +67,10 @@ function SummaryPage() {
 	}, [])
 
 	useEffect(() => {
-		if (!session) return
-
 		axios
 			.post("/api/database/summary/getAvailableYears", {
-				role: session.user.role,
-				sites: session.user.sites,
+				role: session ? session?.user.role : "public",
+				sites: session ? session?.user.sites : [],
 			})
 			.then((result) => {
 				dispatch({
@@ -92,8 +90,8 @@ function SummaryPage() {
 
 		axios
 			.post("api/database/summary/getCaseStats", {
-				role: session?.user.role,
-				sites: session?.user.sites,
+				role: session ? session?.user.role : "public",
+				sites: session ? session?.user.sites : [],
 				selectedYear: selectedYear,
 			})
 			.then((result) => {
@@ -107,19 +105,21 @@ function SummaryPage() {
 
 		axios
 			.post("api/database/summary/getGraphData", {
-				role: session?.user.role,
-				sites: session?.user.sites,
+				role: session ? session?.user.role : "public",
+				sites: session ? session?.user.sites : [],
 				selectedYear: selectedYear,
 				ecmoMode: ecmoMode,
 			})
 			.then((result) => {
-				setGraphData(result.data)
+				dispatch({ type: ACTION.SET_GRAPH_DATA, payload: result.data })
+				setGraphData(result.data[selectedSite])
 			})
 	}, [selectedYear, ecmoMode])
 
 	useEffect(() => {
 		setAvailableYears(state.years[selectedSite])
 		setCaseData(state.ecmo_data[selectedSite])
+		setGraphData(state.graph_data[selectedSite])
 	}, [selectedSite])
 
 	function handleButtonClick(mode: EcmoMode) {
