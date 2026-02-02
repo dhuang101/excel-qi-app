@@ -19,13 +19,14 @@ export const HorizontalBarplot = ({
 	const boundsWidth = width - MARGIN.right - MARGIN.left
 	const boundsHeight = height - MARGIN.top - MARGIN.bottom
 
-	// 1. Calculate Total for percentages
 	const totalCount = useMemo(() => {
 		return d3.sum(data, (d) => d.count)
 	}, [data])
 
 	const sortedData = useMemo(() => {
-		return [...data].sort((a, b) => b.count - a.count)
+		return [...data]
+			.filter((d) => d.count > 0)
+			.sort((a, b) => b.count - a.count)
 	}, [data])
 
 	const groups = useMemo(() => sortedData.map((d) => d.value), [sortedData])
@@ -52,7 +53,6 @@ export const HorizontalBarplot = ({
 
 		const availableWidthForLabel = MARGIN.left - 30
 
-		// 2. Compute the percentage string
 		const percentage =
 			totalCount > 0 ? ((d.count / totalCount) * 100).toFixed(1) : 0
 
@@ -72,7 +72,7 @@ export const HorizontalBarplot = ({
 				/>
 				<text
 					x={
-						xScale(d.count) > 60 // Increased threshold slightly for longer text
+						xScale(d.count) > 60
 							? xScale(d.count) - 7
 							: xScale(d.count) + 12
 					}
