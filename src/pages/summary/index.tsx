@@ -96,9 +96,8 @@ function SummaryPage() {
 			})
 			.then((result) => {
 				dispatch({ type: ACTION.SET_ECMO_STATS, payload: result.data })
-				setCaseData(result.data[selectedSite])
 			})
-	}, [selectedYear])
+	}, [selectedYear, session])
 
 	useEffect(() => {
 		if (selectedYear === 0) return
@@ -112,15 +111,14 @@ function SummaryPage() {
 			})
 			.then((result) => {
 				dispatch({ type: ACTION.SET_GRAPH_DATA, payload: result.data })
-				setGraphData(result.data[selectedSite])
 			})
-	}, [selectedYear, ecmoMode])
+	}, [selectedYear, ecmoMode, session])
 
 	useEffect(() => {
 		setAvailableYears(state.years[selectedSite])
 		setCaseData(state.ecmo_data[selectedSite])
 		setGraphData(state.graph_data[selectedSite])
-	}, [selectedSite])
+	}, [state, selectedSite])
 
 	function handleButtonClick(mode: EcmoMode) {
 		setEcmoMode(mode)
