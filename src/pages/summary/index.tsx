@@ -48,11 +48,11 @@ function SummaryPage() {
 		graph_data: {},
 	})
 	// state attributes for query
-	const [availableYears, setAvailableYears] = useState([])
 	const [selectedYear, setSelectedYear] = useState(0)
 	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
 	// state attributes for returned data
-	const [displayedSite, setDisplayedSite] = useState("all_sites")
+	const [selectedSite, setSelectedSite] = useState("all_sites")
+	const [availableYears, setAvailableYears] = useState([])
 	const [caseData, setCaseData] = useState<CaseData | null>(null)
 	const [graphData, setGraphData] = useState<GraphData | null>(null)
 	const [width, setWidth] = useState(500)
@@ -78,8 +78,11 @@ function SummaryPage() {
 			})
 			.then((result) => {
 				dispatch({
-					type: ACTION.SET_SITES,
-					payload: Object.keys(result.data),
+					type: ACTION.SET_SITES_YEARS,
+					payload: {
+						sites: Object.keys(result.data),
+						years: result.data,
+					},
 				})
 				setAvailableYears(result.data["all_sites"])
 				setSelectedYear(result.data["all_sites"].at(-1))
@@ -111,10 +114,13 @@ function SummaryPage() {
 				ecmoMode: ecmoMode,
 			})
 			.then((result) => {
-				console.log(result.data)
 				setGraphData(result.data)
 			})
 	}, [selectedYear, ecmoMode])
+
+	useEffect(() => {
+		setAvailableYears(state.years[selectedSite])
+	}, [selectedSite])
 
 	function handleButtonClick(mode: EcmoMode) {
 		setEcmoMode(mode)
@@ -136,10 +142,10 @@ function SummaryPage() {
 							Select Site to Display
 						</legend>
 						<select
-							defaultValue={Object.keys(availableYears)[0]}
+							defaultValue={availableYears[0]}
 							className="select"
 							onChange={(event) => {
-								setDisplayedSite(event.target.value)
+								setSelectedSite(event.target.value)
 							}}
 						>
 							{state.sites.map((site: string) => {

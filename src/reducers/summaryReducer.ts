@@ -5,8 +5,7 @@ interface Action {
 }
 
 export enum ACTION {
-	SET_SITES,
-	SET_YEARS,
+	SET_SITES_YEARS,
 	SET_ECMO_STATS,
 	SET_GRAPH_DATA,
 }
@@ -53,15 +52,11 @@ export interface state {
 
 export default function SummaryReducer(state: state, action: Action) {
 	switch (action.type) {
-		case ACTION.SET_SITES:
+		case ACTION.SET_SITES_YEARS:
 			return {
 				...state,
-				sites: action.payload,
-			}
-		case ACTION.SET_YEARS:
-			return {
-				...state,
-				years: action.payload,
+				sites: action.payload.sites,
+				years: action.payload.years,
 			}
 		case ACTION.SET_ECMO_STATS:
 			return {
