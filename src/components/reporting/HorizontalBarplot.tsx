@@ -53,6 +53,9 @@ export const HorizontalBarplot = ({
 
 		const availableWidthForLabel = MARGIN.left - 30
 
+		const barWidth = xScale(d.count)
+		const barCenterY = y + yScale.bandwidth() / 2
+
 		const percentage =
 			totalCount > 0 ? ((d.count / totalCount) * 100).toFixed(1) : 0
 
@@ -61,7 +64,7 @@ export const HorizontalBarplot = ({
 				<rect
 					x={xScale(0)}
 					y={y}
-					width={xScale(d.count)}
+					width={barWidth}
 					height={yScale.bandwidth()}
 					opacity={0.7}
 					stroke="var(--color-base-content)"
@@ -76,7 +79,7 @@ export const HorizontalBarplot = ({
 							? xScale(d.count) - 7
 							: xScale(d.count) + 12
 					}
-					y={y + yScale.bandwidth() / 2}
+					y={barCenterY + 4}
 					textAnchor={xScale(d.count) > 60 ? "end" : "start"}
 					dominantBaseline="middle"
 					fill="var(--color-base-content)"
@@ -88,7 +91,7 @@ export const HorizontalBarplot = ({
 				{/* Y-Axis Wrapped Label */}
 				<text
 					x={xScale(0) - 10}
-					y={y + yScale.bandwidth() / 2}
+					y={barCenterY + 4}
 					textAnchor="end"
 					fill="var(--color-base-content)"
 					fontSize={12}

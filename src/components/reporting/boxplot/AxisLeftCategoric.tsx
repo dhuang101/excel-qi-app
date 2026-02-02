@@ -36,7 +36,7 @@ export const AxisLeft = ({ yScale }: AxisLeftProps) => {
 					outcm_mv_days_2: "Days on IMV",
 				}
 				return (
-					<g key={value} transform={`translate(0, ${yOffset})`}>
+					<g key={value} transform={`translate(0, ${yOffset + 4})`}>
 						{/* Ticks */}
 						{/* <line x2={-TICK_LENGTH} stroke="currentColor" /> */}
 						<text
