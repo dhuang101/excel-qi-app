@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import * as d3 from "d3"
 import { SvgWrapText } from "@/utilities/SvgWrapText"
 
-const MARGIN = { top: 30, right: 30, bottom: 70, left: 140 }
+const MARGIN = { top: 30, right: 30, bottom: 70, left: 200 }
 const BAR_PADDING = 0.3
 
 interface HorizontalBarplotProps {
@@ -50,7 +50,7 @@ export const HorizontalBarplot = ({
 		const y = yScale(d.value)
 		if (y === undefined) return null
 
-		const availableWidthForLabel = MARGIN.left - 20
+		const availableWidthForLabel = MARGIN.left - 30
 
 		// 2. Compute the percentage string
 		const percentage =

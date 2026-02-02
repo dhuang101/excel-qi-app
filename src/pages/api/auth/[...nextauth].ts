@@ -4,7 +4,7 @@ import NextAuth, { Session, User } from "next-auth"
 import { JWT } from "next-auth/jwt"
 import OktaProvider from "next-auth/providers/okta"
 import { CreateAccountProvisionedEmail } from "@/utilities/ProvisionEmailTemplate"
-// import Auth0Provider from "next-auth/providers/auth0"
+import Auth0Provider from "next-auth/providers/auth0"
 
 const uri = process.env.DB_CONNECTION_URI as string
 let cachedClient: MongoClient | null = null
@@ -25,11 +25,11 @@ const rolesCollection = db.collection("permissions")
 export const authOptions = {
 	// Configure one or more authentication providers
 	providers: [
-		// Auth0Provider({
-		// 	clientId: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID as string,
-		// 	clientSecret: process.env.AUTH0_CLIENT_SECRET as string,
-		// 	issuer: process.env.NEXT_PUBLIC_AUTH0_ISSUER,
-		// }),
+		Auth0Provider({
+			clientId: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID as string,
+			clientSecret: process.env.AUTH0_CLIENT_SECRET as string,
+			issuer: process.env.NEXT_PUBLIC_AUTH0_ISSUER,
+		}),
 		OktaProvider({
 			clientId: process.env.NEXT_PUBLIC_OKTA_CLIENT_ID as string,
 			clientSecret: process.env.OKTA_CLIENT_SECRET as string,
