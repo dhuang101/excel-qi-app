@@ -82,7 +82,11 @@ export const HorizontalBarplot = ({
 					y={barCenterY + 1}
 					textAnchor={xScale(d.count) > 60 ? "end" : "start"}
 					dominantBaseline="middle"
-					fill="var(--color-base-content)"
+					fill={
+						xScale(d.count) > 60
+							? "var(--color-primary-content)"
+							: "var(--color-base-content)"
+					}
 					fontSize={12}
 				>
 					{`${d.count} (${percentage}%)`}
