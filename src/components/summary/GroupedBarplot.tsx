@@ -170,7 +170,7 @@ export const GroupedBarplot = ({
 						width={12}
 						height={12}
 						fill="var(--color-primary)"
-						fillOpacity={0.5}
+						fillOpacity={1}
 						stroke="var(--color-base-content)"
 						strokeWidth={0.7}
 					/>
@@ -188,7 +188,7 @@ export const GroupedBarplot = ({
 						width={12}
 						height={12}
 						fill="var(--color-secondary)"
-						fillOpacity={0.5}
+						fillOpacity={1}
 						stroke="var(--color-base-content)"
 						strokeWidth={0.7}
 					/>

@@ -208,7 +208,7 @@ function SummaryPage() {
 						onChange={(e) =>
 							setSelectedYear(Number(e.target.value))
 						}
-						className="range range-primary w-full"
+						className="range range-primary [--range-fill:0]  w-full"
 						step={1}
 					/>
 					<div className="flex justify-between px-3 mt-2 text-xs">
@@ -224,12 +224,12 @@ function SummaryPage() {
 				</div>
 				<div className="flex justify-between w-full mt-4">
 					<div className="flex flex-col w-[30%]">
-						<div className="flex min-h-12 items-center justify-center rounded-t-md bg-primary  outline outline-primary">
-							<article className="font-semibold text-primary-content text-xl">
+						<div className="flex min-h-12 items-center justify-center rounded-t-md bg-base-300 outline outline-base-300">
+							<article className="font-semibold text-base-content text-xl">
 								Total Cases
 							</article>
 						</div>
-						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
+						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-base-300">
 							<article className="text-3xl">
 								{caseData.total.count}
 							</article>
@@ -239,12 +239,12 @@ function SummaryPage() {
 						</div>
 					</div>
 					<div className="flex flex-col w-[30%]">
-						<div className="flex min-h-12 items-center justify-center rounded-t-md bg-primary  outline outline-primary">
-							<article className="font-semibold text-primary-content text-xl">
+						<div className="flex min-h-12 items-center justify-center rounded-t-md bg-base-300  outline outline-base-300">
+							<article className="font-semibold text-base-content text-xl">
 								V-A Cases
 							</article>
 						</div>
-						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
+						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-base-300">
 							<article className="text-3xl">
 								{caseData.va.count}
 							</article>
@@ -254,12 +254,12 @@ function SummaryPage() {
 						</div>
 					</div>
 					<div className="flex flex-col w-[30%]">
-						<div className="flex min-h-12 items-center justify-center rounded-t-md bg-primary  outline outline-primary">
-							<article className="font-semibold text-primary-content text-xl">
+						<div className="flex min-h-12 items-center justify-center rounded-t-md bg-base-300  outline outline-base-300">
+							<article className="font-semibold text-base-content text-xl">
 								V-V Cases
 							</article>
 						</div>
-						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-primary">
+						<div className="flex flex-col min-h-24 items-center justify-center rounded-b-md outline outline-base-300">
 							<article className="text-3xl">
 								{caseData.vv.count}
 							</article>
@@ -269,7 +269,7 @@ function SummaryPage() {
 						</div>
 					</div>
 				</div>
-				<div className="flex justify-between w-full mt-4 outline outline-primary p-2 shadow-2xl rounded">
+				<div className="flex justify-between w-full mt-4 outline outline-base-300 p-2 shadow-2xl rounded">
 					<button
 						className={`btn w-[30%] ${
 							ecmoMode === "total" ? "btn-primary" : ""
@@ -301,9 +301,9 @@ function SummaryPage() {
 						V-V Cases
 					</button>
 				</div>
-				<div className="flex flex-col w-full mt-4 outline outline-primary shadow-2xl rounded">
-					<div className="flex justify-center w-full bg-primary py-2">
-						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Mortality distribution by age group`}</article>
+				<div className="flex flex-col w-full mt-4 outline outline-base-300 shadow-2xl rounded">
+					<div className="flex justify-center w-full bg-base-300 py-2">
+						<article className="text-base-content font-semibold">{`Total (${selectedYear}) - Mortality distribution by age group`}</article>
 					</div>
 					<div
 						ref={graphRef}
@@ -316,9 +316,9 @@ function SummaryPage() {
 						/>
 					</div>
 				</div>
-				<div className="flex flex-col w-full mt-4 outline outline-primary shadow-2xl rounded">
-					<div className="flex justify-center w-full bg-primary py-2">
-						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Age distribution of cases vs deaths`}</article>
+				<div className="flex flex-col w-full mt-4 outline outline-base-300 shadow-2xl rounded">
+					<div className="flex justify-center w-full bg-base-300 py-2">
+						<article className="text-base-content font-semibold">{`Total (${selectedYear}) - Age distribution of cases vs deaths`}</article>
 					</div>
 					<div className="flex w-full justify-center p-4">
 						<GroupedBarplot
@@ -328,9 +328,9 @@ function SummaryPage() {
 						/>
 					</div>
 				</div>
-				<div className="flex flex-col w-full mt-4 outline outline-primary shadow-2xl rounded">
-					<div className="flex justify-center w-full bg-primary py-2">
-						<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Age distribution of cases`}</article>
+				<div className="flex flex-col w-full mt-4 outline outline-base-300 shadow-2xl rounded">
+					<div className="flex justify-center w-full bg-base-300 py-2">
+						<article className="text-base-content font-semibold">{`Total (${selectedYear}) - Age distribution of cases`}</article>
 					</div>
 					<div className="flex w-full justify-center p-4">
 						<VerticalBarplot
@@ -341,9 +341,9 @@ function SummaryPage() {
 					</div>
 				</div>
 				<div className="flex justify-between mt-4">
-					<div className="flex flex-col w-[49%] outline outline-primary shadow-2xl rounded">
-						<div className="flex justify-center w-full bg-primary py-2">
-							<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Gender distribution of cases`}</article>
+					<div className="flex flex-col w-[49%] outline outline-base-300 shadow-2xl rounded">
+						<div className="flex justify-center w-full bg-base-300 py-2">
+							<article className="text-base-content font-semibold">{`Total (${selectedYear}) - Gender distribution of cases`}</article>
 						</div>
 						<div className="flex w-full justify-center p-4">
 							<PieChart
@@ -355,9 +355,9 @@ function SummaryPage() {
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col w-[49%] outline outline-primary shadow-2xl rounded">
-						<div className="flex justify-center w-full bg-primary py-2">
-							<article className="text-primary-content font-semibold">{`Total (${selectedYear}) - Gender distribution of deaths`}</article>
+					<div className="flex flex-col w-[49%] outline outline-base-300 shadow-2xl rounded">
+						<div className="flex justify-center w-full bg-base-300 py-2">
+							<article className="text-base-content font-semibold">{`Total (${selectedYear}) - Gender distribution of deaths`}</article>
 						</div>
 						<div className="flex w-full justify-center p-4">
 							<PieChart
