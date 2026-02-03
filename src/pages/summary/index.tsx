@@ -208,7 +208,7 @@ function SummaryPage() {
 						onChange={(e) =>
 							setSelectedYear(Number(e.target.value))
 						}
-						className="range range-primary w-full"
+						className="range range-primary [--range-fill:0] w-full"
 						step={1}
 					/>
 					<div className="flex justify-between px-3 mt-2 text-xs">
