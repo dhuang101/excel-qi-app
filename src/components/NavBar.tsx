@@ -106,7 +106,7 @@ function NavBar() {
 									.map(
 										(word) =>
 											word.charAt(0).toUpperCase() +
-											word.slice(1)
+											word.slice(1),
 									)
 									.join(" ")}
 							</article>
@@ -131,7 +131,7 @@ function NavBar() {
 											process.env
 												.NEXT_PUBLIC_AUTH0_CLIENT_ID
 										}&returnTo=${encodeURIComponent(
-											window.location.origin
+											window.location.origin,
 										)}`
 									}}
 								>

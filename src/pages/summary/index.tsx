@@ -153,7 +153,7 @@ function SummaryPage() {
 	) : (
 		<div className="flex flex-col w-full items-center justify-center">
 			<div className="flex flex-col w-2/3 mt-2">
-				<div className="flex">
+				<div className="flex justify-between">
 					{status === "authenticated" && (
 						<fieldset className="fieldset w-1/3">
 							<legend className="fieldset-legend">
