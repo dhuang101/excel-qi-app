@@ -80,21 +80,25 @@ function SearchPage() {
 	}
 
 	// arrow function used to pipe input into event handler
-	const handleSelectChange =
-		(area: "ecmo_mode" | "ecmo_indication") =>
-		(event: React.ChangeEvent<HTMLSelectElement>) => {
-			if ((event.target as HTMLSelectElement).value === "Any") {
-				setUserEnteredQuery((oldState) => {
-					const { [area]: string, ...newState } = oldState
-					return newState
-				})
-			} else {
-				setUserEnteredQuery({
-					...userEnteredQuery,
-					[area]: (event.target as HTMLSelectElement).value,
-				})
-			}
+	const handleSelectChange = (
+		area: "ecmo_mode" | "ecmo_indication",
+		value: string,
+	) => {
+		if (value === "Any") {
+			setUserEnteredQuery((oldState) => {
+				const { [area]: _, ...newState } = oldState
+				return newState
+			})
+		} else {
+			setUserEnteredQuery((oldState) => ({
+				...oldState,
+				[area]: value,
+			}))
 		}
+		if (document.activeElement instanceof HTMLElement) {
+			document.activeElement.blur()
+		}
+	}
 
 	// similar for date input
 	const handleDateChange =
@@ -552,11 +556,17 @@ function SearchPage() {
 									<DropdownInput
 										title={"ECMO Mode"}
 										handleSelectChange={handleSelectChange}
+										selectedValue={
+											userEnteredQuery.ecmo_mode
+										}
 										queryAttribute={"ecmo_mode"}
 									/>
 									<DropdownInput
 										title={"ECMO Indication"}
 										handleSelectChange={handleSelectChange}
+										selectedValue={
+											userEnteredQuery.ecmo_indication
+										}
 										queryAttribute={"ecmo_indication"}
 									/>
 								</div>
