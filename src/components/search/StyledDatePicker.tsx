@@ -3,14 +3,14 @@
 
 import React from "react"
 import { ThemeProvider, createTheme } from "@mui/material/styles"
-import { DateTimePicker } from "@mui/x-date-pickers"
+import { DatePicker } from "@mui/x-date-pickers"
 
 interface Props {
 	label: string
 	onChange: void
 }
 
-function StyledDateTimePicker({ onChange, label }: Props) {
+function StyledDatePicker({ onChange, label }: Props) {
 	const theme = createTheme({
 		components: {
 			// calendar icon
@@ -55,16 +55,6 @@ function StyledDateTimePicker({ onChange, label }: Props) {
 				styleOverrides: {
 					root: {
 						color: "var(--color-base-content)",
-					},
-				},
-			},
-			// text input outline
-			MuiOutlinedInput: {
-				styleOverrides: {
-					root: {
-						"& fieldset": {
-							borderColor: "var(--color-base-content)",
-						},
 					},
 				},
 			},
@@ -133,21 +123,6 @@ function StyledDateTimePicker({ onChange, label }: Props) {
 					weekDayLabel: { color: "var(--color-base-content)" },
 				},
 			},
-			// time picker
-			MuiMultiSectionDigitalClockSection: {
-				styleOverrides: {
-					item: {
-						"&.Mui-selected": {
-							backgroundColor: "var(--color-primary)",
-							color: "var(--color-primary-content)",
-						},
-						"&.Mui-selected:hover": {
-							backgroundColor: "var(--color-primary)",
-							color: "var(--color-primary-content)",
-						},
-					},
-				},
-			},
 		},
 	})
 
@@ -162,7 +137,7 @@ function StyledDateTimePicker({ onChange, label }: Props) {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<DateTimePicker
+			<DatePicker
 				className="w-full"
 				slotProps={{
 					textField: { size: "small" },
@@ -190,4 +165,4 @@ function StyledDateTimePicker({ onChange, label }: Props) {
 	)
 }
 
-export default StyledDateTimePicker
+export default StyledDatePicker

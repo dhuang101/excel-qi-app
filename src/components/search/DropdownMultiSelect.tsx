@@ -37,21 +37,38 @@ function DropdownMultiSelect({
 			<div className="pb-2">
 				<span className="label-text font-medium">{title}</span>
 			</div>
-			<div className="dropdown w-full">
+			<div className="dropdown dropdown-right w-full">
 				<div
 					tabIndex={0}
 					role="button"
-					className="select select-bordered w-full flex items-center justify-between overflow-hidden"
+					className="btn w-full justify-between font-normal bg-base-100 border-base-300 hover:border-base-300"
+					style={{ backgroundImage: "none" }}
 				>
 					<span className="truncate">
 						{selectedValues.length === 0
 							? "Select options..."
 							: `${selectedValues.length} selected`}
 					</span>
+
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						strokeWidth={2}
+						stroke="currentColor"
+						className="inline-block w-4 h-4 stroke-current"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M8.25 4.5l7.5 7.5-7.5 7.5"
+						/>
+					</svg>
 				</div>
+
 				<ul
 					tabIndex={0}
-					className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
+					className="dropdown-content z-[50] menu p-2 shadow bg-base-100 rounded-box w-full ml-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
 				>
 					<div className="flex justify-between px-2 py-1 mb-2 border-b border-base-200">
 						<button
@@ -80,7 +97,7 @@ function DropdownMultiSelect({
 									checked={selectedValues.includes(option)}
 									onChange={() => onSelect(option, queryKey)}
 								/>
-								<article className="text-left text-base-content">
+								<article className="text-left text-base-content lowercase first-letter:uppercase">
 									{option}
 								</article>
 							</label>

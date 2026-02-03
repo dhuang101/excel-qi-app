@@ -1,4 +1,4 @@
-import StyledDateTimePicker from "./StyledDateTimePicker"
+import StyledDatePicker from "./StyledDatePicker"
 
 interface Props {
 	title: string
@@ -9,17 +9,17 @@ interface Props {
 function DateRangeInput({ title, queryAttribute, handleDateChange }: Props) {
 	return (
 		<div>
-			<article className="mb-2 text-sm">{title}</article>
+			<article className="mb-2">{title}</article>
 			<div className="flex w-full">
 				<div className="w-1/4">
-					<StyledDateTimePicker
+					<StyledDatePicker
 						label="After"
 						onChange={handleDateChange(queryAttribute + "_after")}
 					/>
 				</div>
 				<div className="w-1/12" />
 				<div className="w-1/4">
-					<StyledDateTimePicker
+					<StyledDatePicker
 						label="Before"
 						onChange={handleDateChange(queryAttribute + "_before")}
 					/>

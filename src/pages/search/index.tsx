@@ -43,7 +43,7 @@ function SearchPage() {
 	})
 	// selected site
 	const [selectedSite, setSelectedSite] = useState(
-		(session?.user.sites?.at(0) as string) || "all"
+		(session?.user.sites?.at(0) as string) || "all",
 	)
 	const [errorMessage, setErrorMessage] = useState("")
 	// visualisations state
@@ -81,18 +81,20 @@ function SearchPage() {
 
 	// arrow function used to pipe input into event handler
 	const handleSelectChange =
-		(area: "ecmo_mode" | "ecmo_indication") =>
-		(event: React.ChangeEvent<HTMLSelectElement>) => {
-			if ((event.target as HTMLSelectElement).value === "Any") {
+		(area: "ecmo_mode" | "ecmo_indication") => (value: string) => {
+			if (value === "Any") {
 				setUserEnteredQuery((oldState) => {
-					const { [area]: string, ...newState } = oldState
+					const { [area]: _, ...newState } = oldState
 					return newState
 				})
 			} else {
-				setUserEnteredQuery({
-					...userEnteredQuery,
-					[area]: (event.target as HTMLSelectElement).value,
-				})
+				setUserEnteredQuery((oldState) => ({
+					...oldState,
+					[area]: value,
+				}))
+			}
+			if (document.activeElement instanceof HTMLElement) {
+				document.activeElement.blur()
 			}
 		}
 
@@ -115,8 +117,8 @@ function SearchPage() {
 							event.$M,
 							event.$D,
 							event.$H,
-							event.$m
-						)
+							event.$m,
+						),
 					)
 					setUserEnteredQuery({
 						...userEnteredQuery,
@@ -178,7 +180,7 @@ function SearchPage() {
 
 	// handles change of row count
 	function handleChangeRowsPerPage(
-		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 	): void {
 		dispatch({
 			type: ACTION.UPDATE_ROWSPERPAGE,
@@ -189,7 +191,7 @@ function SearchPage() {
 	// handles change of page
 	function handleChangePage(
 		event: React.MouseEvent<HTMLButtonElement> | null,
-		page: number
+		page: number,
 	): void {
 		dispatch({ type: ACTION.UPDATE_PAGENUM, payload: page }) // calls useEffect
 	}
@@ -235,7 +237,7 @@ function SearchPage() {
 
 	const handleSelectAll = (
 		key: keyof UserEnteredQuery,
-		options: string[]
+		options: string[],
 	) => {
 		setUserEnteredQuery((prev) => ({
 			...prev,
@@ -320,7 +322,7 @@ function SearchPage() {
 														: {value}
 													</div>
 												)
-											}
+											},
 										)}
 										<article className="my-3">
 											Total Cohort Size:{" "}
@@ -371,18 +373,18 @@ function SearchPage() {
 										? "All Sites"
 										: FormatName(selectedSite),
 									Array.isArray(
-										userEnteredQuery.diagnosis_cardiac
+										userEnteredQuery.diagnosis_cardiac,
 									)
 										? userEnteredQuery.diagnosis_cardiac.join(
-												", "
-										  )
+												", ",
+											)
 										: userEnteredQuery.diagnosis_cardiac,
 									Array.isArray(
-										userEnteredQuery.diagnosis_resp
+										userEnteredQuery.diagnosis_resp,
 									)
 										? userEnteredQuery.diagnosis_resp.join(
-												", "
-										  )
+												", ",
+											)
 										: userEnteredQuery.diagnosis_resp,
 									userEnteredQuery.ecmo_mode,
 									userEnteredQuery.ecmo_indication,
@@ -402,7 +404,7 @@ function SearchPage() {
 											dispatch({
 												type: ACTION.UPDATE_ROWSPERPAGE,
 												payload: parseInt(
-													event.target.value
+													event.target.value,
 												),
 											})
 										}}
@@ -518,59 +520,50 @@ function SearchPage() {
 								Patient attributes
 							</article>
 							<div className="flex flex-col w-full">
-								<div className="flex w-full justify-between mb-4">
-									<div className="flex flex-col w-1/4 gap-y-2">
-										<DropdownMultiSelect
-											title="Primary Respiratory Diagnosis"
-											selectedValues={
-												userEnteredQuery.diagnosis_resp as string[]
-											}
-											queryKey="diagnosis_resp"
-											onSelect={handleMultiSelect}
-											onSelectAll={handleSelectAll}
-											onClearAll={handleClearAll}
-										/>
-										<DropdownInput
-											title={"ECMO Mode"}
-											handleSelectChange={
-												handleSelectChange
-											}
-											queryAttribute={"ecmo_mode"}
-										/>
-									</div>
-									<div className="flex flex-col w-1/4 gap-y-2">
-										<DropdownMultiSelect
-											title="Primary Cardiac Diagnosis"
-											selectedValues={
-												userEnteredQuery.diagnosis_cardiac as string[]
-											}
-											queryKey="diagnosis_cardiac"
-											onSelect={handleMultiSelect}
-											onSelectAll={handleSelectAll}
-											onClearAll={handleClearAll}
-										/>
-										<DropdownInput
-											title={"ECMO Indication"}
-											handleSelectChange={
-												handleSelectChange
-											}
-											queryAttribute={"ecmo_indication"}
-										/>
-									</div>
-									<div className="flex flex-col w-1/4 gap-y-2">
-										<DropdownMultiSelect
-											title="Hospital Discharge Location"
-											selectedValues={
-												userEnteredQuery.outcm_hosp_discharge_loc as string[]
-											}
-											queryKey="outcm_hosp_discharge_loc"
-											onSelect={handleMultiSelect}
-											onSelectAll={handleSelectAll}
-											onClearAll={handleClearAll}
-										/>
-									</div>
+								<div className="flex flex-col w-1/4 gap-y-2">
+									<DropdownMultiSelect
+										title="Primary Respiratory Diagnosis"
+										selectedValues={
+											userEnteredQuery.diagnosis_resp as string[]
+										}
+										queryKey="diagnosis_resp"
+										onSelect={handleMultiSelect}
+										onSelectAll={handleSelectAll}
+										onClearAll={handleClearAll}
+									/>
+									<DropdownMultiSelect
+										title="Hospital Discharge Location"
+										selectedValues={
+											userEnteredQuery.outcm_hosp_discharge_loc as string[]
+										}
+										queryKey="outcm_hosp_discharge_loc"
+										onSelect={handleMultiSelect}
+										onSelectAll={handleSelectAll}
+										onClearAll={handleClearAll}
+									/>
+									<DropdownMultiSelect
+										title="Primary Cardiac Diagnosis"
+										selectedValues={
+											userEnteredQuery.diagnosis_cardiac as string[]
+										}
+										queryKey="diagnosis_cardiac"
+										onSelect={handleMultiSelect}
+										onSelectAll={handleSelectAll}
+										onClearAll={handleClearAll}
+									/>
+									<DropdownInput
+										title={"ECMO Mode"}
+										handleSelectChange={handleSelectChange}
+										queryAttribute={"ecmo_mode"}
+									/>
+									<DropdownInput
+										title={"ECMO Indication"}
+										handleSelectChange={handleSelectChange}
+										queryAttribute={"ecmo_indication"}
+									/>
 								</div>
-								<div className="flex flex-col gap-y-3">
+
+								<div className="flex flex-col gap-y-3 mt-2">
 									<DateRangeInput
 										title={"Hospital Admission Time"}
 										handleDateChange={handleDateChange}
