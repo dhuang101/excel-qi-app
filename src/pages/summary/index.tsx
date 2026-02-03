@@ -8,6 +8,22 @@ import axios from "axios"
 import { useSession } from "next-auth/react"
 import { useEffect, useCallback, useState, useReducer } from "react"
 
+const MONTHS = [
+	{ label: "All Year", value: 0 },
+	{ label: "January", value: 1 },
+	{ label: "February", value: 2 },
+	{ label: "March", value: 3 },
+	{ label: "April", value: 4 },
+	{ label: "May", value: 5 },
+	{ label: "June", value: 6 },
+	{ label: "July", value: 7 },
+	{ label: "August", value: 8 },
+	{ label: "September", value: 9 },
+	{ label: "October", value: 10 },
+	{ label: "November", value: 11 },
+	{ label: "December", value: 12 },
+]
+
 interface CaseData {
 	total: { count: number; mortalityRate: number }
 	va: { count: number; mortalityRate: number }
@@ -48,6 +64,7 @@ function SummaryPage() {
 	// state attributes selector at the top
 	const [availableYears, setAvailableYears] = useState([])
 	const [selectedYear, setSelectedYear] = useState(0)
+	const [selectedMonth, setSelectedMonth] = useState(0)
 	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
 	// state attributes for displayed data
 	const [selectedSite, setSelectedSite] = useState("all_sites")
@@ -92,12 +109,13 @@ function SummaryPage() {
 			.post("api/database/summary/getCaseStats", {
 				role: session ? session?.user.role : "public",
 				sites: session ? session?.user.sites : [],
-				selectedYear: selectedYear,
+				selectedYear,
+				selectedMonth,
 			})
 			.then((result) => {
 				dispatch({ type: ACTION.SET_ECMO_STATS, payload: result.data })
 			})
-	}, [selectedYear, session])
+	}, [selectedYear, selectedMonth, session])
 
 	useEffect(() => {
 		if (selectedYear === 0) return
@@ -106,13 +124,14 @@ function SummaryPage() {
 			.post("api/database/summary/getGraphData", {
 				role: session ? session?.user.role : "public",
 				sites: session ? session?.user.sites : [],
-				selectedYear: selectedYear,
+				selectedYear,
+				selectedMonth,
 				ecmoMode: ecmoMode,
 			})
 			.then((result) => {
 				dispatch({ type: ACTION.SET_GRAPH_DATA, payload: result.data })
 			})
-	}, [selectedYear, ecmoMode, session])
+	}, [selectedYear, selectedMonth, ecmoMode, session])
 
 	useEffect(() => {
 		setAvailableYears(state.years[selectedSite])
@@ -134,28 +153,49 @@ function SummaryPage() {
 	) : (
 		<div className="flex flex-col w-full items-center justify-center">
 			<div className="flex flex-col w-2/3 mt-2">
-				{status === "authenticated" && (
+				<div className="flex">
+					{status === "authenticated" && (
+						<fieldset className="fieldset w-1/3">
+							<legend className="fieldset-legend">
+								Select Site to Display
+							</legend>
+							<select
+								defaultValue={availableYears[0]}
+								className="select"
+								onChange={(event) => {
+									setSelectedSite(event.target.value)
+								}}
+							>
+								{state.sites.map((site: string) => {
+									return (
+										<option key={site} value={site}>
+											{FormatName(site)}
+										</option>
+									)
+								})}
+							</select>
+						</fieldset>
+					)}
 					<fieldset className="fieldset w-1/3">
 						<legend className="fieldset-legend">
-							Select Site to Display
+							Select Month
 						</legend>
 						<select
-							defaultValue={availableYears[0]}
 							className="select"
-							onChange={(event) => {
-								setSelectedSite(event.target.value)
-							}}
+							value={selectedMonth}
+							onChange={(e) =>
+								setSelectedMonth(Number(e.target.value))
+							}
 						>
-							{state.sites.map((site: string) => {
-								return (
-									<option key={site} value={site}>
-										{FormatName(site)}
-									</option>
-								)
-							})}
+							{MONTHS.map((m) => (
+								<option key={m.value} value={m.value}>
+									{m.label}
+								</option>
+							))}
 						</select>
 					</fieldset>
-				)}
+				</div>
+
 				<article className="text-lg w-full mt-2">
 					Available Years
 				</article>
