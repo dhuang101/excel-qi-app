@@ -7,6 +7,7 @@ type ParamsType = {
 	role: string
 	sites: string[]
 	selectedYear: number
+	selectedMonth: number
 	ecmoMode: "total" | "V-V" | "V-A"
 	// | "V-VA" | "A-VCO2R" | "V-VECCO2R" | "VP"
 }
@@ -29,12 +30,39 @@ async function GetGraphData(params: ParamsType) {
 
 	const isPowerUser = ["admin", "global_viewer"].includes(params.role)
 
+	// Logic for dynamic date range
+	let startDate: Date
+	let endDate: Date
+
+	if (params.selectedMonth > 0) {
+		startDate = new Date(
+			Date.UTC(params.selectedYear, params.selectedMonth - 1, 1, 0, 0, 0),
+		)
+		endDate = new Date(
+			Date.UTC(
+				params.selectedYear,
+				params.selectedMonth,
+				0,
+				23,
+				59,
+				59,
+				999,
+			),
+		)
+	} else {
+		startDate = new Date(Date.UTC(params.selectedYear, 0, 1, 0, 0, 0))
+		endDate = new Date(
+			Date.UTC(params.selectedYear, 11, 31, 23, 59, 59, 999),
+		)
+	}
+
 	const baseFilters: Record<string, any> = {
 		ecmo_start_date_time: {
-			$gte: new Date(`${params.selectedYear}-01-01T00:00:00.000Z`),
-			$lte: new Date(`${params.selectedYear}-12-31T23:59:59.999Z`),
+			$gte: startDate,
+			$lte: endDate,
 		},
 	}
+
 	if (params.ecmoMode !== "total") {
 		baseFilters.ecmo_mode = params.ecmoMode
 	}
