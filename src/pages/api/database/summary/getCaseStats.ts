@@ -7,6 +7,7 @@ type ParamsType = {
 	role: string
 	sites: string[]
 	selectedYear: number
+	selectedMonth: number
 }
 
 const uri = process.env.DB_CONNECTION_URI as string
@@ -31,15 +32,28 @@ async function GetCaseStats(params: ParamsType) {
 		: { redcap_data_access_group: { $in: params.sites } }
 
 	// Common year filter used by both queries
-	const yearMatch = {
+	const dateMatch: any = {
 		$expr: {
-			$eq: [{ $year: "$ecmo_start_date_time" }, params.selectedYear],
+			$and: [
+				{
+					$eq: [
+						{ $year: "$ecmo_start_date_time" },
+						params.selectedYear,
+					],
+				},
+			],
 		},
+	}
+
+	if (params.selectedMonth > 0) {
+		dateMatch.$expr.$and.push({
+			$eq: [{ $month: "$ecmo_start_date_time" }, params.selectedMonth],
+		})
 	}
 
 	// 1. Pipeline for individual sites (Restricted by siteMatch)
 	const pipeline = [
-		{ $match: { $and: [siteMatch, yearMatch] } },
+		{ $match: { $and: [siteMatch, dateMatch] } },
 		{
 			$group: {
 				_id: "$redcap_data_access_group",
@@ -200,7 +214,7 @@ async function GetCaseStats(params: ParamsType) {
 
 	const [globalTotal] = await collection
 		.aggregate([
-			{ $match: yearMatch },
+			{ $match: dateMatch },
 			{
 				$group: {
 					_id: null,
