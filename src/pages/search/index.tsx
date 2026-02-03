@@ -81,20 +81,18 @@ function SearchPage() {
 
 	// arrow function used to pipe input into event handler
 	const handleSelectChange =
-		(area: "ecmo_mode" | "ecmo_indication") => (value: string) => {
-			if (value === "Any") {
+		(area: "ecmo_mode" | "ecmo_indication") =>
+		(event: React.ChangeEvent<HTMLSelectElement>) => {
+			if ((event.target as HTMLSelectElement).value === "Any") {
 				setUserEnteredQuery((oldState) => {
-					const { [area]: _, ...newState } = oldState
+					const { [area]: string, ...newState } = oldState
 					return newState
 				})
 			} else {
-				setUserEnteredQuery((oldState) => ({
-					...oldState,
-					[area]: value,
-				}))
-			}
-			if (document.activeElement instanceof HTMLElement) {
-				document.activeElement.blur()
+				setUserEnteredQuery({
+					...userEnteredQuery,
+					[area]: (event.target as HTMLSelectElement).value,
+				})
 			}
 		}
 
@@ -131,7 +129,7 @@ function SearchPage() {
 						const {
 							["hospadm_date_time_after"]: Date,
 							...newState
-						} = oldState // Destructure to exclude the key
+						} = oldState
 						return newState
 					})
 				} else if (area === "hospadm_date_time_before") {
@@ -139,7 +137,7 @@ function SearchPage() {
 						const {
 							["hospadm_date_time_before"]: Date,
 							...newState
-						} = oldState // Destructure to exclude the key
+						} = oldState
 						return newState
 					})
 				}
