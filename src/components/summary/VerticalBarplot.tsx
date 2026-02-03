@@ -82,10 +82,10 @@ export const VerticalBarplot = ({
 					y={yScale(d.value)}
 					width={xScale.bandwidth()}
 					height={barHeight}
-					opacity={0.7}
+					opacity={1}
 					stroke="var(--color-base-content)"
 					fill="var(--color-primary)"
-					fillOpacity={0.5}
+					fillOpacity={1}
 					strokeWidth={1}
 					rx={1}
 				/>

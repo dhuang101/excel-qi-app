@@ -93,17 +93,17 @@ export const PieChart = <T,>({
 							<path
 								d={arcGenerator(arc) || ""}
 								fill={colorScale(label) as string}
-								fillOpacity={0.5}
+								fillOpacity={1}
 							/>
 							{arc.endAngle - arc.startAngle > 0.25 && (
 								<text
 									transform={`translate(${labelArcGenerator.centroid(
-										arc
+										arc,
 									)})`}
 									textAnchor="middle"
 									alignmentBaseline="middle"
 									fontSize={12}
-									fill="var(--color-base-content)"
+									fill="var(--color-primary-content)"
 									style={{ pointerEvents: "none" }}
 								>
 									{percentage}%
@@ -124,7 +124,7 @@ export const PieChart = <T,>({
 								width={12}
 								height={12}
 								fill={colorScale(label) as string}
-								fillOpacity={0.5}
+								fillOpacity={1}
 								stroke="var(--color-base-content)"
 								strokeWidth={1}
 								rx={1}

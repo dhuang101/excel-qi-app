@@ -28,7 +28,7 @@ export const GroupedBarplot = ({
 			boundsWidth: width - MARGIN.right - MARGIN.left,
 			boundsHeight: height - MARGIN.top - MARGIN.bottom,
 		}),
-		[width, height]
+		[width, height],
 	)
 
 	const x0Scale = useMemo(() => {
@@ -49,7 +49,7 @@ export const GroupedBarplot = ({
 
 	const yScale = useMemo(() => {
 		const maxVal = d3.max(data, (d) =>
-			Math.max(d.totalCases, d.totalDeaths)
+			Math.max(d.totalCases, d.totalDeaths),
 		)
 		return d3
 			.scaleLinear()
@@ -110,14 +110,14 @@ export const GroupedBarplot = ({
 										width={x1Scale.bandwidth()}
 										height={Math.max(
 											0,
-											boundsHeight - yScale(val)
+											boundsHeight - yScale(val),
 										)}
 										fill={
 											isDeath
 												? "var(--color-secondary)"
 												: "var(--color-primary)"
 										}
-										fillOpacity={0.5}
+										fillOpacity={1}
 										stroke="var(--color-base-content)"
 										strokeWidth={1}
 										rx={1}
