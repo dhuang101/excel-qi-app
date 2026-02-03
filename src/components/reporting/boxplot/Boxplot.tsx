@@ -26,7 +26,7 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 				Math.min(currentMin, min),
 				Math.max(currentMax, max),
 			],
-			[Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]
+			[Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY],
 		)
 		const groups = [...new Set(data.map((d) => d.name))]
 		return { chartMin, chartMax, groups }
@@ -47,7 +47,7 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 	// Build the box shapes
 	const allShapes = groups.map((group, i) => {
 		const { min, q1, median, q3, max } = data.find(
-			(d) => d.name === group
+			(d) => d.name === group,
 		) as BoxplotStats
 
 		return (
@@ -61,7 +61,7 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 					max={xScale(max)}
 					stroke="var(--color-base-content)"
 					fill={"var(--color-primary)"}
-					fillOpacity={0.5}
+					fillOpacity={1}
 				/>
 			</g>
 		)
@@ -74,7 +74,7 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 					width={boundsWidth}
 					height={boundsHeight}
 					transform={`translate(${[MARGIN.left, MARGIN.top].join(
-						","
+						",",
 					)})`}
 				>
 					{allShapes}

@@ -66,10 +66,10 @@ export const HorizontalBarplot = ({
 					y={y}
 					width={barWidth}
 					height={yScale.bandwidth()}
-					opacity={0.7}
+					opacity={1}
 					stroke="var(--color-base-content)"
 					fill="var(--color-primary)"
-					fillOpacity={0.5}
+					fillOpacity={1}
 					strokeWidth={1}
 					rx={1}
 				/>
@@ -79,7 +79,7 @@ export const HorizontalBarplot = ({
 							? xScale(d.count) - 7
 							: xScale(d.count) + 12
 					}
-					y={barCenterY}
+					y={barCenterY + 1}
 					textAnchor={xScale(d.count) > 60 ? "end" : "start"}
 					dominantBaseline="middle"
 					fill="var(--color-base-content)"
@@ -116,14 +116,6 @@ export const HorizontalBarplot = ({
 		.slice(1)
 		.map((value, i) => (
 			<g key={i}>
-				<line
-					x1={xScale(value)}
-					x2={xScale(value)}
-					y1={0}
-					y2={boundsHeight}
-					stroke="var(--color-base-content)"
-					opacity={0.2}
-				/>
 				<text
 					x={xScale(value)}
 					y={boundsHeight + 12}

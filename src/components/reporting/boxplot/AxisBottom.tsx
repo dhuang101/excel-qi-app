@@ -28,7 +28,7 @@ export const AxisBottom = ({
 			filteredD3Ticks.map((value) => ({
 				value,
 				xOffset: xScale(value),
-			}))
+			})),
 		)
 	}, [xScale, pixelsPerTick, range])
 
@@ -41,13 +41,6 @@ export const AxisBottom = ({
 					transform={`translate(${xOffset}, 0)`}
 					shapeRendering={"crispEdges"}
 				>
-					<line
-						y1={TICK_LENGTH}
-						y2={-height - TICK_LENGTH}
-						stroke="var(--color-base-content)"
-						strokeWidth={1}
-						opacity={0.25}
-					/>
 					<text
 						style={{
 							fontSize: "12px",
