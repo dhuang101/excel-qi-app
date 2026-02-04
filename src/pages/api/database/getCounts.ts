@@ -33,7 +33,7 @@ async function GetCounts(params: ParamsType) {
 		"ecmo_indication",
 	]
 
-	// attributes for ARDS Complications graph
+	// attributes for Complications graph
 	const ardsKeys = Object.keys(ARDS_COMPLICATIONS_MAP)
 
 	const facetStages: Record<string, any[]> = {}
@@ -137,7 +137,7 @@ async function GetCounts(params: ParamsType) {
 		})
 	})
 
-	// fill attributes for ARDS Complications
+	// fill attributes ARDS Complications
 	rawResults.ards_outcomes.forEach((siteData: any) => {
 		const site = siteData._id
 		if (siteResultsMap[site]) {

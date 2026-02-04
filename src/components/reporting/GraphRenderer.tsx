@@ -139,12 +139,10 @@ function GraphRenderer({
 					/>
 				</div>
 			)
-		case "ARDS Complications":
+		case "Complications":
 			return (
 				<div className="flex items-center flex-col">
-					<article className="font-semibold">
-						ARDS Complications
-					</article>
+					<article className="font-semibold">Complications</article>
 					<HorizontalBarplot
 						width={width}
 						height={height}

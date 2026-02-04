@@ -67,7 +67,7 @@ function SingleView({ state }: PropType) {
 						<option>ECMO Indication</option>
 						<option>Length of Stay Distribution</option>
 						<option>IMV Duration</option>
-						<option>ARDS Complications</option>
+						<option>Complications</option>
 					</select>
 				</fieldset>
 				{status === "authenticated" && (
