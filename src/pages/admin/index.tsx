@@ -11,7 +11,7 @@ function AdminPage() {
 
 	return (
 		<div className="flex flex-col grow w-full items-center bg-base-100">
-			<div className="w-2/3 h-full">
+			<div className="w-4/5 h-full">
 				<article className="text-3xl font-semibold mt-4 mb-2">
 					Admin Panel
 				</article>

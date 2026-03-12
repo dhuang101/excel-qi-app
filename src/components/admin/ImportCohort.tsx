@@ -25,7 +25,7 @@ export default function ImportCohort() {
 							(mergedRows: any, currentRow: any) => {
 								if (
 									Object.keys(mergedRows).includes(
-										currentRow.record_id
+										currentRow.record_id,
 									)
 								) {
 									for (const key in currentRow) {
@@ -43,9 +43,9 @@ export default function ImportCohort() {
 								}
 								return mergedRows
 							},
-							{}
-						) as Record<string, any>
-					)
+							{},
+						) as Record<string, any>,
+					),
 				)
 			},
 		})
