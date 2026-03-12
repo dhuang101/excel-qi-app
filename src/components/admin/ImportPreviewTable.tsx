@@ -43,6 +43,7 @@ const headers = [
 	"Days on ECMO",
 	"Days in ICU",
 	"Days in Hospital",
+	"Renal Replacement Therapy",
 ]
 
 function ImportPreviewTable({ records }: Props) {
@@ -95,6 +96,7 @@ function ImportPreviewTable({ records }: Props) {
 					<td>{record.outcm_ecmo_days_2}</td>
 					<td>{record.outcm_icu_days}</td>
 					<td>{record.outcm_hosp_days}</td>
+					<td>{record.rrt}</td>
 				</tr>
 			)}
 		/>

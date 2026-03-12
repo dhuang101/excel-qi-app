@@ -37,4 +37,5 @@ export interface excelImportRow {
 	outcm_ecmo_days_2: number
 	outcm_icu_days: number
 	outcm_hosp_days: number
+	rrt: number
 }
