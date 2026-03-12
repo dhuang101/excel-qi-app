@@ -38,4 +38,19 @@ export interface excelImportRow {
 	outcm_icu_days: number
 	outcm_hosp_days: number
 	rrt: number
+	form11_mech_oxygenator?: number
+	form11_mech_pump?: number
+	form11_mech_thromb?: number
+	form11_haem_surgical?: number
+	form11_haem_major?: number
+	form11_cardio_ami?: number
+	form11_limb_ischemia?: number
+	form11_mech_problem?: number
+	form11_haem_hemorrhage?: number
+	form11_renal_265?: number
+	form11_pulmonary_pule?: number
+	form11_pulmonary_pulh?: number
+	form11_metabolic_heamm?: number
+	form11_limb_pressure?: number
+	form11_neuro_bd?: number
 }
