@@ -55,9 +55,9 @@ function ImportPreviewTable({ records }: Props) {
 				<tr
 					key={record.record_id}
 					data-index={record.record_id}
-					className="hover:text-accent-content hover:bg-accent"
+					className="group hover:bg-accent hover:text-accent-content"
 				>
-					<td className="sticky left-0 bg-base-100 z-index-2">
+					<td className="sticky left-0 z-10 bg-base-100 group-hover:bg-accent group-hover:text-accent-content">
 						{record.record_id}
 					</td>
 					<td>{record.birthdate}</td>
