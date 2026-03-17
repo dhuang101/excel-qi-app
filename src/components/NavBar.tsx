@@ -28,7 +28,7 @@ function NavBar() {
 	}
 
 	return (
-		<div className="sticky top-0 bg-base-100 z-10">
+		<div className="sticky top-0 bg-base-100 z-20">
 			<div className="navbar">
 				<div className="flex flex-1">
 					<Link href={"/"}>
