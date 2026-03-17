@@ -19,7 +19,7 @@ function Table<T>({ data, headers, renderRow, emptyMessage }: TableProps<T>) {
 									<th
 										key={i}
 										className={`bg-base-300 text-lg font-semibold ${
-											i === 0 ? "sticky left-0 z-20" : ""
+											i === 0 ? "sticky left-0 z-2" : ""
 										}`}
 									>
 										{header}

@@ -61,7 +61,7 @@ function ImportPreviewTable({ records }: Props) {
 					key={record.record_id}
 					className="group hover:bg-accent hover:text-accent-content transition-colors"
 				>
-					<td className="sticky left-0 z-10 bg-base-100 group-hover:bg-accent group-hover:text-accent-content transition-colors font-semibold border-r border-base-300">
+					<td className="sticky left-0 z-2 bg-base-100 group-hover:bg-accent group-hover:text-accent-content transition-colors font-semibold border-r border-base-300">
 						{record.record_id}
 					</td>
 
