@@ -7,20 +7,22 @@ import { TranslateExcel } from "@/utilities/TranslateExcel"
 import { excelImportRow } from "@/types/excelImportTypes"
 
 export default function ImportCohort() {
-	// nextjs router
 	const router = useRouter()
 	const [file, setFile] = useState<File | null>(null)
 	const [rows, setRows] = useState<excelImportRow[]>([])
+	// Changed error to a string so we can display specific messages if needed
+	const [error, setError] = useState<string | null>(null)
 
 	function handlePreview() {
 		if (!file) return
+		setError(null) // Reset error state on new attempt
 
 		Papa.parse(file, {
 			header: true,
 			skipEmptyLines: true,
 			complete: function (results) {
-				setRows(
-					Object.values(
+				try {
+					const mergedData = Object.values(
 						results.data.reduce(
 							(mergedRows: any, currentRow: any) => {
 								if (
@@ -45,8 +47,22 @@ export default function ImportCohort() {
 							},
 							{},
 						) as Record<string, any>,
-					),
+					) as excelImportRow[]
+
+					setRows(mergedData)
+				} catch (err: any) {
+					setError(
+						err.message ||
+							"An unexpected error occurred during parsing.",
+					)
+					console.error(err)
+				}
+			},
+			error: function (err) {
+				setError(
+					"Error reading the file. Please ensure it is a valid CSV.",
 				)
+				console.error(err)
 			},
 		})
 	}
@@ -54,6 +70,7 @@ export default function ImportCohort() {
 	function handleGoBack() {
 		setRows([])
 		setFile(null)
+		setError(null)
 	}
 
 	function handleImport() {
@@ -88,25 +105,35 @@ export default function ImportCohort() {
 		</div>
 	) : (
 		<div className="flex w-full justify-center">
-			<div>
+			<div className="flex flex-col">
 				<fieldset className="fieldset">
 					<legend className="fieldset-legend">.csv file only</legend>
 					<input
 						type="file"
 						accept=".csv"
-						onChange={(e) =>
+						onChange={(e) => {
 							setFile(e.target.files ? e.target.files[0] : null)
-						}
-						className="file-input file-input-primary"
+							setError(null)
+						}}
+						className={`file-input file-input-primary ${error ? "file-input-error" : ""}`}
 					/>
 					<label className="label">Max size 1MB</label>
 				</fieldset>
+
 				<button
-					className="btn btn-primary mt-2"
+					className="btn btn-primary max-w-20 mt-2"
 					onClick={handlePreview}
 				>
 					Preview
 				</button>
+
+				{error && (
+					<div className="alert alert-error shadow-lg max-w-80 mt-4">
+						<span className="text-white text-sm font-medium">
+							{error}
+						</span>
+					</div>
+				)}
 			</div>
 		</div>
 	)

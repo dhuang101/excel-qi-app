@@ -8,9 +8,18 @@ export function TranslateExcel(currentRow: any, key: string) {
 		key === "outcm_icu_discharge" ||
 		key === "outcm_hosp_discharge"
 	) {
-		currentRow[key] = dayjs(currentRow[key], "D/MM/YYYY H:mm").toDate()
-	} else if (key === "diagnosis_resp") {
-		const mapping = [
+		const date = dayjs(currentRow[key], "D/MM/YYYY H:mm")
+		if (!date.isValid()) {
+			throw new Error(
+				`Invalid date format at ${key}: "${currentRow[key]}"`,
+			)
+		}
+		currentRow[key] = date.toDate()
+		return
+	}
+
+	const mappings: Record<string, string[]> = {
+		diagnosis_resp: [
 			"0",
 			"ARDS (risk factor)",
 			"Post lung transplant",
@@ -22,10 +31,8 @@ export function TranslateExcel(currentRow: any, key: string) {
 			"Chronic end stage lung disease",
 			"N/A",
 			"Management of airway obstruction",
-		]
-		currentRow[key] = mapping[parseInt(currentRow[key])]
-	} else if (key === "diagnosis_cardiac") {
-		const mapping = [
+		],
+		diagnosis_cardiac: [
 			"0",
 			"Acute myocardial infarction (AMI)",
 			"Myocarditis",
@@ -40,10 +47,8 @@ export function TranslateExcel(currentRow: any, key: string) {
 			"Acute decompensated heart not covered above",
 			"Peri-operative support",
 			"N/A",
-		]
-		currentRow[key] = mapping[parseInt(currentRow[key])]
-	} else if (key === "outcm_hosp_discharge_loc") {
-		const mapping = [
+		],
+		outcm_hosp_discharge_loc: [
 			"0",
 			"Home",
 			"Transferred to another hospital",
@@ -51,10 +56,8 @@ export function TranslateExcel(currentRow: any, key: string) {
 			"Transfer to hospice",
 			"Dead",
 			"Other",
-		]
-		currentRow[key] = mapping[parseInt(currentRow[key])]
-	} else if (key === "icuadm_cfs") {
-		const mapping = [
+		],
+		icuadm_cfs: [
 			"0",
 			"Very fit",
 			"Well",
@@ -65,10 +68,8 @@ export function TranslateExcel(currentRow: any, key: string) {
 			"Severly frail",
 			"Extremely frail",
 			"N/A",
-		]
-		currentRow[key] = mapping[parseInt(currentRow[key])]
-	} else if (key === "ecmo_mode") {
-		const mapping = [
+		],
+		ecmo_mode: [
 			"Unknown",
 			"V-A",
 			"V-V",
@@ -79,10 +80,21 @@ export function TranslateExcel(currentRow: any, key: string) {
 			"7",
 			"8",
 			"Other",
-		]
-		currentRow[key] = mapping[parseInt(currentRow[key])]
-	} else if (key === "ecmo_indication") {
-		const mapping = ["0", "Pulmonary", "Cardiac", "ECPR"]
-		currentRow[key] = mapping[parseInt(currentRow[key])]
+		],
+		ecmo_indication: ["0", "Pulmonary", "Cardiac", "ECPR"],
+	}
+
+	if (mappings[key]) {
+		const rawValue = currentRow[key]
+		const index = parseInt(rawValue)
+		const selectedMapping = mappings[key][index]
+
+		if (isNaN(index) || selectedMapping === undefined) {
+			throw new Error(
+				`Invalid value "${rawValue}" for field "${key}". Expected a number between 0 and ${mappings[key].length - 1}.`,
+			)
+		}
+
+		currentRow[key] = selectedMapping
 	}
 }
