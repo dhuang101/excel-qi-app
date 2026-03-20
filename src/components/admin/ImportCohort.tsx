@@ -15,7 +15,7 @@ export default function ImportCohort() {
 
 	function handlePreview() {
 		if (!file) return
-		setError(null) // Reset error state on new attempt
+		setError(null)
 
 		Papa.parse(file, {
 			header: true,
@@ -112,7 +112,22 @@ export default function ImportCohort() {
 						type="file"
 						accept=".csv"
 						onChange={(e) => {
-							setFile(e.target.files ? e.target.files[0] : null)
+							const selectedFile = e.target.files
+								? e.target.files[0]
+								: null
+							const MAX_FILE_SIZE = 1 * 1024 * 1024
+
+							if (
+								selectedFile &&
+								selectedFile.size > MAX_FILE_SIZE
+							) {
+								setError("File is too large. Max size is 1MB.")
+								setFile(null)
+								e.target.value = ""
+								return
+							}
+
+							setFile(selectedFile)
 							setError(null)
 						}}
 						className={`file-input file-input-primary ${error ? "file-input-error" : ""}`}
