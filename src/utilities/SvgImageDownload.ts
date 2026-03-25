@@ -1,6 +1,6 @@
 // downloads the svg as an image
 export default function SvgImageDownload(
-	svgRef: React.MutableRefObject<SVGSVGElement | null>,
+	svgRef: React.RefObject<SVGSVGElement | null>,
 	name: string
 ) {
 	const svg = svgRef.current
@@ -42,5 +42,8 @@ export default function SvgImageDownload(
 		link.click()
 		document.body.removeChild(link)
 	}
-	img.src = `data:image/svg+xml;base64,${btoa(svgString)}`
+
+	img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+		svgString
+	)}`
 }

@@ -28,11 +28,11 @@ function NavBar() {
 	}
 
 	return (
-		<div className="sticky top-0 bg-base-100 z-10">
+		<div className="sticky top-0 bg-base-100 z-20">
 			<div className="navbar">
 				<div className="flex flex-1">
 					<Link href={"/"}>
-						<article className="btn btn-ghost normal-case rounded-xl text-xl text-base-content">
+						<article className="btn btn-ghost rounded-xl ">
 							<Image
 								width={1672}
 								height={971}
@@ -40,10 +40,17 @@ function NavBar() {
 								className="max-h-10 max-w-17 w-auto h-auto"
 								alt="Logo"
 							/>
-							NICE Data Project
+							<article className="sm:text-sm xl:text-xl text-base-content normal-case ml-2 ">
+								EXCEL QI
+							</article>
 						</article>
 					</Link>
 					<div className="flex ml-36 gap-x-2">
+						<Link href={"/summary"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								Summary Statistics
+							</article>
+						</Link>
 						<Link href={"/search"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								Registry Search
@@ -54,14 +61,14 @@ function NavBar() {
 								Reporting
 							</article>
 						</Link>
-						<Link href={"/models"}>
-							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
-								NLP Model
-							</article>
-						</Link>
 						<Link href={"/ecmo-pal"}>
 							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
 								ECMO Prediction
+							</article>
+						</Link>
+						<Link href={"/file-repo"}>
+							<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+								File Repository
 							</article>
 						</Link>
 						<Link href={"/resources"}>
@@ -69,6 +76,14 @@ function NavBar() {
 								ECMO Resources
 							</article>
 						</Link>
+						{(session?.user.role === "admin" ||
+							session?.user.role === "global-viewer") && (
+							<Link href={"/admin"}>
+								<article className="btn btn-ghost normal-case rounded-xl text-md text-base-content">
+									Admin Panel
+								</article>
+							</Link>
+						)}
 					</div>
 				</div>
 				<div className="btn btn-ghost rounded-xl" onClick={toggleTheme}>
@@ -85,20 +100,39 @@ function NavBar() {
 							className="btn btn-ghost rounded-btn"
 						>
 							<PersonIcon />
+							<article className="mx-2">
+								{session.user.role
+									?.split("-")
+									.map(
+										(word) =>
+											word.charAt(0).toUpperCase() +
+											word.slice(1),
+									)
+									.join(" ")}
+							</article>
 						</label>
 						<ul
 							tabIndex={0}
-							className="menu dropdown-content z-1 p-2 shadow-sm rounded-box w-60 mt-4 bg-primary text-primary-content"
+							className="menu dropdown-content z-1 p-2 shadow-sm rounded-box min-w-60 w-fit mt-4 bg-primary text-primary-content"
 						>
 							<article className="mx-2 my-2">
 								Signed In As
 								<br />
-								<b>{session.user && session.user.email}</b>
+								<b>{session.user && session.user.name}</b>
 							</article>
 							<li>
 								<a
-									onClick={() => {
-										signOut()
+									onClick={async () => {
+										await signOut({ callbackUrl: "/" })
+
+										window.location.href = `${
+											process.env.NEXT_PUBLIC_AUTH0_ISSUER
+										}/v2/logout?client_id=${
+											process.env
+												.NEXT_PUBLIC_AUTH0_CLIENT_ID
+										}&returnTo=${encodeURIComponent(
+											window.location.origin,
+										)}`
 									}}
 								>
 									<LogoutIcon />
@@ -109,14 +143,14 @@ function NavBar() {
 					</div>
 				) : (
 					<Link href={"/api/auth/signin"}>
-						<div className="ml-4 mr-6 btn btn-ghost normal-case rounded-xl text-lg text-primary-content outline outline-1 outline-primary-content">
+						<div className="ml-4 mr-6 btn btn-ghost rounded-xl text-lg outline">
 							<LoginIcon />
 							Sign In
 						</div>
 					</Link>
 				)}
 			</div>
-			<div className="divider divider-base-200 m-0 h-0 "></div>
+			<div className="divider divider-base-200 m-0 h-0"></div>
 		</div>
 	)
 }

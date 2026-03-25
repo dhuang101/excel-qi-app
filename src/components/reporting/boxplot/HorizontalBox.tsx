@@ -3,7 +3,7 @@ const STROKE_WIDTH = 40
 // A reusable component that builds a horizontal box shape using svg
 // Note: numbers here are px, not the real values in the dataset.
 
-type HorizontalBoxProps = {
+interface HorizontalBoxProps {
 	min: number
 	q1: number
 	median: number

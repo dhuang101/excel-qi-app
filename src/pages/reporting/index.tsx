@@ -1,131 +1,103 @@
 import axios from "axios"
-import Barplot from "@/components/reporting/Barplot"
-import { Boxplot } from "@/components/reporting/boxplot/Boxplot"
 import reportReducer, { ACTION } from "@/reducers/reportReducer"
 import { CircularProgress } from "@mui/material"
-import { useEffect, useReducer, useRef, useState } from "react"
+import { useEffect, useReducer, useState } from "react"
+import { useSession } from "next-auth/react"
+import React from "react"
+import SingleView from "@/components/reporting/SingleView"
+import ComparisonView from "@/components/reporting/ComparisonView"
+import { useRouter } from "next/router"
+
+type displayViews = "Single" | "Comparison"
 
 function ReportingPage() {
+	// nextjs router
+	const router = useRouter()
+	// auth session
+	const { data: session, status } = useSession()
+	// state
 	const [state, dispatch] = useReducer(reportReducer, {
-		totalDocuments: 0,
-		counts: {},
-		losData: [],
+		countData: [],
+		boxplotData: [],
 	})
-	const [width, setWidth] = useState(0)
+	const [currentView, setCurrentView] = useState<displayViews>("Single")
 
-	const graphContainer = useRef<HTMLDivElement | null>(null)
-
-	// sequentially fetch the data
-	// TODO: fetch them in parallel?
+	// fetch the data
 	useEffect(() => {
-		let payload = {}
-		axios
-			.get("/api/database/getCounts")
-			.then((result) => {
-				payload = result.data
-			})
-			.then(() => {
-				return Promise.resolve(axios.get("/api/database/getLosValues"))
-			})
-			.then((result) => {
-				payload = { ...payload, losData: result.data }
-			})
-			.then(() => {
-				dispatch({ type: ACTION.SET_SUMMARY, payload: payload })
-			})
-	}, [])
+		const controller = new AbortController()
 
-	// dynamically assigns width variable to create responsive d3 graphs
-	useEffect(() => {
-		if (!graphContainer.current) {
-			return
-		}
+		if (status === "loading") return
 
-		const resizeObserver = new ResizeObserver(() => {
-			if (
-				graphContainer.current?.offsetWidth !== width &&
-				graphContainer.current !== null
-			) {
-				setWidth(graphContainer.current!.offsetWidth)
+		const fetchData = async () => {
+			try {
+				const body = {
+					role: session?.user?.role ?? "public",
+					sites: session?.user?.sites ?? [],
+				}
+
+				const [countsRes, boxplotRes] = await Promise.all([
+					axios.post("/api/database/getCounts", body, {
+						signal: controller.signal,
+					}),
+					axios.post("/api/database/getBoxplotValues", body, {
+						signal: controller.signal,
+					}),
+				])
+
+				dispatch({
+					type: ACTION.SET_SUMMARY,
+					payload: {
+						countData: countsRes.data,
+						boxplotData: boxplotRes.data,
+					},
+				})
+			} catch (error) {
+				if (axios.isCancel(error)) return
+
+				console.error("Error fetching data:", error)
+				router.push("/error")
 			}
+		}
+
+		fetchData()
+
+		return () => controller.abort()
+	}, [status, router, session])
+
+	function switchView() {
+		setCurrentView((current) => {
+			return current === "Single" ? "Comparison" : "Single"
 		})
-
-		if (graphContainer.current) {
-			resizeObserver.observe(graphContainer.current)
-		}
-
-		return () => {
-			resizeObserver.disconnect()
-		}
-	}, [state, width])
-
-	// useEffect(() => {
-	// 	console.log(state)
-	// }, [state])
+	}
 
 	return (
-		<div className="flex flex-col grow w-full items-center">
-			{state.totalDocuments > 0 ? (
+		<div className="flex flex-col grow w-full items-center justify-center">
+			{state.countData[0]?.totalDocuments > 0 ? (
 				<div className="flex flex-col w-2/3 h-full items-center">
-					<article className="my-4 text-xl font-semibold">
-						There are currently {state.totalDocuments} patients
-						enrolled in the NICE Data Project.
-					</article>
-					<div ref={graphContainer} className="flex flex-col w-full">
-						<div className="flex mt-4 h-fit">
-							<div className="flex items-center flex-col">
-								<article className="font-semibold">
-									Hospital Outcomes
-								</article>
-								<Barplot
-									width={width / 3}
-									height={650}
-									data={state.counts.outcm_hosp_discharge_loc}
-								/>
+					{session?.user &&
+						session.user.role !== "public" &&
+						!(
+							session.user.role === "site-viewer" &&
+							session.user.sites.length === 0
+						) && (
+							<div className="flex justify-between items-center w-full mt-4">
+								<button
+									className="btn btn-primary"
+									onClick={switchView}
+								>
+									Change to{" "}
+									{currentView === "Single"
+										? "Comparison"
+										: "Single"}{" "}
+									View
+								</button>
 							</div>
-							<div className="flex items-center flex-col">
-								<article className="font-semibold">
-									Primary Cardiac Diagnosis
-								</article>
-								<Barplot
-									width={width / 3}
-									height={650}
-									data={state.counts.diagnosis_cardiac}
-								/>
-								<article className="mt-4">
-									These figures display the number of patients
-									for each unique value of the titled
-									attribute
-								</article>
-							</div>
-							<div className="flex items-center flex-col">
-								<article className="font-semibold">
-									Primary Respiratory Diagnosis
-								</article>
-								<Barplot
-									width={width / 3}
-									height={650}
-									data={state.counts.diagnosis_resp}
-								/>
-							</div>
-						</div>
-						<div className="flex items-center flex-col mt-16">
-							<article className="font-semibold">
-								Length of Stay Distribution
-							</article>
-							<Boxplot
-								width={width / 1.5}
-								height={500}
-								data={state.losData}
-							/>
-							<article className="mt-4 w-1/3">
-								Boxplot detailing the distribution of length of
-								stays in vital hospital locations
-							</article>
-						</div>
-					</div>
-					{/* footer */}
-					<div className="h-16" />
+						)}
+					{currentView === "Single" ? (
+						<SingleView state={state} />
+					) : (
+						<ComparisonView state={state} />
+					)}
 				</div>
 			) : (
 				<div className="flex flex-col justify-center items-center h-[83vh]">
@@ -135,6 +107,12 @@ function ReportingPage() {
 					</article>
 				</div>
 			)}
+			<div className="flex justify-center items-center h-24">
+				<article>
+					Please send any queries or suggestions to
+					carol.hodgson@monash.edu
+				</article>
+			</div>
 		</div>
 	)
 }

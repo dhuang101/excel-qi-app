@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { ScaleLinear } from "d3"
 
-type AxisBottomProps = {
+interface AxisBottomProps {
 	xScale: ScaleLinear<number, number>
 	pixelsPerTick: number
 	height: number
@@ -21,13 +21,16 @@ export const AxisBottom = ({
 		const width = range[1] - range[0]
 		const numberOfTicksTarget = Math.floor(width / pixelsPerTick)
 
-		return xScale.ticks(numberOfTicksTarget).map((value) => ({
-			value,
-			xOffset: xScale(value),
-		}))
-		// disabled as d3 does not correctly handle dependencies
-		// eslint-disable-next-line
-	}, [xScale])
+		const d3Ticks = xScale.ticks(numberOfTicksTarget)
+		const filteredD3Ticks = d3Ticks.filter((v) => v !== 0)
+
+		return [{ value: 0, xOffset: xScale(0) }].concat(
+			filteredD3Ticks.map((value) => ({
+				value,
+				xOffset: xScale(value),
+			})),
+		)
+	}, [xScale, pixelsPerTick, range])
 
 	return (
 		<>
@@ -38,15 +41,7 @@ export const AxisBottom = ({
 					transform={`translate(${xOffset}, 0)`}
 					shapeRendering={"crispEdges"}
 				>
-					<line
-						y1={TICK_LENGTH}
-						y2={-height - TICK_LENGTH}
-						stroke="var(--color-base-content)"
-						strokeWidth={1}
-						opacity={0.25}
-					/>
 					<text
-						key={value}
 						style={{
 							fontSize: "12px",
 							textAnchor: "middle",

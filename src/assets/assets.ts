@@ -7,6 +7,8 @@ const ASSETS = {
 	jhm: new URL("./jhm.png", import.meta.url).href,
 	litfl: new URL("./litfl.jpg", import.meta.url).href,
 	vecmos: new URL("./vecmos.png", import.meta.url).href,
+	excel: new URL("./excel.jpg", import.meta.url).href,
+	redcap: new URL("./redcap.png", import.meta.url).href,
 }
 
 export default ASSETS

@@ -1,96 +1,124 @@
+import { SearchQuery, UserEnteredQuery } from "@/types/searchTypes"
 import { FindOptions, MongoClient } from "mongodb"
+import { NextApiRequest, NextApiResponse } from "next"
 
-interface searchQuery {
-	diagnosis_resp?: string
-	diagnosis_cardiac?: string
-	outcm_hosp_discharge_loc?: string
-	hospadm_date_time_before?: string
-	hospadm_date_time_after?: string
+const uri = process.env.DB_CONNECTION_URI as string
+let cachedClient: MongoClient | null = null
+
+async function getClient() {
+	if (!uri) throw new Error("Missing DB_CONNECTION_URI")
+	if (!cachedClient) {
+		cachedClient = new MongoClient(uri)
+		await cachedClient.connect()
+	}
+	return cachedClient
 }
 
-async function GetPatients(params: searchQuery) {
-	// connect to db
-	const client = new MongoClient(process.env.DB_CONNECTION_URI as string)
-	const collection = client.db("main").collection("collection")
+async function GetPatients(params: SearchQuery) {
+	const client = await getClient()
+	const collection = client.db("main").collection("excel-data")
 
-	// Build the query dynamically checking if search params were included
-	let query = {}
-
-	query = {
-		...query,
-		...(params.diagnosis_resp && {
-			diagnosis_resp: {
-				$regex: params.diagnosis_resp,
-				$options: "i",
-				$ne: "N/A", // Exclude "N/A"
-			},
+	// Build text-based filters
+	let query: any = {
+		...(params.userEnteredQuery.diagnosis_resp.length > 0 && {
+			diagnosis_resp: { $in: params.userEnteredQuery.diagnosis_resp },
 		}),
-		...(params.diagnosis_cardiac && {
+		...(params.userEnteredQuery.diagnosis_cardiac.length > 0 && {
 			diagnosis_cardiac: {
-				$regex: params.diagnosis_cardiac,
-				$options: "i",
-				$ne: "N/A", // Exclude "N/A"
+				$in: params.userEnteredQuery.diagnosis_cardiac,
 			},
 		}),
-		...(params.outcm_hosp_discharge_loc && {
+		...(params.userEnteredQuery.outcm_hosp_discharge_loc.length > 0 && {
 			outcm_hosp_discharge_loc: {
-				$regex: params.outcm_hosp_discharge_loc,
-				$options: "i",
-				$ne: "N/A", // Exclude "N/A"
+				$in: params.userEnteredQuery.outcm_hosp_discharge_loc,
 			},
 		}),
-		...((params.hospadm_date_time_before ||
-			params.hospadm_date_time_after) && {
-			hospadm_date_time: {
-				...(params.hospadm_date_time_before && {
-					$lte: new Date(params.hospadm_date_time_before),
-				}),
-				...(params.hospadm_date_time_after && {
-					$gte: new Date(params.hospadm_date_time_after),
-				}),
-			},
+		...(params.userEnteredQuery.ecmo_mode && {
+			ecmo_mode: params.userEnteredQuery.ecmo_mode,
+		}),
+		...(params.userEnteredQuery.ecmo_indication && {
+			ecmo_indication: params.userEnteredQuery.ecmo_indication,
 		}),
 	}
 
-	// Remove undefined or null fields from the query
+	// Remove undefined or null fields
 	query = Object.fromEntries(
 		Object.entries(query).filter(([_, value]) => value !== undefined)
 	)
 
-	// Add a global filter to exclude "N/A" or null fields
+	// Add date-based filters
+	const dateFields: [keyof UserEnteredQuery, string][] = [
+		["hospadm_date_time_after", "hospadm_date_time"],
+		["hospadm_date_time_before", "hospadm_date_time"],
+		["icuadm_date_time_after", "icuadm_date_time"],
+		["icuadm_date_time_before", "icuadm_date_time"],
+		["ecmo_start_date_time_after", "ecmo_start_date_time"],
+		["ecmo_start_date_time_before", "ecmo_start_date_time"],
+		["decan_date_time_after", "decan_date_time"],
+		["decan_date_time_before", "decan_date_time"],
+		["outcm_icu_discharge_after", "outcm_icu_discharge"],
+		["outcm_icu_discharge_before", "outcm_icu_discharge"],
+		["outcm_hosp_discharge_after", "outcm_hosp_discharge"],
+		["outcm_hosp_discharge_before", "outcm_hosp_discharge"],
+	]
+
+	const dateConditions: Record<string, any> = {}
+
+	for (const [userField, mongoField] of dateFields) {
+		const val = params.userEnteredQuery[userField]
+		// properly type check val
+		if (!val || Array.isArray(val)) continue
+
+		if (!dateConditions[mongoField]) {
+			dateConditions[mongoField] = {}
+		}
+
+		if (userField.endsWith("after")) {
+			dateConditions[mongoField]["$gte"] = new Date(val)
+		} else if (userField.endsWith("before")) {
+			dateConditions[mongoField]["$lte"] = new Date(val)
+		}
+	}
+
+	// Combine filters into final Mongo query
 	query = {
 		$and: [
 			query,
-			{
-				$nor: [
-					{ diagnosis_resp: "N/A" },
-					{ diagnosis_resp: null },
-					{ diagnosis_cardiac: "N/A" },
-					{ diagnosis_cardiac: null },
-					{ outcm_hosp_discharge_loc: null },
-				],
-			},
+			...Object.entries(dateConditions).map(([field, condition]) => ({
+				[field]: condition,
+			})),
+			...(params.sites === "all" &&
+			(params.role === "admin" || params.role === "global_viewer")
+				? []
+				: [
+						{
+							redcap_data_access_group: params.sites,
+						},
+				  ]),
 		],
 	}
 
-	const options = {
-		// Include only the particular fields
-		projection: { _id: 0 },
-	} as FindOptions
+	const options: FindOptions = {
+		projection: { _id: 0 }, // Exclude Mongo _id
+	}
 
-	// run find
 	const results = await collection.find(query, options).toArray()
-	return results
+	// Block from returning queries with results less than 5
+	return results.length > 5 ? results : []
 }
 
-// handler for any calls to this endpoint
-export default async function handler(req: any, res: any) {
-	const params = req.query
+// API Route Handler
+export default async function handler(
+	req: NextApiRequest,
+	res: NextApiResponse
+) {
+	const params = req.body as SearchQuery
 
 	try {
 		const results = await GetPatients(params)
 		res.status(200).json(results)
 	} catch (err) {
-		res.status(500).json(err)
+		console.error("Error at database/getPatients :", err)
+		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

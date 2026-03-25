@@ -1,8 +1,10 @@
 // translates the keys to english
-export const keyToTitle = {
+export const KEY_TO_TITLE = {
 	diagnosis_resp: "Diagnosis Respiratory",
 	diagnosis_cardiac: "Diagnosis Cardiac",
 	outcm_hosp_discharge_loc: "Discharge Outcome",
+	ecmo_mode: "ECMO Mode",
+	ecmo_indication: "ECMO Indication",
 	hospadm_date_time_before: "Hospital Admission Time Before",
 	hospadm_date_time_after: "Hospital Admission Time After",
 	icuadm_date_time_before: "ICU Admission Time Before",

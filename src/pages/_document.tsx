@@ -5,6 +5,7 @@ function Document() {
 	return (
 		<Html lang="en">
 			<Head />
+			<title>EXCEL QI</title>
 			<body>
 				<Main />
 				<NextScript />

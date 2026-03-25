@@ -1,43 +1,77 @@
-import { diagnosis_resp_options } from "@/constants/search/selectOptions"
-import { diagnosis_cardiac_options } from "@/constants/search/selectOptions"
-import { outcm_hosp_discharge_loc_options } from "@/constants/search/selectOptions"
-import { ChangeEventHandler } from "react"
+import {
+	ECMO_INDICIATION_OPTIONS,
+	ECMO_MODE_OPTIONS,
+} from "@/constants/search/selectOptions"
 
 interface Props {
 	title: string
-	queryAttribute:
-		| "diagnosis_resp"
-		| "diagnosis_cardiac"
-		| "outcm_hosp_discharge_loc"
+	queryAttribute: "ecmo_mode" | "ecmo_indication"
+	selectedValue?: string
 	handleSelectChange(
-		area:
-			| "diagnosis_resp"
-			| "diagnosis_cardiac"
-			| "outcm_hosp_discharge_loc"
-	): ChangeEventHandler<HTMLSelectElement> | undefined
+		area: "ecmo_mode" | "ecmo_indication",
+		value: string,
+	): void
 }
 
-function DropdownInput({ title, queryAttribute, handleSelectChange }: Props) {
-	const optionsMap = {
-		diagnosis_resp: diagnosis_resp_options,
-		diagnosis_cardiac: diagnosis_cardiac_options,
-		outcm_hosp_discharge_loc: outcm_hosp_discharge_loc_options,
-	}
+const optionsMap = {
+	ecmo_mode: ECMO_MODE_OPTIONS,
+	ecmo_indication: ECMO_INDICIATION_OPTIONS,
+}
+
+function DropdownInput({
+	title,
+	queryAttribute,
+	selectedValue,
+	handleSelectChange,
+}: Props) {
+	const displayValue = selectedValue || `Any`
 
 	return (
-		<label className="form-control w-1/4">
+		<div className="form-control w-full">
 			<div className="pb-2">
 				<span className="label-text">{title}</span>
 			</div>
-			<select
-				className="select select-neutral w-full"
-				onChange={handleSelectChange(queryAttribute)}
-			>
-				{optionsMap[queryAttribute].map((value) => (
-					<option key={value}>{value}</option>
-				))}
-			</select>
-		</label>
+
+			<div className="dropdown dropdown-right w-full">
+				<div
+					tabIndex={0}
+					role="button"
+					className="btn w-full justify-between font-normal bg-base-100 border-base-300 hover:border-base-300"
+				>
+					{displayValue}
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						className="inline-block w-4 h-4 stroke-current"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M9 5l7 7-7 7"
+						></path>
+					</svg>
+				</div>
+
+				<ul
+					tabIndex={0}
+					className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 ml-2 border border-base-200"
+				>
+					{optionsMap[queryAttribute].map((value) => (
+						<li key={value}>
+							<a
+								onClick={() =>
+									handleSelectChange(queryAttribute, value)
+								}
+							>
+								{value}
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		</div>
 	)
 }
 

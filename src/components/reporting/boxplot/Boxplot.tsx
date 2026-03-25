@@ -1,17 +1,17 @@
 import { useMemo } from "react"
 import * as d3 from "d3"
-import { getSummaryStats } from "./summary-stats"
 import { AxisLeft } from "./AxisLeftCategoric"
 
 import { HorizontalBox } from "./HorizontalBox"
 import { AxisBottom } from "./AxisBottom"
+import { BoxplotStats } from "@/reducers/reportReducer"
 
-const MARGIN = { top: 30, right: 30, bottom: 30, left: 120 }
+const MARGIN = { top: 30, right: 30, bottom: 70, left: 120 }
 
-type BoxplotProps = {
+interface BoxplotProps {
 	width: number
 	height: number
-	data: { name: string; value: number }[]
+	data: BoxplotStats[]
 }
 
 export const Boxplot = ({ width, height, data }: BoxplotProps) => {
@@ -21,10 +21,13 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 
 	// Compute everything derived from the dataset:
 	const { chartMin, chartMax, groups } = useMemo(() => {
-		const [chartMin, chartMax] = d3.extent(data.map((d) => d.value)) as [
-			number,
-			number
-		]
+		const [chartMin, chartMax] = data.reduce(
+			([currentMin, currentMax], { min, max }) => [
+				Math.min(currentMin, min),
+				Math.max(currentMax, max),
+			],
+			[Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY],
+		)
 		const groups = [...new Set(data.map((d) => d.name))]
 		return { chartMin, chartMax, groups }
 	}, [data])
@@ -43,16 +46,9 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 
 	// Build the box shapes
 	const allShapes = groups.map((group, i) => {
-		const groupData = data
-			.filter((d) => d.name === group)
-			.map((d) => d.value)
-		const sumStats = getSummaryStats(groupData)
-
-		if (!sumStats) {
-			return null
-		}
-
-		const { min, q1, median, q3, max } = sumStats
+		const { min, q1, median, q3, max } = data.find(
+			(d) => d.name === group,
+		) as BoxplotStats
 
 		return (
 			<g key={i} transform={`translate(0,${yScale(group)})`}>
@@ -65,7 +61,7 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 					max={xScale(max)}
 					stroke="var(--color-base-content)"
 					fill={"var(--color-primary)"}
-					fillOpacity={0.5}
+					fillOpacity={1}
 				/>
 			</g>
 		)
@@ -78,7 +74,7 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 					width={boundsWidth}
 					height={boundsHeight}
 					transform={`translate(${[MARGIN.left, MARGIN.top].join(
-						","
+						",",
 					)})`}
 				>
 					{allShapes}
@@ -90,9 +86,19 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 						<AxisBottom
 							xScale={xScale}
 							height={boundsHeight}
-							pixelsPerTick={80}
+							pixelsPerTick={40}
 						/>
 					</g>
+					<text
+						x={boundsWidth / 2}
+						y={boundsHeight + 50}
+						textAnchor="middle"
+						fontSize={14}
+						fill="var(--color-base-content)"
+						fontWeight="bold"
+					>
+						Days
+					</text>
 				</g>
 			</svg>
 		</div>

@@ -1,6 +1,6 @@
 import axios from "axios"
 
-async function postEcmoPalEvaluate(variables: any) {
+async function PostEcmoPalEvaluate(variables: any) {
 	let result = await axios.post(
 		`${process.env.ECMOPAL_API_URL}/evaluate`,
 		variables
@@ -20,10 +20,10 @@ export default async function handler(req: any, res: any) {
 	const params = req.body
 
 	try {
-		const result = await postEcmoPalEvaluate(params.variables)
+		const result = await PostEcmoPalEvaluate(params.variables)
 		res.status(200).json(result)
-		// res.status(200).json(result)
 	} catch (err) {
-		res.status(500).json(err)
+		console.error("Error at ecmo-pal/evaluate :", err)
+		res.status(500).json({ error: "Internal Server Error" })
 	}
 }

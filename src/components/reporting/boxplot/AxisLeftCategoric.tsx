@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { ScaleBand } from "d3"
 
-type AxisLeftProps = {
+interface AxisLeftProps {
 	yScale: ScaleBand<string>
 }
 
@@ -33,9 +33,10 @@ export const AxisLeft = ({ yScale }: AxisLeftProps) => {
 					outcm_ecmo_days_2: "Days on ECMO",
 					outcm_icu_days: "Days in ICU",
 					outcm_hosp_days: "Days in Hospital",
+					outcm_mv_days_2: "Days on IMV",
 				}
 				return (
-					<g key={value} transform={`translate(0, ${yOffset})`}>
+					<g key={value} transform={`translate(0, ${yOffset + 4})`}>
 						{/* Ticks */}
 						{/* <line x2={-TICK_LENGTH} stroke="currentColor" /> */}
 						<text
