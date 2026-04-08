@@ -37,7 +37,8 @@ function DropdownMultiSelect({
 			<div className="pb-2">
 				<span className="label-text font-medium">{title}</span>
 			</div>
-			<div className="dropdown dropdown-right w-full">
+			{/* Added dropdown-bottom for mobile and restored sm:dropdown-right for larger screens */}
+			<div className="dropdown dropdown-bottom sm:dropdown-right w-full">
 				<div
 					tabIndex={0}
 					role="button"
@@ -58,17 +59,18 @@ function DropdownMultiSelect({
 						stroke="currentColor"
 						className="inline-block w-4 h-4 stroke-current"
 					>
+						{/* Changed path to a downward chevron */}
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"
-							d="M8.25 4.5l7.5 7.5-7.5 7.5"
+							d="M19.5 8.25l-7.5 7.5-7.5-7.5"
 						/>
 					</svg>
 				</div>
 
 				<ul
 					tabIndex={0}
-					className="dropdown-content z-[50] menu p-2 shadow bg-base-100 rounded-box w-full ml-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
+					className="dropdown-content z-[50] menu p-2 shadow bg-base-100 rounded-box w-full sm:ml-1 max-h-60 overflow-y-auto border border-base-300 flex-nowrap"
 				>
 					<div className="flex justify-between px-2 py-1 mb-2 border-b border-base-200">
 						<button

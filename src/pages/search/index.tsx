@@ -255,9 +255,10 @@ function SearchPage() {
 	}
 
 	return (
-		<div className="flex flex-col grow w-full items-center">
-			<div className="w-2/3 h-full">
-				<article className="my-2 text-3xl font-semibold">
+		<div className="flex flex-col grow w-full items-center px-4 md:px-0">
+			{/* Main container: changed from w-2/3 to responsive width */}
+			<div className="w-full md:w-2/3 h-full">
+				<article className="my-4 text-2xl md:text-3xl font-semibold">
 					Cohort Construction
 				</article>
 				{loading === true ? (
@@ -343,16 +344,16 @@ function SearchPage() {
 								<button>close</button>
 							</form>
 						</dialog>
-						{/* rest of the page */}
-						<div className="flex w-full justify-between mb-2">
+						{/* Action buttons: changed to flex-col on mobile */}
+						<div className="flex flex-col sm:flex-row w-full gap-2 justify-between mb-4">
 							<button
-								className="btn btn-primary"
+								className="btn btn-primary w-full sm:w-auto"
 								onClick={handleBack}
 							>
 								New Search
 							</button>
 							<button
-								className="btn btn-primary"
+								className="btn btn-primary w-full sm:w-auto"
 								onClick={handleToggleVis}
 							>
 								{showingVis
@@ -360,7 +361,7 @@ function SearchPage() {
 									: "Visualise Cohort"}
 							</button>
 							<button
-								className="btn btn-primary"
+								className="btn btn-primary w-full sm:w-auto"
 								onClick={() => {
 									modalRef.current!.showModal()
 								}}
@@ -368,8 +369,9 @@ function SearchPage() {
 								Export Cohort
 							</button>
 						</div>
-						<div className="flex w-full items-center justify-between mb-2">
-							<article className="w-2/3 text-md">
+						{/* Filters and Pagination row: responsive stacking */}
+						<div className="flex flex-col md:flex-row w-full items-start md:items-center justify-between mb-2 gap-4">
+							<article className="w-full md:w-2/3 text-sm md:text-md">
 								{`Filters: ${[
 									selectedSite === "all"
 										? "All Sites"
@@ -395,7 +397,7 @@ function SearchPage() {
 									.join(", ")}`}
 							</article>
 							{!showingVis && (
-								<div className="flex items-center">
+								<div className="flex items-center self-end md:self-auto">
 									<article className="text-sm w-24 mr-4">
 										Rows Per Page:
 									</article>
@@ -421,39 +423,40 @@ function SearchPage() {
 						</div>
 						{showingVis ? (
 							<div className="flex flex-col items-center mt-4">
-								<article className="font-semibold text-lg">
+								<article className="font-semibold text-lg text-center">
 									Outcomes for Primary Respiratory Diagnoses
 								</article>
 								<div
 									ref={graphContainer}
-									className="flex justify-center w-[85vw]"
+									className="flex justify-center w-full overflow-x-auto"
 								>
 									<ClusteredBarplot
 										data={state.graphDataResp}
 										keys={state.graphKeys}
 										width={width}
-										height={600}
+										height={400} // reduced height for mobile better viewing
 									/>
 								</div>
-								<article className="font-semibold text-lg mt-16">
+								<article className="font-semibold text-lg mt-16 text-center">
 									Outcomes for Primary Cardiac Diagnoses
 								</article>
-								<div className="flex justify-center w-[85vw]">
+								<div className="flex justify-center w-full overflow-x-auto">
 									<ClusteredBarplot
 										data={state.graphDataCardiac}
 										keys={state.graphKeys}
 										width={width}
-										height={600}
+										height={400}
 									/>
 								</div>
-								{/* footer */}
 								<div className="h-8" />
 							</div>
 						) : (
 							<React.Fragment>
-								<SearchTable
-									patientData={state.slicedResults}
-								/>
+								<div className="w-full overflow-x-auto">
+									<SearchTable
+										patientData={state.slicedResults}
+									/>
+								</div>
 								<div className="flex flex-col items-center">
 									<TablePagination
 										component="div"
@@ -467,6 +470,7 @@ function SearchPage() {
 										sx={{
 											"& .MuiToolbar-root": {
 												color: "var(--color-base-content)",
+												paddingLeft: "8px",
 											},
 											"& .MuiSelect-icon": {
 												color: "var(--color-base-content)",
@@ -483,13 +487,14 @@ function SearchPage() {
 						)}
 					</React.Fragment>
 				) : (
-					// search page
+					// search form page
 					<React.Fragment>
 						<div className="flex flex-col w-full">
 							<article className="mb-2 text-xl">
 								Select site to search
 							</article>
-							<label className="form-control w-1/4">
+							{/* Inputs: changed from w-1/4 to w-full on mobile */}
+							<label className="form-control w-full md:w-1/2 lg:w-1/4">
 								<select
 									className="select w-full"
 									onChange={handleSiteSelect}
@@ -518,11 +523,11 @@ function SearchPage() {
 									)}
 								</select>
 							</label>
-							<article className="mt-4 mb-2 text-xl">
+							<article className="mt-6 mb-2 text-xl">
 								Patient attributes
 							</article>
 							<div className="flex flex-col w-full">
-								<div className="flex flex-col w-1/4 gap-y-2">
+								<div className="flex flex-col w-full md:w-1/2 lg:w-1/4 gap-y-3">
 									<DropdownMultiSelect
 										title="Primary Respiratory Diagnosis"
 										selectedValues={
@@ -571,7 +576,7 @@ function SearchPage() {
 									/>
 								</div>
 
-								<div className="flex flex-col gap-y-3 mt-2">
+								<div className="flex flex-col gap-y-4 mt-6">
 									<DateRangeInput
 										title={"Hospital Admission Time"}
 										handleDateChange={handleDateChange}
@@ -605,14 +610,14 @@ function SearchPage() {
 								</div>
 							</div>
 						</div>
-						<div className="flex items-center">
+						<div className="flex flex-col sm:flex-row items-center mt-6">
 							<button
-								className="btn btn-primary my-4"
+								className="btn btn-primary w-full sm:w-auto my-4"
 								onClick={handleSearch}
 							>
 								Search
 							</button>
-							<article className="ml-12 text-error font-semibold">
+							<article className="sm:ml-12 text-error font-semibold text-center sm:text-left">
 								{errorMessage}
 							</article>
 						</div>
