@@ -153,7 +153,7 @@ function NavBar() {
 									<a
 										className="bg-primary-focus flex gap-2"
 										onClick={async () => {
-											await signOut({ callbackUrl: "/" })
+											await signOut({ redirect: false })
 											window.location.href = `${process.env.NEXT_PUBLIC_AUTH0_ISSUER}/v2/logout?client_id=${process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID}&returnTo=${encodeURIComponent(window.location.origin)}`
 										}}
 									>
