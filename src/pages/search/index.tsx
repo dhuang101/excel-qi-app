@@ -111,40 +111,33 @@ function SearchPage() {
 			$H: number | undefined
 			$m: number | undefined
 		}) => {
+			const clearState = () => {
+				setUserEnteredQuery((oldState) => {
+					const { [area]: _, ...newState } = oldState
+					return newState
+				})
+			}
+
 			if (event) {
 				if (!Number.isNaN(event.$d.getTime())) {
 					const UtcDate = new Date(
 						Date.UTC(
 							event.$y,
-							event.$M,
-							event.$D,
-							event.$H,
-							event.$m,
+							event.$M ?? 0,
+							event.$D ?? 1,
+							event.$H ?? 0,
+							event.$m ?? 0,
 						),
 					)
 					setUserEnteredQuery({
 						...userEnteredQuery,
 						[area]: UtcDate,
 					})
+				} else {
+					clearState()
 				}
 			} else {
-				if (area === "hospadm_date_time_after") {
-					setUserEnteredQuery((oldState) => {
-						const {
-							["hospadm_date_time_after"]: Date,
-							...newState
-						} = oldState
-						return newState
-					})
-				} else if (area === "hospadm_date_time_before") {
-					setUserEnteredQuery((oldState) => {
-						const {
-							["hospadm_date_time_before"]: Date,
-							...newState
-						} = oldState
-						return newState
-					})
-				}
+				clearState()
 			}
 		}
 
