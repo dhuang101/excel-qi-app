@@ -151,6 +151,24 @@ function SummaryPage() {
 		<div className="flex flex-col w-full items-center justify-center p-4">
 			<div className="flex flex-col w-full lg:w-2/3 mt-2">
 				<div className="flex flex-col md:flex-row justify-between gap-4">
+					<fieldset className="fieldset w-full md:w-1/3">
+						<legend className="fieldset-legend">
+							Select Month
+						</legend>
+						<select
+							className="select select-bordered w-full"
+							value={selectedMonth}
+							onChange={(e) =>
+								setSelectedMonth(Number(e.target.value))
+							}
+						>
+							{MONTHS.map((m) => (
+								<option key={m.value} value={m.value}>
+									{m.label}
+								</option>
+							))}
+						</select>
+					</fieldset>
 					{status === "authenticated" && (
 						<fieldset className="fieldset w-full md:w-1/3">
 							<legend className="fieldset-legend">
@@ -171,24 +189,6 @@ function SummaryPage() {
 							</select>
 						</fieldset>
 					)}
-					<fieldset className="fieldset w-full md:w-1/3">
-						<legend className="fieldset-legend">
-							Select Month
-						</legend>
-						<select
-							className="select select-bordered w-full"
-							value={selectedMonth}
-							onChange={(e) =>
-								setSelectedMonth(Number(e.target.value))
-							}
-						>
-							{MONTHS.map((m) => (
-								<option key={m.value} value={m.value}>
-									{m.label}
-								</option>
-							))}
-						</select>
-					</fieldset>
 				</div>
 
 				<article className="text-lg w-full mt-6">
