@@ -27,6 +27,7 @@ export interface BoxplotStats {
 	median: number
 	q3: number
 	max: number
+	outliers?: number[]
 }
 
 export interface BoxplotEntry {

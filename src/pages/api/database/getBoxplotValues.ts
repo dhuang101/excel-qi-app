@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb"
 import { NextApiRequest, NextApiResponse } from "next"
 
 interface DocumentType {
-	[key: string]: any // Allow dynamic indexing with string keys
+	[key: string]: any
 }
 
 type ParamsType = {
@@ -18,9 +18,9 @@ type SummaryStats = {
 	median: number
 	q3: number
 	max: number
+	outliers: number[]
 }
 
-// Computes summary statistics for a given set of values
 function computeSummaryStats(values: number[], name: string): SummaryStats {
 	if (values.length === 0) {
 		return {
@@ -31,16 +31,29 @@ function computeSummaryStats(values: number[], name: string): SummaryStats {
 			median: NaN,
 			q3: NaN,
 			max: NaN,
+			outliers: [],
 		}
 	}
+
 	const sorted = [...values].sort((a, b) => a - b)
 	const count = sorted.length
-	const min = sorted[0]
-	const max = sorted[count - 1]
+
 	const q1 = quantile(sorted, 0.25)
 	const median = quantile(sorted, 0.5)
 	const q3 = quantile(sorted, 0.75)
-	return { name, count, min, q1, median, q3, max }
+
+	const iqr = q3 - q1
+	const lowerFence = q1 - 1.5 * iqr
+	const upperFence = q3 + 1.5 * iqr
+
+	const outliers = sorted.filter((v) => v < lowerFence || v > upperFence)
+	const validValues = sorted.filter((v) => v >= lowerFence && v <= upperFence)
+
+	const min = validValues.length > 0 ? validValues[0] : q1
+	const max =
+		validValues.length > 0 ? validValues[validValues.length - 1] : q3
+
+	return { name, count, min, q1, median, q3, max, outliers }
 }
 
 function quantile(sortedArr: number[], q: number): number {
@@ -82,7 +95,7 @@ async function GetBoxplotValues(params: ParamsType) {
 			proj[attr] = 1
 			return proj
 		},
-		{ _id: 0, redcap_data_access_group: 1 }
+		{ _id: 0, redcap_data_access_group: 1 },
 	)
 
 	const results = await collection.find({}, { projection }).toArray()
@@ -101,13 +114,13 @@ async function GetBoxplotValues(params: ParamsType) {
 	if (params.role !== "public") {
 		for (const site of sites) {
 			const siteResults = results.filter(
-				(doc) => doc.redcap_data_access_group === site
+				(doc) => doc.redcap_data_access_group === site,
 			)
 			siteStats[site] = attributes.map((attr) => {
 				const values = siteResults
 					.map((doc) => doc[attr])
 					.filter(
-						(i) => typeof i === "number" && !isNaN(i)
+						(i) => typeof i === "number" && !isNaN(i),
 					) as number[]
 				return computeSummaryStats(values, attr)
 			})
@@ -136,10 +149,9 @@ async function GetBoxplotValues(params: ParamsType) {
 	return siteStatsArray
 }
 
-// handler for any calls to this endpoint
 export default async function handler(
 	req: NextApiRequest,
-	res: NextApiResponse
+	res: NextApiResponse,
 ) {
 	const params = req.body as ParamsType
 
