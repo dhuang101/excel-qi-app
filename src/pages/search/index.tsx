@@ -532,21 +532,21 @@ function SearchPage() {
 										onClearAll={handleClearAll}
 									/>
 									<DropdownMultiSelect
-										title="Hospital Discharge Location"
-										selectedValues={
-											userEnteredQuery.outcm_hosp_discharge_loc as string[]
-										}
-										queryKey="outcm_hosp_discharge_loc"
-										onSelect={handleMultiSelect}
-										onSelectAll={handleSelectAll}
-										onClearAll={handleClearAll}
-									/>
-									<DropdownMultiSelect
 										title="Primary Cardiac Diagnosis"
 										selectedValues={
 											userEnteredQuery.diagnosis_cardiac as string[]
 										}
 										queryKey="diagnosis_cardiac"
+										onSelect={handleMultiSelect}
+										onSelectAll={handleSelectAll}
+										onClearAll={handleClearAll}
+									/>
+									<DropdownMultiSelect
+										title="Hospital Discharge Location"
+										selectedValues={
+											userEnteredQuery.outcm_hosp_discharge_loc as string[]
+										}
+										queryKey="outcm_hosp_discharge_loc"
 										onSelect={handleMultiSelect}
 										onSelectAll={handleSelectAll}
 										onClearAll={handleClearAll}
