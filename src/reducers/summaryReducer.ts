@@ -21,8 +21,8 @@ interface CaseDeathData {
 	totalDeaths: number
 }
 
-interface GenderData {
-	gender: "Male" | "Female" | string
+interface sexData {
+	sex: "Male" | "Female" | string
 	percentOfTotal: number
 	mortalityRate: number
 }
@@ -32,7 +32,7 @@ interface GraphMetrics {
 	mortalityDist: AgeData[]
 	caseDist: AgeData[]
 	caseDeathDist: CaseDeathData[]
-	genderDist: GenderData[]
+	sexDist: sexData[]
 }
 
 export interface state {

@@ -39,8 +39,8 @@ interface GraphData {
 		totalCases: number
 		totalDeaths: number
 	}[]
-	genderDist: {
-		gender: "Male" | "Female"
+	sexDist: {
+		sex: "Male" | "Female"
 		percentOfTotal: number
 		mortalityRate: number
 	}[]
@@ -299,13 +299,13 @@ function SummaryPage() {
 							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
 								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
 									<article className="text-base-content font-semibold text-sm">
-										Gender Distribution: Cases
+										Sex Distribution: Cases
 									</article>
 								</div>
 								<div className="flex w-full justify-center p-4">
 									<PieChart
-										data={graphData.genderDist}
-										categoryKey="gender"
+										data={graphData.sexDist}
+										categoryKey="sex"
 										valueKey="percentOfTotal"
 										width={
 											width > 600 ? width / 2 : width - 40
@@ -317,13 +317,13 @@ function SummaryPage() {
 							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
 								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
 									<article className="text-base-content font-semibold text-sm">
-										Gender Distribution: Deaths
+										Sex Distribution: Deaths
 									</article>
 								</div>
 								<div className="flex w-full justify-center p-4">
 									<PieChart
-										data={graphData.genderDist}
-										categoryKey="gender"
+										data={graphData.sexDist}
+										categoryKey="sex"
 										valueKey="mortalityRate"
 										width={
 											width > 600 ? width / 2 : width - 40

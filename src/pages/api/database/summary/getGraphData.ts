@@ -130,7 +130,7 @@ async function GetGraphData(params: ParamsType) {
 			}
 		})
 
-		const genderMap: Record<string, { count: number; deaths: number }> = {
+		const sexMap: Record<string, { count: number; deaths: number }> = {
 			Male: { count: 0, deaths: 0 },
 			Female: { count: 0, deaths: 0 },
 		}
@@ -138,12 +138,12 @@ async function GetGraphData(params: ParamsType) {
 		dataPoints.forEach((d) => {
 			const label =
 				d.sex === 1 ? "Male" : d.sex === 2 ? "Female" : "Unknown"
-			genderMap[label].count += d.count
-			genderMap[label].deaths += d.deaths
+			sexMap[label].count += d.count
+			sexMap[label].deaths += d.deaths
 		})
 
-		const genderDist = Object.entries(genderMap).map(([gender, stats]) => ({
-			gender,
+		const sexDist = Object.entries(sexMap).map(([sex, stats]) => ({
+			sex,
 			percentOfTotal:
 				totalOverall > 0
 					? Math.round((stats.count / totalOverall) * 100 * 100) / 100
@@ -168,7 +168,7 @@ async function GetGraphData(params: ParamsType) {
 				totalCases: r.totalCount,
 				totalDeaths: r.totalDeaths,
 			})),
-			genderDist,
+			sexDist,
 		}
 	}
 
