@@ -295,7 +295,44 @@ function SummaryPage() {
 								</button>
 							))}
 						</div>
-
+						<div className="flex flex-col lg:flex-row justify-between mt-8 gap-6">
+							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
+								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
+									<article className="text-base-content font-semibold text-sm">
+										Gender Distribution: Cases
+									</article>
+								</div>
+								<div className="flex w-full justify-center p-4">
+									<PieChart
+										data={graphData.genderDist}
+										categoryKey="gender"
+										valueKey="percentOfTotal"
+										width={
+											width > 600 ? width / 2 : width - 40
+										}
+										height={300}
+									/>
+								</div>
+							</div>
+							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
+								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
+									<article className="text-base-content font-semibold text-sm">
+										Gender Distribution: Deaths
+									</article>
+								</div>
+								<div className="flex w-full justify-center p-4">
+									<PieChart
+										data={graphData.genderDist}
+										categoryKey="gender"
+										valueKey="mortalityRate"
+										width={
+											width > 600 ? width / 2 : width - 40
+										}
+										height={300}
+									/>
+								</div>
+							</div>
+						</div>
 						<div className="space-y-8 mt-8">
 							{[
 								{
@@ -346,45 +383,6 @@ function SummaryPage() {
 									</div>
 								</div>
 							))}
-						</div>
-
-						<div className="flex flex-col lg:flex-row justify-between mt-8 gap-6">
-							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
-								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
-									<article className="text-base-content font-semibold text-sm">
-										Gender Distribution: Cases
-									</article>
-								</div>
-								<div className="flex w-full justify-center p-4">
-									<PieChart
-										data={graphData.genderDist}
-										categoryKey="gender"
-										valueKey="percentOfTotal"
-										width={
-											width > 600 ? width / 2 : width - 40
-										}
-										height={300}
-									/>
-								</div>
-							</div>
-							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
-								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
-									<article className="text-base-content font-semibold text-sm">
-										Gender Distribution: Deaths
-									</article>
-								</div>
-								<div className="flex w-full justify-center p-4">
-									<PieChart
-										data={graphData.genderDist}
-										categoryKey="gender"
-										valueKey="mortalityRate"
-										width={
-											width > 600 ? width / 2 : width - 40
-										}
-										height={300}
-									/>
-								</div>
-							</div>
 						</div>
 					</React.Fragment>
 				)}
