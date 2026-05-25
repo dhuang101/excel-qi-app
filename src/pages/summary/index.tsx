@@ -218,6 +218,30 @@ function SummaryPage() {
 					</div>
 				</div>
 
+				<div className="alert alert-primary mt-6 shadow-sm rounded-lg flex gap-2 items-center text-sm">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						className="h-6 w-6 shrink-0 stroke-current"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
+					</svg>
+					<span>
+						The summary figures and charts below only reflect data
+						collected during the selected month and year:{" "}
+						<strong>
+							{`${MONTHS.find((m) => m.value === selectedMonth)?.label} - `}
+							{selectedYear}
+						</strong>
+						.
+					</span>
+				</div>
 				{caseData === undefined || graphData === undefined ? (
 					<div className="flex flex-col items-center justify-center min-h-[40vh] mt-12 p-8 border-base-300 rounded-xl text-center bg-base-50">
 						<article className="text-2xl font-semibold text-base-content">
