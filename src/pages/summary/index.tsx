@@ -7,6 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress/CircularProgress"
 import axios from "axios"
 import { useSession } from "next-auth/react"
 import { useEffect, useCallback, useState, useReducer } from "react"
+import React from "react"
 
 const MONTHS = [
 	{ label: "All Year", value: 0 },
@@ -46,10 +47,6 @@ interface GraphData {
 }
 
 type EcmoMode = "total" | "V-V" | "V-A"
-// | "V-VA"
-// | "A-VCO2R"
-// | "V-VECCO2R"
-// | "VP"
 
 function SummaryPage() {
 	// auth session
@@ -143,7 +140,7 @@ function SummaryPage() {
 		setEcmoMode(mode)
 	}
 
-	return !caseData || !graphData ? (
+	return caseData === null || graphData === null || !availableYears ? (
 		<div className="flex flex-col justify-center items-center h-[83vh]">
 			<CircularProgress size={80} />
 			<article className="text-lg font-semibold pt-4">
@@ -221,131 +218,152 @@ function SummaryPage() {
 					</div>
 				</div>
 
-				<div className="flex flex-col md:flex-row justify-between w-full mt-8 gap-4">
-					{[
-						{ label: "Total Cases", data: caseData.total },
-						{ label: "V-A Cases", data: caseData.va },
-						{ label: "V-V Cases", data: caseData.vv },
-					].map((card, idx) => (
-						<div
-							key={idx}
-							className="flex flex-col w-full md:w-[31%] shadow-sm rounded-lg overflow-hidden outline outline-base-300"
-						>
-							<div className="flex min-h-12 items-center justify-center bg-base-300">
-								<article className="font-semibold text-base-content text-lg tracking-tight">
-									{card.label}
-								</article>
-							</div>
-							<div className="flex flex-col min-h-24 items-center justify-center bg-base-100">
-								<article className="text-4xl font-bold">
-									{card.data.count}
-								</article>
-								<article className="mt-1 text-sm opacity-70">
-									{`Mortality: ${card.data.mortalityRate}%`}
-								</article>
-							</div>
-						</div>
-					))}
-				</div>
-
-				<div className="flex flex-col sm:flex-row justify-between w-full mt-8 gap-2 bg-base-200 p-2 rounded-lg">
-					{["total", "V-A", "V-V"].map((mode) => (
-						<button
-							key={mode}
-							className={`btn flex-1 ${ecmoMode === mode ? "btn-primary" : "btn-ghost"}`}
-							onClick={() => handleButtonClick(mode as EcmoMode)}
-						>
-							{mode === "total" ? "Total" : mode} Cases
-						</button>
-					))}
-				</div>
-
-				<div className="space-y-8 mt-8">
-					{[
-						{
-							title: "Mortality distribution by age",
-							component: (
-								<VerticalBarplot
-									data={graphData.mortalityDist}
-									width={width}
-									height={400}
-								/>
-							),
-						},
-						{
-							title: "Age distribution: Cases vs Deaths",
-							component: (
-								<GroupedBarplot
-									data={graphData.caseDeathDist}
-									width={width}
-									height={400}
-								/>
-							),
-						},
-						{
-							title: "Age distribution of cases",
-							component: (
-								<VerticalBarplot
-									data={graphData.caseDist}
-									width={width}
-									height={400}
-								/>
-							),
-						},
-					].map((graph, idx) => (
-						<div
-							key={idx}
-							className="flex flex-col w-full outline outline-base-300 shadow-xl rounded-xl overflow-hidden"
-						>
-							<div className="flex justify-center w-full bg-base-300 py-3 px-4 text-center">
-								<article className="text-base-content font-semibold text-sm md:text-base">
-									{`${graph.title} (${selectedYear})`}
-								</article>
-							</div>
-							<div
-								ref={idx === 0 ? graphRef : null}
-								className="flex w-full justify-center p-2 md:p-4 overflow-x-hidden"
-							>
-								{graph.component}
-							</div>
-						</div>
-					))}
-				</div>
-
-				<div className="flex flex-col lg:flex-row justify-between mt-8 gap-6">
-					<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
-						<div className="flex justify-center w-full bg-base-300 py-3 text-center">
-							<article className="text-base-content font-semibold text-sm">
-								Gender Distribution: Cases
-							</article>
-						</div>
-						<div className="flex w-full justify-center p-4">
-							<PieChart
-								data={graphData.genderDist}
-								categoryKey="gender"
-								valueKey="percentOfTotal"
-								width={width > 600 ? width / 2 : width - 40}
-								height={300}
-							/>
-						</div>
+				{caseData === undefined || graphData === undefined ? (
+					<div className="flex flex-col items-center justify-center min-h-[40vh] mt-12 p-8 border-base-300 rounded-xl text-center bg-base-50">
+						<article className="text-2xl font-semibold text-base-content">
+							No Case Data Found
+						</article>
+						<p className="mt-2 text-md text-base-content/60 max-w-md">
+							There are no recorded instances matching your
+							selected site, month, or year configuration. Try
+							altering your filters above.
+						</p>
 					</div>
-					<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
-						<div className="flex justify-center w-full bg-base-300 py-3 text-center">
-							<article className="text-base-content font-semibold text-sm">
-								Gender Distribution: Deaths
-							</article>
+				) : (
+					<React.Fragment>
+						<div className="flex flex-col md:flex-row justify-between w-full mt-8 gap-4">
+							{[
+								{ label: "Total Cases", data: caseData.total },
+								{ label: "V-A Cases", data: caseData.va },
+								{ label: "V-V Cases", data: caseData.vv },
+							].map((card, idx) => (
+								<div
+									key={idx}
+									className="flex flex-col w-full md:w-[31%] shadow-sm rounded-lg overflow-hidden outline outline-base-300"
+								>
+									<div className="flex min-h-12 items-center justify-center bg-base-300">
+										<article className="font-semibold text-base-content text-lg tracking-tight">
+											{card.label}
+										</article>
+									</div>
+									<div className="flex flex-col min-h-24 items-center justify-center bg-base-100">
+										<article className="text-4xl font-bold">
+											{card.data.count}
+										</article>
+										<article className="mt-1 text-sm opacity-70">
+											{`Mortality: ${card.data.mortalityRate}%`}
+										</article>
+									</div>
+								</div>
+							))}
 						</div>
-						<div className="flex w-full justify-center p-4">
-							<PieChart
-								data={graphData.genderDist}
-								categoryKey="gender"
-								valueKey="mortalityRate"
-								width={width > 600 ? width / 2 : width - 40}
-								height={300}
-							/>
+
+						<div className="flex flex-col sm:flex-row justify-between w-full mt-8 gap-2 bg-base-200 p-2 rounded-lg">
+							{["total", "V-A", "V-V"].map((mode) => (
+								<button
+									key={mode}
+									className={`btn flex-1 ${ecmoMode === mode ? "btn-primary" : "btn-ghost"}`}
+									onClick={() =>
+										handleButtonClick(mode as EcmoMode)
+									}
+								>
+									{mode === "total" ? "Total" : mode} Cases
+								</button>
+							))}
 						</div>
-					</div>
-				</div>
+
+						<div className="space-y-8 mt-8">
+							{[
+								{
+									title: "Mortality distribution by age",
+									component: (
+										<VerticalBarplot
+											data={graphData.mortalityDist}
+											width={width}
+											height={400}
+										/>
+									),
+								},
+								{
+									title: "Age distribution: Cases vs Deaths",
+									component: (
+										<GroupedBarplot
+											data={graphData.caseDeathDist}
+											width={width}
+											height={400}
+										/>
+									),
+								},
+								{
+									title: "Age distribution of cases",
+									component: (
+										<VerticalBarplot
+											data={graphData.caseDist}
+											width={width}
+											height={400}
+										/>
+									),
+								},
+							].map((graph, idx) => (
+								<div
+									key={idx}
+									className="flex flex-col w-full outline outline-base-300 shadow-xl rounded-xl overflow-hidden"
+								>
+									<div className="flex justify-center w-full bg-base-300 py-3 px-4 text-center">
+										<article className="text-base-content font-semibold text-sm md:text-base">
+											{`${graph.title} (${selectedYear})`}
+										</article>
+									</div>
+									<div
+										ref={idx === 0 ? graphRef : null}
+										className="flex w-full justify-center p-2 md:p-4 overflow-x-hidden"
+									>
+										{graph.component}
+									</div>
+								</div>
+							))}
+						</div>
+
+						<div className="flex flex-col lg:flex-row justify-between mt-8 gap-6">
+							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
+								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
+									<article className="text-base-content font-semibold text-sm">
+										Gender Distribution: Cases
+									</article>
+								</div>
+								<div className="flex w-full justify-center p-4">
+									<PieChart
+										data={graphData.genderDist}
+										categoryKey="gender"
+										valueKey="percentOfTotal"
+										width={
+											width > 600 ? width / 2 : width - 40
+										}
+										height={300}
+									/>
+								</div>
+							</div>
+							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
+								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
+									<article className="text-base-content font-semibold text-sm">
+										Gender Distribution: Deaths
+									</article>
+								</div>
+								<div className="flex w-full justify-center p-4">
+									<PieChart
+										data={graphData.genderDist}
+										categoryKey="gender"
+										valueKey="mortalityRate"
+										width={
+											width > 600 ? width / 2 : width - 40
+										}
+										height={300}
+									/>
+								</div>
+							</div>
+						</div>
+					</React.Fragment>
+				)}
 			</div>
 			<div className="h-12" />
 		</div>
