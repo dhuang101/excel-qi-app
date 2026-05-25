@@ -99,7 +99,7 @@ function DropdownMultiSelect({
 									checked={selectedValues.includes(option)}
 									onChange={() => onSelect(option, queryKey)}
 								/>
-								<article className="text-left text-base-content lowercase first-letter:uppercase">
+								<article className="text-left text-base-content">
 									{option}
 								</article>
 							</label>
