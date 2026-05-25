@@ -252,7 +252,7 @@ function SearchPage() {
 			{/* Main container: changed from w-2/3 to responsive width */}
 			<div className="w-full md:w-2/3 h-full">
 				<article className="my-4 text-2xl md:text-3xl font-semibold">
-					Cohort Construction
+					Cohort Identification
 				</article>
 				{loading === true ? (
 					<div className="flex flex-col justify-center items-center h-[83vh]">

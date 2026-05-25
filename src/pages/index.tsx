@@ -29,7 +29,7 @@ function Home() {
 					</Link>
 					<Link href={"/search"} className="w-full md:w-auto">
 						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
-							Registry Search
+							Cohort Identification
 						</button>
 					</Link>
 					<Link href={"/reporting"} className="w-full md:w-auto">

@@ -31,7 +31,7 @@ function NavBar() {
 			</Link>
 			<Link href="/search">
 				<article className="btn btn-ghost normal-case rounded-xl text-base-content">
-					Registry Search
+					Cohort Identification
 				</article>
 			</Link>
 			<Link href="/reporting">
