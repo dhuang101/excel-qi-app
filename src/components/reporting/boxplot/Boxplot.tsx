@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import * as d3 from "d3"
 import { AxisLeft } from "./AxisLeftCategoric"
 
@@ -14,12 +14,25 @@ interface BoxplotProps {
 	data: BoxplotStats[]
 }
 
+const valueMap: { [index: string]: any } = {
+	outcm_ecmo_days_2: "Days on ECMO",
+	outcm_icu_days: "Days in ICU",
+	outcm_hosp_days: "Days in Hospital",
+	outcm_mv_days_2: "Days on IMV",
+}
+
+interface TooltipState {
+	stats: BoxplotStats
+	x: number
+	y: number
+}
+
 export const Boxplot = ({ width, height, data }: BoxplotProps) => {
-	// The bounds (= area inside the axis) is calculated by substracting the margins from total width / height
+	const [tooltip, setTooltip] = useState<TooltipState | null>(null)
+
 	const boundsWidth = width - MARGIN.right - MARGIN.left
 	const boundsHeight = height - MARGIN.top - MARGIN.bottom
 
-	// Compute everything derived from the dataset:
 	const { chartMin, chartMax, groups } = useMemo(() => {
 		const [chartMin, chartMax] = data.reduce(
 			([currentMin, currentMax], { min, max }) => [
@@ -32,7 +45,6 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 		return { chartMin, chartMax, groups }
 	}, [data])
 
-	// Compute scales
 	const xScale = d3
 		.scaleLinear()
 		.domain([chartMin, chartMax])
@@ -44,14 +56,32 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 		.domain(groups)
 		.padding(0.25)
 
-	// Build the box shapes
 	const allShapes = groups.map((group, i) => {
-		const { min, q1, median, q3, max } = data.find(
-			(d) => d.name === group,
-		) as BoxplotStats
+		const stats = data.find((d) => d.name === group) as BoxplotStats
+		const { min, q1, median, q3, max } = stats
 
 		return (
-			<g key={i} transform={`translate(0,${yScale(group)})`}>
+			<g
+				key={i}
+				transform={`translate(0,${yScale(group)})`}
+				onMouseMove={(e) => {
+					const bounds = e.currentTarget.getBoundingClientRect()
+					const containerBounds = e.currentTarget
+						.closest(".relative-chart-container")
+						?.getBoundingClientRect()
+
+					const x = e.clientX - (containerBounds?.left || 0)
+					const y = e.clientY - (containerBounds?.top || 0)
+
+					setTooltip({
+						stats,
+						x,
+						y: y - 10,
+					})
+				}}
+				onMouseLeave={() => setTooltip(null)}
+				style={{ cursor: "pointer" }}
+			>
 				<HorizontalBox
 					height={yScale.bandwidth()}
 					q1={xScale(q1)}
@@ -68,20 +98,20 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 	})
 
 	return (
-		<div>
+		<div
+			className="relative-chart-container"
+			style={{ position: "relative", width }}
+		>
 			<svg width={width} height={height}>
 				<g
 					width={boundsWidth}
 					height={boundsHeight}
-					transform={`translate(${[MARGIN.left, MARGIN.top].join(
-						",",
-					)})`}
+					transform={`translate(${[MARGIN.left, MARGIN.top].join(",")})`}
 				>
 					{allShapes}
 
 					<AxisLeft yScale={yScale} />
 
-					{/* X axis uses an additional translation to appear at the bottom */}
 					<g transform={`translate(0, ${boundsHeight})`}>
 						<AxisBottom
 							xScale={xScale}
@@ -101,6 +131,70 @@ export const Boxplot = ({ width, height, data }: BoxplotProps) => {
 					</text>
 				</g>
 			</svg>
+
+			{tooltip && (
+				<div
+					style={{
+						position: "absolute",
+						left: tooltip.x,
+						top: tooltip.y,
+						transform: "translate(-50%, -100%)",
+						backgroundColor: "rgba(0, 0, 0, 0.85)",
+						color: "#fff",
+						padding: "8px 12px",
+						borderRadius: "4px",
+						fontSize: "12px",
+						pointerEvents: "none",
+						zIndex: 10,
+						boxShadow: "0 4px 6px rgba(0,0,0,0.15)",
+						lineHeight: "1.4",
+					}}
+				>
+					<strong
+						style={{
+							display: "block",
+							marginBottom: "4px",
+							borderBottom: "1px solid #555",
+						}}
+					>
+						{valueMap[tooltip.stats.name] || tooltip.stats.name}
+					</strong>
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns: "auto auto",
+							gap: "2px 10px",
+						}}
+					>
+						<span>Max:</span>{" "}
+						<span style={{ textAlign: "right" }}>
+							{tooltip.stats.max}
+						</span>
+						<span>Q3:</span>{" "}
+						<span style={{ textAlign: "right" }}>
+							{tooltip.stats.q3}
+						</span>
+						<span>Median:</span>{" "}
+						<span
+							style={{
+								textAlign: "right",
+								fontWeight: "bold",
+								color: "#60a5fa",
+							}}
+						>
+							{tooltip.stats.median}
+						</span>
+						<span>Q1:</span>{" "}
+						<span style={{ textAlign: "right" }}>
+							{tooltip.stats.q1}
+						</span>
+						<span>Min:</span>{" "}
+						<span style={{ textAlign: "right" }}>
+							{tooltip.stats.min}
+						</span>
+					</div>
+				</div>
+			)}
 		</div>
 	)
 }
