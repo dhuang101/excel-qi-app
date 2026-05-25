@@ -311,7 +311,7 @@ function SummaryPage() {
 								>
 									<div className="flex justify-center w-full bg-base-300 py-3 px-4 text-center">
 										<article className="text-base-content font-semibold text-sm md:text-base">
-											{`${graph.title} (${selectedYear})`}
+											{`${graph.title} (${selectedMonth > 0 ? `${MONTHS.find((m) => m.value === selectedMonth)?.label} - ` : ""}${selectedYear})`}
 										</article>
 									</div>
 									<div
