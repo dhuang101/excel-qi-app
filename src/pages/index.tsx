@@ -13,19 +13,12 @@ function Home() {
 				</article>
 
 				<article className="w-full md:w-3/4 text-center md:text-left leading-relaxed">
-					The EXCEL QI Project is an innovative in development project
-					to provide an intelligent platform for users of the EXCEL
-					Registry by allowing them to efficiently explore and
-					visualize data. The project aims to enhance the
-					accessibility and usability of the data, making it easier
-					for researchers and healthcare professionals to derive
-					insights and make informed decisions.
-					<br />
-					<br />
-					The platform will also leverage AI-driven analysis to
-					interpret patient conditions and support recovery strategies
-					bringing advanced intelligence to the forefront of patient
-					care.
+					The EXCEL QI Project is an innovative, in-development
+					platform that enables users of the EXCEL Registry to
+					efficiently explore and visualise data. The project aims to
+					enhance accessibility and usability of data, supporting
+					researchers and healthcare professionals to derive insights
+					and make informed decisions.
 				</article>
 
 				<div className="flex flex-col md:flex-row mt-8 md:mt-12 w-full md:w-2/3 gap-4 md:justify-between items-center">
