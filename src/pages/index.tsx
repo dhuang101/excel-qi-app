@@ -22,6 +22,11 @@ function Home() {
 				</article>
 
 				<div className="flex flex-col md:flex-row mt-8 md:mt-12 w-full md:w-2/3 gap-4 md:justify-between items-center">
+					<Link href={"/resources"} className="w-full md:w-auto">
+						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
+							Summary Statistics
+						</button>
+					</Link>
 					<Link href={"/search"} className="w-full md:w-auto">
 						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
 							Registry Search
@@ -35,11 +40,6 @@ function Home() {
 					<Link href={"/ecmo-pal"} className="w-full md:w-auto">
 						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
 							ECMO Prediction
-						</button>
-					</Link>
-					<Link href={"/resources"} className="w-full md:w-auto">
-						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
-							ECMO Resources
 						</button>
 					</Link>
 				</div>
