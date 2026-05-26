@@ -43,7 +43,7 @@ export function TranslateExcel(currentRow: any, key: string) {
 			"Congential heart disease",
 			'Primary arrhythmia ("Channelopathy")',
 			"Chronic graft (heart) dysfunction",
-			"Chronic cardiomyopathy no covered above",
+			"Chronic cardiomyopathy not covered above",
 			"Acute decompensated heart not covered above",
 			"Peri-operative support",
 			"N/A",
