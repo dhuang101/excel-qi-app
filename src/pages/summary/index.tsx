@@ -242,7 +242,7 @@ function SummaryPage() {
 						.
 					</span>
 				</div>
-				{caseData === undefined || graphData === undefined ? (
+				{caseData === undefined ? (
 					<div className="flex flex-col items-center justify-center min-h-[40vh] mt-12 p-8 border-base-300 rounded-xl text-center bg-base-50">
 						<article className="text-2xl font-semibold text-base-content">
 							No Case Data Found
@@ -295,95 +295,121 @@ function SummaryPage() {
 								</button>
 							))}
 						</div>
-						<div className="flex flex-col lg:flex-row justify-between mt-8 gap-6">
-							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
-								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
-									<article className="text-base-content font-semibold text-sm">
-										Sex Distribution: Cases
-									</article>
-								</div>
-								<div className="flex w-full justify-center p-4">
-									<PieChart
-										data={graphData.sexDist}
-										categoryKey="sex"
-										valueKey="percentOfTotal"
-										width={
-											width > 600 ? width / 2 : width - 40
-										}
-										height={300}
-									/>
-								</div>
+						{graphData === undefined ? (
+							<div className="flex flex-col items-center justify-center min-h-[40vh] mt-12 p-8 border-base-300 rounded-xl text-center bg-base-50">
+								<article className="text-2xl font-semibold text-base-content">
+									No Graph Data Found
+								</article>
+								<p className="mt-2 text-md text-base-content/60 max-w-md">
+									There is no cases to display for your
+									selected site, month, year, or ECMO mode
+									configuration. Try altering your filters
+									above.
+								</p>
 							</div>
-							<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
-								<div className="flex justify-center w-full bg-base-300 py-3 text-center">
-									<article className="text-base-content font-semibold text-sm">
-										Sex Distribution: Deaths
-									</article>
-								</div>
-								<div className="flex w-full justify-center p-4">
-									<PieChart
-										data={graphData.sexDist}
-										categoryKey="sex"
-										valueKey="mortalityRate"
-										width={
-											width > 600 ? width / 2 : width - 40
-										}
-										height={300}
-									/>
-								</div>
-							</div>
-						</div>
-						<div className="space-y-8 mt-8">
-							{[
-								{
-									title: "Mortality distribution by age",
-									component: (
-										<VerticalBarplot
-											data={graphData.mortalityDist}
-											width={width}
-											height={400}
-										/>
-									),
-								},
-								{
-									title: "Age distribution: Cases vs Deaths",
-									component: (
-										<GroupedBarplot
-											data={graphData.caseDeathDist}
-											width={width}
-											height={400}
-										/>
-									),
-								},
-								{
-									title: "Age distribution of cases",
-									component: (
-										<VerticalBarplot
-											data={graphData.caseDist}
-											width={width}
-											height={400}
-										/>
-									),
-								},
-							].map((graph, idx) => (
-								<div
-									key={idx}
-									className="flex flex-col w-full outline outline-base-300 shadow-xl rounded-xl overflow-hidden"
-								>
-									<div className="flex justify-center w-full bg-base-300 py-3 px-4 text-center">
-										<article className="text-base-content font-semibold text-sm md:text-base">
-											{`${graph.title} (${selectedMonth > 0 ? `${MONTHS.find((m) => m.value === selectedMonth)?.label} - ` : ""}${selectedYear})`}
-										</article>
+						) : (
+							<React.Fragment>
+								<div className="flex flex-col lg:flex-row justify-between mt-8 gap-6">
+									<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
+										<div className="flex justify-center w-full bg-base-300 py-3 text-center">
+											<article className="text-base-content font-semibold text-sm">
+												Sex Distribution: Cases
+											</article>
+										</div>
+										<div className="flex w-full justify-center p-4">
+											<PieChart
+												data={graphData.sexDist}
+												categoryKey="sex"
+												valueKey="percentOfTotal"
+												width={
+													width > 600
+														? width / 2
+														: width - 40
+												}
+												height={300}
+											/>
+										</div>
 									</div>
-									<div
-										ref={idx === 0 ? graphRef : null}
-										className="flex w-full justify-center p-2 md:p-4 overflow-x-hidden"
-									>
-										{graph.component}
+									<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
+										<div className="flex justify-center w-full bg-base-300 py-3 text-center">
+											<article className="text-base-content font-semibold text-sm">
+												Sex Distribution: Deaths
+											</article>
+										</div>
+										<div className="flex w-full justify-center p-4">
+											<PieChart
+												data={graphData.sexDist}
+												categoryKey="sex"
+												valueKey="mortalityRate"
+												width={
+													width > 600
+														? width / 2
+														: width - 40
+												}
+												height={300}
+											/>
+										</div>
 									</div>
 								</div>
-							))}
-						</div>
+								<div className="space-y-8 mt-8">
+									{[
+										{
+											title: "Mortality distribution by age",
+											component: (
+												<VerticalBarplot
+													data={
+														graphData.mortalityDist
+													}
+													width={width}
+													height={400}
+												/>
+											),
+										},
+										{
+											title: "Age distribution: Cases vs Deaths",
+											component: (
+												<GroupedBarplot
+													data={
+														graphData.caseDeathDist
+													}
+													width={width}
+													height={400}
+												/>
+											),
+										},
+										{
+											title: "Age distribution of cases",
+											component: (
+												<VerticalBarplot
+													data={graphData.caseDist}
+													width={width}
+													height={400}
+												/>
+											),
+										},
+									].map((graph, idx) => (
+										<div
+											key={idx}
+											className="flex flex-col w-full outline outline-base-300 shadow-xl rounded-xl overflow-hidden"
+										>
+											<div className="flex justify-center w-full bg-base-300 py-3 px-4 text-center">
+												<article className="text-base-content font-semibold text-sm md:text-base">
+													{`${graph.title} (${selectedMonth > 0 ? `${MONTHS.find((m) => m.value === selectedMonth)?.label} - ` : ""}${selectedYear})`}
+												</article>
+											</div>
+											<div
+												ref={
+													idx === 0 ? graphRef : null
+												}
+												className="flex w-full justify-center p-2 md:p-4 overflow-x-hidden"
+											>
+												{graph.component}
+											</div>
+										</div>
+									))}
+								</div>
+							</React.Fragment>
+						)}
 					</React.Fragment>
 				)}
 			</div>
