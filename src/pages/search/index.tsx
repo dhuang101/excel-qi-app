@@ -52,7 +52,6 @@ function SearchPage() {
 	// loading
 	const [loading, setLoading] = useState(false)
 
-	const modalRef = useRef<HTMLDialogElement>(null)
 	const graphContainer = useRef<HTMLDivElement | null>(null)
 
 	// returns to query page
@@ -264,81 +263,8 @@ function SearchPage() {
 				) : state.searchResults !== null ? (
 					// search completed
 					<React.Fragment>
-						{/* dialog overlay for modal */}
-						<dialog ref={modalRef} className="modal">
-							<div className="modal-box max-w-3xl">
-								<React.Fragment>
-									<article className="font-bold text-xl">
-										Request Cohort Export
-									</article>
-									<div className="flex flex-col mt-4">
-										<article className="font-semibold text-lg">
-											Searched for Patients With
-										</article>
-										{`Site: ${
-											selectedSite === "all"
-												? "All Sites"
-												: FormatName(selectedSite)
-										}`}{" "}
-										{Object.keys(userEnteredQuery).map(
-											(key) => {
-												const rawValue =
-													userEnteredQuery[
-														key as keyof UserEnteredQuery
-													]
-												let value:
-													| string
-													| null
-													| undefined
-
-												if (Array.isArray(rawValue)) {
-													if (rawValue.length === 0)
-														return null
-													value = rawValue.join(", ")
-												} else if (
-													rawValue instanceof Date
-												) {
-													value = FormatDate(rawValue)
-												} else {
-													value = rawValue?.toString()
-												}
-												if (
-													value === null ||
-													value === undefined
-												)
-													return null
-
-												return (
-													<div key={key}>
-														{
-															KEY_TO_TITLE[
-																key as keyof UserEnteredQuery
-															]
-														}
-														: {value}
-													</div>
-												)
-											},
-										)}
-										<article className="my-3">
-											Total Cohort Size:{" "}
-											{state.searchResults.length}{" "}
-											patient(s)
-										</article>
-										<article>
-											Please send these details to the
-											administrator of EXCEL to request an
-											export of this cohort
-										</article>
-									</div>
-								</React.Fragment>
-							</div>
-							<form method="dialog" className="modal-backdrop">
-								<button>close</button>
-							</form>
-						</dialog>
 						{/* Action buttons: changed to flex-col on mobile */}
-						<div className="flex flex-col sm:flex-row w-full gap-2 justify-between mb-4">
+						<div className="flex flex-col sm:flex-row w-full gap-2 justify-between">
 							<button
 								className="btn btn-primary w-full sm:w-auto"
 								onClick={handleBack}
@@ -353,17 +279,9 @@ function SearchPage() {
 									? "Close Graphs"
 									: "Visualise Cohort"}
 							</button>
-							<button
-								className="btn btn-primary w-full sm:w-auto"
-								onClick={() => {
-									modalRef.current!.showModal()
-								}}
-							>
-								Export Cohort
-							</button>
 						</div>
 						{/* Filters and Pagination row: responsive stacking */}
-						<div className="flex flex-col md:flex-row w-full items-start md:items-center justify-between mb-2 gap-4">
+						<div className="flex flex-col md:flex-row w-full min-h-8 items-start md:items-center justify-between my-2 gap-4">
 							<article className="w-full md:w-2/3 text-sm md:text-md">
 								{`Filters: ${[
 									selectedSite === "all"
