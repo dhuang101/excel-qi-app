@@ -232,7 +232,7 @@ function SummaryPage() {
 							d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
 						/>
 					</svg>
-					<span>
+					<article>
 						The summary figures and charts below only reflect data
 						collected during the selected month and year:{" "}
 						<strong>
@@ -240,7 +240,7 @@ function SummaryPage() {
 							{selectedYear}
 						</strong>
 						.
-					</span>
+					</article>
 				</div>
 				{caseData === undefined ? (
 					<div className="flex flex-col items-center justify-center min-h-[40vh] mt-12 p-8 border-base-300 rounded-xl text-center bg-base-50">

@@ -263,7 +263,6 @@ function SearchPage() {
 				) : state.searchResults !== null ? (
 					// search completed
 					<React.Fragment>
-						{/* Action buttons: changed to flex-col on mobile */}
 						<div className="flex flex-col sm:flex-row w-full gap-2 justify-between">
 							<button
 								className="btn btn-primary w-full sm:w-auto"
@@ -280,7 +279,6 @@ function SearchPage() {
 									: "Visualise Cohort"}
 							</button>
 						</div>
-						{/* Filters and Pagination row: responsive stacking */}
 						<div className="flex flex-col md:flex-row w-full min-h-8 items-start md:items-center justify-between my-2 gap-4">
 							<article className="w-full md:w-2/3 text-sm md:text-md">
 								{`Filters: ${[
@@ -404,7 +402,6 @@ function SearchPage() {
 							<article className="mb-2 text-xl">
 								Select site to search
 							</article>
-							{/* Inputs: changed from w-1/4 to w-full on mobile */}
 							<label className="form-control w-full md:w-1/2 lg:w-1/4">
 								<select
 									className="select w-full"
@@ -434,9 +431,29 @@ function SearchPage() {
 									)}
 								</select>
 							</label>
-							<article className="mt-6 mb-2 text-xl">
+							<article className="mt-6 text-xl">
 								Patient attributes
 							</article>
+							<div className="alert alert-primary w-1/2 my-4 shadow-sm rounded-lg flex gap-2 items-center text-sm">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									className="h-6 w-6 shrink-0 stroke-current"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+									/>
+								</svg>
+								<article>
+									Select filters to apply to the search. None
+									of the filters are mandatory. Click "Search"
+									when done.
+								</article>
+							</div>
 							<div className="flex flex-col w-full">
 								<div className="flex flex-col w-full md:w-1/2 lg:w-1/4 gap-y-3">
 									<DropdownMultiSelect
