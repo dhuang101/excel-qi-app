@@ -107,7 +107,7 @@ function SingleView({ state }: PropType) {
 					displayedGraph={displayedGraph}
 					displayedSite={displayedSite}
 					width={width}
-					height={625}
+					height={675}
 				/>
 			</div>
 		</React.Fragment>

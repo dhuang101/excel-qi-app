@@ -97,7 +97,7 @@ function ComparisonView({ state }: PropType) {
 						displayedGraph={displayedGraph}
 						displayedSite={leftDisplayedSite}
 						width={width / 2.2}
-						height={600}
+						height={650}
 					/>
 				</div>
 				<div className="flex flex-col items-center">
@@ -124,7 +124,7 @@ function ComparisonView({ state }: PropType) {
 						displayedGraph={displayedGraph}
 						displayedSite={rightDisplayedSite}
 						width={width / 2.2}
-						height={600}
+						height={650}
 					/>
 				</div>
 			</div>
