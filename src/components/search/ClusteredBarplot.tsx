@@ -18,6 +18,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 	margin = { top: 50, right: 208, bottom: 100, left: 50 },
 }) => {
 	const svgRef = useRef<SVGSVGElement | null>(null)
+	const containerRef = useRef<HTMLDivElement | null>(null)
 
 	function handleDownload() {
 		SvgImageDownload(svgRef, "clustered-barplot.jpg")
@@ -27,18 +28,37 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 		const svg = d3.select(svgRef.current)
 		svg.selectAll("*").remove() // Clear previous content
 
+		// Select or append HTML tooltip element inside the relative wrapper
+		const container = d3.select(containerRef.current)
+		let tooltip = container.select<HTMLDivElement>(".d3-tooltip")
+		if (tooltip.empty()) {
+			tooltip = container
+				.append("div")
+				.attr("class", "d3-tooltip")
+				.style("position", "absolute")
+				.style("visibility", "hidden")
+				.style("pointer-events", "none")
+				.style("background-color", "rgba(17, 24, 39, 0.95)")
+				.style("color", "#fff")
+				.style("padding", "10px")
+				.style("border-radius", "6px")
+				.style("font-size", "12px")
+				.style("box-shadow", "0 4px 6px -1px rgb(0 0 0 / 0.1)")
+				.style("z-index", "50")
+		}
+
 		const chartWidth = width - margin.left - margin.right
 		const chartHeight = height - margin.top - margin.bottom
 
 		// Clean keys and data once
 		const cleanKeys = keys.filter(
-			(k) => k !== undefined && k !== "undefined"
+			(k) => k !== undefined && k !== "undefined",
 		)
 		const cleanData = data.filter(
 			(d) =>
 				d.category !== "N/A" &&
 				d.category !== undefined &&
-				d.category !== "undefined"
+				d.category !== "undefined",
 		)
 
 		// Create scales
@@ -59,7 +79,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.domain([
 				0,
 				d3.max(cleanData, (d) =>
-					d3.max(cleanKeys, (key) => Number(d[key]) || 0)
+					d3.max(cleanKeys, (key) => Number(d[key]) || 0),
 				) || 0,
 			])
 			.nice()
@@ -93,11 +113,11 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 		// Function to wrap text
 		function wrapText(
 			text: d3.Selection<d3.BaseType, unknown, SVGGElement, unknown>,
-			width: number
+			width: number,
 		): void {
 			text.each(function () {
 				const textElement = d3.select<SVGTextElement, unknown>(
-					this as SVGTextElement
+					this as SVGTextElement,
 				)
 				const words: string[] = textElement.text().split(/\s+/)
 				let line: string[] = []
@@ -151,7 +171,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 				d3
 					.axisLeft(y)
 					.tickSize(-chartWidth)
-					.tickFormat(() => "")
+					.tickFormat(() => ""),
 			)
 
 		grid.selectAll("line")
@@ -171,8 +191,13 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("transform", (d) => `translate(${x0(d.category)},0)`)
 
 		bars.selectAll("rect")
-			.data((d) =>
-				cleanKeys.map((key) => ({ key, value: Number(d[key]) || 0 }))
+			.data((parentData) =>
+				cleanKeys.map((key) => ({
+					key,
+					value: Number(parentData[key]) || 0,
+					// Pass down parent cluster details for the tooltip
+					cluster: parentData,
+				})),
 			)
 			.enter()
 			.append("rect")
@@ -180,18 +205,59 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("y", (d) => (d.value === 0 ? chartHeight - 3 : y(d.value)))
 			.attr("width", x1.bandwidth())
 			.attr("height", (d) =>
-				d.value === 0 ? 3 : chartHeight - y(d.value)
+				d.value === 0 ? 3 : chartHeight - y(d.value),
 			)
 			.attr("stroke", "var(--color-base-content)")
 			.attr("stroke-width", "1")
 			.attr("fill", (d) => color(d.key) || "#000")
 			.attr("fill-opacity", "0.6")
+			.style("cursor", "pointer")
+			// Tooltip interactivity
+			.on("pointerover", function (event, d) {
+				d3.select(this).attr("fill-opacity", "0.9")
+
+				const clusterRows = cleanKeys
+					.map((k) => {
+						const val = d.cluster[k] || 0
+						const isCurrent =
+							k === d.key
+								? "font-weight: bold; color: #38bdf8;"
+								: ""
+						return `<div style="display: flex; justify-content: space-between; gap: 16px; ${isCurrent}">
+                            <span>${k}:</span>
+                            <span>${val}</span>
+                        </div>`
+					})
+					.join("")
+
+				tooltip.style("visibility", "visible").html(`
+                        <div style="font-weight: 600; margin-bottom: 4px; border-bottom: 1px solid #4b5563; padding-bottom: 2px;">
+                            ${d.cluster.category}
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            ${clusterRows}
+                        </div>
+                    `)
+			})
+			.on("pointermove", function (event) {
+				const [pointerX, pointerY] = d3.pointer(
+					event,
+					containerRef.current,
+				)
+				tooltip
+					.style("left", `${pointerX + 15}px`)
+					.style("top", `${pointerY - 15}px`)
+			})
+			.on("pointerleave", function () {
+				d3.select(this).attr("fill-opacity", "0.6")
+				tooltip.style("visibility", "hidden")
+			})
 
 		bars.selectAll(".bar-label")
 			.data((d) => {
 				const total = cleanKeys.reduce(
 					(sum, key) => sum + (Number(d[key]) || 0),
-					0
+					0,
 				)
 
 				return cleanKeys.map((key) => {
@@ -205,7 +271,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("class", "bar-label")
 			.attr("x", (d) => (x1(d.key) || 0) + x1.bandwidth() / 2)
 			.attr("y", (d) =>
-				d.value === 0 ? chartHeight - 7 : y(d.value) - 5
+				d.value === 0 ? chartHeight - 7 : y(d.value) - 5,
 			)
 			.attr("text-anchor", "middle")
 			.attr("font-size", "10px")
@@ -236,7 +302,7 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 			.attr("class", "legend")
 			.attr(
 				"transform",
-				`translate(${width - margin.right + 20}, ${margin.top})`
+				`translate(${width - margin.right + 20}, ${margin.top})`,
 			)
 
 		cleanKeys.forEach((key, i) => {
@@ -262,9 +328,9 @@ const ClusteredBarplot: React.FC<ClusteredBarplotProps> = ({
 	}, [data, keys, width, height, margin])
 
 	return (
-		<div className="flex flex-col items-center">
+		<div ref={containerRef} className="relative flex flex-col items-center">
 			<svg ref={svgRef}></svg>
-			<button onClick={handleDownload} className="btn btn-primary">
+			<button onClick={handleDownload} className="btn btn-primary mt-4">
 				Download Plot
 			</button>
 		</div>
