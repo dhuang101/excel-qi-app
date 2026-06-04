@@ -4,9 +4,7 @@ import axios from "axios"
 import React from "react"
 import DateRangeInput from "@/components/search/DateRangeInput"
 import DropdownInput from "@/components/search/DropdownInput"
-import { KEY_TO_TITLE } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
-import { FormatDate } from "@/utilities/FormatDate"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
 import ClusteredBarplot from "@/components/search/ClusteredBarplot"
 import { useSession } from "next-auth/react"
@@ -337,24 +335,24 @@ function SearchPage() {
 								</article>
 								<div
 									ref={graphContainer}
-									className="flex justify-center w-full overflow-x-auto"
+									className="flex justify-center w-[90vw]"
 								>
 									<ClusteredBarplot
 										data={state.graphDataResp}
 										keys={state.graphKeys}
 										width={width}
-										height={400} // reduced height for mobile better viewing
+										height={600}
 									/>
 								</div>
-								<article className="font-semibold text-lg mt-16 text-center">
+								<article className="font-semibold text-lg mt-16">
 									Outcomes for Primary Cardiac Diagnoses
 								</article>
-								<div className="flex justify-center w-full overflow-x-auto">
+								<div className="flex justify-center w-[90vw]">
 									<ClusteredBarplot
 										data={state.graphDataCardiac}
 										keys={state.graphKeys}
 										width={width}
-										height={400}
+										height={600}
 									/>
 								</div>
 								<div className="h-8" />
