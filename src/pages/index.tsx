@@ -22,7 +22,7 @@ function Home() {
 				</article>
 
 				<div className="flex flex-col md:flex-row mt-8 md:mt-12 w-full md:w-2/3 gap-4 md:justify-between items-center">
-					<Link href={"/resources"} className="w-full md:w-auto">
+					<Link href={"/summary"} className="w-full md:w-auto">
 						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
 							Summary Statistics
 						</button>
