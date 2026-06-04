@@ -59,7 +59,7 @@ function SummaryPage() {
 		graph_data: {},
 	})
 	// state attributes selector at the top
-	const [availableYears, setAvailableYears] = useState([])
+	const [availableYears, setAvailableYears] = useState<number[]>([])
 	const [selectedYear, setSelectedYear] = useState(0)
 	const [selectedMonth, setSelectedMonth] = useState(0)
 	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
@@ -131,14 +131,21 @@ function SummaryPage() {
 	}, [selectedYear, selectedMonth, ecmoMode, session])
 
 	useEffect(() => {
-		setAvailableYears(state.years[selectedSite])
+		const siteYears = state.years[selectedSite] || []
+		setAvailableYears(siteYears)
 		setCaseData(state.ecmo_data[selectedSite])
 		setGraphData(state.graph_data[selectedSite])
-	}, [state, selectedSite])
+
+		if (siteYears.length > 0 && !siteYears.includes(selectedYear)) {
+			setSelectedYear(siteYears.at(-1))
+		}
+	}, [state, selectedSite, selectedYear])
 
 	function handleButtonClick(mode: EcmoMode) {
 		setEcmoMode(mode)
 	}
+
+	console.log(caseData, graphData)
 
 	return caseData === null || graphData === null || !availableYears ? (
 		<div className="flex flex-col justify-center items-center h-[83vh]">
@@ -197,12 +204,24 @@ function SummaryPage() {
 				<div className="w-full">
 					<input
 						type="range"
-						min={availableYears[0]}
-						max={availableYears.at(-1)}
-						value={selectedYear}
-						onChange={(e) =>
-							setSelectedYear(Number(e.target.value))
+						min={0}
+						max={
+							availableYears.length > 0
+								? availableYears.length - 1
+								: 0
 						}
+						value={
+							availableYears.indexOf(selectedYear) !== -1
+								? availableYears.indexOf(selectedYear)
+								: 0
+						}
+						onChange={(e) => {
+							const index = Number(e.target.value)
+							const actualYear = availableYears[index]
+							if (actualYear) {
+								setSelectedYear(actualYear)
+							}
+						}}
 						className="range range-primary [--range-fill:0] w-full"
 						step={1}
 					/>
@@ -394,7 +413,7 @@ function SummaryPage() {
 										>
 											<div className="flex justify-center w-full bg-base-300 py-3 px-4 text-center">
 												<article className="text-base-content font-semibold text-sm md:text-base">
-													{`${graph.title} (${selectedMonth > 0 ? `${MONTHS.find((m) => m.value === selectedMonth)?.label} - ` : ""}${selectedYear})`}
+													{` ${graph.title} (${selectedMonth > 0 ? `${MONTHS.find((m) => m.value === selectedMonth)?.label} - ` : ""}${selectedYear})`}
 												</article>
 											</div>
 											<div
