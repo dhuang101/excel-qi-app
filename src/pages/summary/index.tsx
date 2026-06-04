@@ -49,7 +49,6 @@ interface GraphData {
 type EcmoMode = "total" | "V-V" | "V-A"
 
 function SummaryPage() {
-	// auth session
 	const { data: session, status } = useSession()
 
 	const [state, dispatch] = useReducer(SummaryReducer, {
@@ -58,29 +57,31 @@ function SummaryPage() {
 		ecmo_data: {},
 		graph_data: {},
 	})
-	// state attributes selector at the top
+
 	const [availableYears, setAvailableYears] = useState<number[]>([])
 	const [selectedYear, setSelectedYear] = useState(0)
 	const [selectedMonth, setSelectedMonth] = useState(0)
 	const [ecmoMode, setEcmoMode] = useState<EcmoMode>("total")
-	// state attributes for displayed data
 	const [selectedSite, setSelectedSite] = useState("all_sites")
 	const [caseData, setCaseData] = useState<CaseData | null>(null)
 	const [graphData, setGraphData] = useState<GraphData | null>(null)
 	const [width, setWidth] = useState(500)
 
-	// dynamically assigns width variable to create responsive d3 graphs
+	const [initialLoading, setInitialLoading] = useState(true)
+	const [casesLoading, setCasesLoading] = useState(false)
+	const [graphsLoading, setGraphsLoading] = useState(false)
+
 	const graphRef = useCallback((node: HTMLDivElement | null) => {
 		if (node !== null) {
 			const resizeObserver = new ResizeObserver((entries) => {
 				setWidth(entries[0].contentRect.width)
 			})
-
 			resizeObserver.observe(node)
 		}
 	}, [])
 
 	useEffect(() => {
+		setInitialLoading(true)
 		axios
 			.post("/api/database/summary/getAvailableYears", {
 				role: session ? session?.user.role : "public",
@@ -94,14 +95,20 @@ function SummaryPage() {
 						years: result.data,
 					},
 				})
-				setAvailableYears(result.data["all_sites"])
-				setSelectedYear(result.data["all_sites"].at(-1))
+				const initialYears = result.data["all_sites"] || []
+				setAvailableYears(initialYears)
+				if (initialYears.length > 0) {
+					setSelectedYear(initialYears.at(-1))
+				}
 			})
+			.catch((err) => console.error(err))
+			.finally(() => setInitialLoading(false))
 	}, [session])
 
 	useEffect(() => {
 		if (selectedYear === 0) return
 
+		setCasesLoading(true)
 		axios
 			.post("api/database/summary/getCaseStats", {
 				role: session ? session?.user.role : "public",
@@ -112,11 +119,19 @@ function SummaryPage() {
 			.then((result) => {
 				dispatch({ type: ACTION.SET_ECMO_STATS, payload: result.data })
 			})
+			.catch((err) => console.error(err))
+			.finally(() => setCasesLoading(false))
 	}, [selectedYear, selectedMonth, session])
 
 	useEffect(() => {
-		if (selectedYear === 0) return
+		if (
+			selectedYear === 0 ||
+			!caseData ||
+			Object.keys(caseData).length === 0
+		)
+			return
 
+		setGraphsLoading(true)
 		axios
 			.post("api/database/summary/getGraphData", {
 				role: session ? session?.user.role : "public",
@@ -128,13 +143,16 @@ function SummaryPage() {
 			.then((result) => {
 				dispatch({ type: ACTION.SET_GRAPH_DATA, payload: result.data })
 			})
-	}, [selectedYear, selectedMonth, ecmoMode, session])
+			.catch((err) => console.error(err))
+			.finally(() => setGraphsLoading(false))
+	}, [selectedYear, selectedMonth, ecmoMode, caseData, session])
 
 	useEffect(() => {
 		const siteYears = state.years[selectedSite] || []
 		setAvailableYears(siteYears)
-		setCaseData(state.ecmo_data[selectedSite])
-		setGraphData(state.graph_data[selectedSite])
+
+		setCaseData(state.ecmo_data[selectedSite] || null)
+		setGraphData(state.graph_data[selectedSite] || null)
 
 		if (siteYears.length > 0 && !siteYears.includes(selectedYear)) {
 			setSelectedYear(siteYears.at(-1))
@@ -145,18 +163,55 @@ function SummaryPage() {
 		setEcmoMode(mode)
 	}
 
-	console.log(caseData, graphData)
+	if (initialLoading && availableYears.length === 0) {
+		return (
+			<div className="flex flex-col justify-center items-center h-[83vh]">
+				<CircularProgress size={80} />
+				<article className="text-lg font-semibold pt-4">
+					Fetching Initial Data...
+				</article>
+			</div>
+		)
+	}
 
-	return caseData === null || graphData === null || !availableYears ? (
-		<div className="flex flex-col justify-center items-center h-[83vh]">
-			<CircularProgress size={80} />
-			<article className="text-lg font-semibold pt-4">
-				Fetching Data...
-			</article>
-		</div>
-	) : (
+	const checkIsGraphDataEmpty = (data: GraphData | null): boolean => {
+		if (!data || Object.keys(data).length === 0) return true
+
+		const totalValueDist = (data.mortalityDist || []).reduce(
+			(sum, item) => sum + (item.value || 0),
+			0,
+		)
+		const totalCaseDist = (data.caseDist || []).reduce(
+			(sum, item) => sum + (item.value || 0),
+			0,
+		)
+		const totalSexDist = (data.sexDist || []).reduce(
+			(sum, item) =>
+				sum + (item.percentOfTotal || 0) + (item.mortalityRate || 0),
+			0,
+		)
+		const totalCaseDeathDist = (data.caseDeathDist || []).reduce(
+			(sum, item) =>
+				sum + (item.totalCases || 0) + (item.totalDeaths || 0),
+			0,
+		)
+
+		return (
+			totalValueDist +
+				totalCaseDist +
+				totalSexDist +
+				totalCaseDeathDist ===
+			0
+		)
+	}
+
+	const hasNoCaseData = !caseData || Object.keys(caseData).length === 0
+	const hasNoGraphData = !graphData || checkIsGraphDataEmpty(graphData)
+
+	return (
 		<div className="flex flex-col w-full items-center justify-center p-4">
 			<div className="flex flex-col w-full lg:w-2/3 mt-2">
+				{/* Filters Row */}
 				<div className="flex flex-col md:flex-row justify-between gap-4">
 					<fieldset className="fieldset w-full md:w-1/3">
 						<legend className="fieldset-legend">
@@ -198,10 +253,11 @@ function SummaryPage() {
 					)}
 				</div>
 
+				{/* Range Slider */}
 				<article className="text-lg w-full mt-6">
 					Available Years
 				</article>
-				<div className="w-full">
+				<div className="w-full relative">
 					<input
 						type="range"
 						min={0}
@@ -237,6 +293,7 @@ function SummaryPage() {
 					</div>
 				</div>
 
+				{/* Alert Notification Header */}
 				<div className="alert alert-primary mt-6 shadow-sm rounded-lg flex gap-2 items-center text-sm">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -261,46 +318,57 @@ function SummaryPage() {
 						.
 					</article>
 				</div>
-				{caseData === undefined ? (
-					<div className="flex flex-col items-center justify-center min-h-[40vh] mt-12 p-8 border-base-300 rounded-xl text-center bg-base-50">
-						<article className="text-2xl font-semibold text-base-content">
+
+				{/* --- MAIN CONDITIONAL RENDERING BLOCK --- */}
+				{hasNoCaseData ? (
+					<div className="flex flex-col items-center justify-center min-h-[30vh] mt-8 p-8 border border-dashed border-base-300 rounded-xl text-center bg-base-50">
+						<article className="text-xl font-semibold text-base-content">
 							No Case Data Found
 						</article>
-						<p className="mt-2 text-md text-base-content/60 max-w-md">
-							There are no recorded instances matching your
-							selected site, month, or year configuration. Try
-							altering your filters above.
+						<p className="mt-1 text-sm text-base-content/60 max-w-sm">
+							There are no cases recorded for the filters
+							currently selected, please try adjusting the month
+							or year to view available data and graphs.
 						</p>
 					</div>
 				) : (
 					<React.Fragment>
-						<div className="flex flex-col md:flex-row justify-between w-full mt-8 gap-4">
-							{[
-								{ label: "Total Cases", data: caseData.total },
-								{ label: "V-A Cases", data: caseData.va },
-								{ label: "V-V Cases", data: caseData.vv },
-							].map((card, idx) => (
-								<div
-									key={idx}
-									className="flex flex-col w-full md:w-[31%] shadow-sm rounded-lg overflow-hidden outline outline-base-300"
-								>
-									<div className="flex min-h-12 items-center justify-center bg-base-300">
-										<article className="font-semibold text-base-content text-lg tracking-tight">
-											{card.label}
-										</article>
+						{/* Summary Cards Layout */}
+						<div
+							className={`transition-opacity duration-200 ${casesLoading ? "opacity-40 pointer-events-none" : "opacity-100"}`}
+						>
+							<div className="flex flex-col md:flex-row justify-between w-full mt-8 gap-4">
+								{[
+									{
+										label: "Total Cases",
+										data: caseData.total,
+									},
+									{ label: "V-A Cases", data: caseData.va },
+									{ label: "V-V Cases", data: caseData.vv },
+								].map((card, idx) => (
+									<div
+										key={idx}
+										className="flex flex-col w-full md:w-[31%] shadow-sm rounded-lg overflow-hidden outline outline-base-300"
+									>
+										<div className="flex min-h-12 items-center justify-center bg-base-300">
+											<article className="font-semibold text-base-content text-lg tracking-tight">
+												{card.label}
+											</article>
+										</div>
+										<div className="flex flex-col min-h-24 items-center justify-center bg-base-100">
+											<article className="text-4xl font-bold">
+												{card.data?.count ?? 0}
+											</article>
+											<article className="mt-1 text-sm opacity-70">
+												{`Mortality: ${card.data?.mortalityRate ?? 0}%`}
+											</article>
+										</div>
 									</div>
-									<div className="flex flex-col min-h-24 items-center justify-center bg-base-100">
-										<article className="text-4xl font-bold">
-											{card.data.count}
-										</article>
-										<article className="mt-1 text-sm opacity-70">
-											{`Mortality: ${card.data.mortalityRate}%`}
-										</article>
-									</div>
-								</div>
-							))}
+								))}
+							</div>
 						</div>
 
+						{/* Mode Selectors */}
 						<div className="flex flex-col sm:flex-row justify-between w-full mt-8 gap-2 bg-base-200 p-2 rounded-lg">
 							{["total", "V-A", "V-V"].map((mode) => (
 								<button
@@ -314,121 +382,141 @@ function SummaryPage() {
 								</button>
 							))}
 						</div>
-						{graphData === undefined ? (
-							<div className="flex flex-col items-center justify-center min-h-[40vh] mt-12 p-8 border-base-300 rounded-xl text-center bg-base-50">
-								<article className="text-2xl font-semibold text-base-content">
-									No Graph Data Found
-								</article>
-								<p className="mt-2 text-md text-base-content/60 max-w-md">
-									There is no cases to display for your
-									selected site, month, year, or ECMO mode
-									configuration. Try altering your filters
-									above.
-								</p>
-							</div>
-						) : (
-							<React.Fragment>
-								<div className="flex flex-col lg:flex-row justify-between mt-8 gap-6">
-									<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
-										<div className="flex justify-center w-full bg-base-300 py-3 text-center">
-											<article className="text-base-content font-semibold text-sm">
-												Sex Distribution: Cases
-											</article>
-										</div>
-										<div className="flex w-full justify-center p-4">
-											<PieChart
-												data={graphData.sexDist}
-												categoryKey="sex"
-												valueKey="percentOfTotal"
-												width={
-													width > 600
-														? width / 2
-														: width - 40
-												}
-												height={300}
-											/>
-										</div>
-									</div>
-									<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
-										<div className="flex justify-center w-full bg-base-300 py-3 text-center">
-											<article className="text-base-content font-semibold text-sm">
-												Sex Distribution: Deaths
-											</article>
-										</div>
-										<div className="flex w-full justify-center p-4">
-											<PieChart
-												data={graphData.sexDist}
-												categoryKey="sex"
-												valueKey="mortalityRate"
-												width={
-													width > 600
-														? width / 2
-														: width - 40
-												}
-												height={300}
-											/>
-										</div>
-									</div>
+
+						{/* --- GRAPH VISUALIZATION SUB-SECTION --- */}
+						<div
+							className={`transition-opacity duration-200 ${graphsLoading ? "opacity-40 pointer-events-none" : "opacity-100"}`}
+						>
+							{hasNoGraphData ? (
+								<div className="flex flex-col items-center justify-center min-h-[40vh] mt-8 p-8 border border-dashed border-base-300 rounded-xl text-center bg-base-50">
+									<article className="text-2xl font-semibold text-base-content">
+										No Graph Data Found
+									</article>
+									<p className="mt-2 text-md text-base-content/60 max-w-md">
+										There are no cases recorded for the
+										filters currently selected, please try
+										adjusting the month, year, or ECMO mode
+										to view available graphs.
+									</p>
 								</div>
-								<div className="space-y-8 mt-8">
-									{[
-										{
-											title: "Mortality distribution by age",
-											component: (
-												<VerticalBarplot
-													data={
-														graphData.mortalityDist
-													}
-													width={width}
-													height={400}
-												/>
-											),
-										},
-										{
-											title: "Age distribution: Cases vs Deaths",
-											component: (
-												<GroupedBarplot
-													data={
-														graphData.caseDeathDist
-													}
-													width={width}
-													height={400}
-												/>
-											),
-										},
-										{
-											title: "Age distribution of cases",
-											component: (
-												<VerticalBarplot
-													data={graphData.caseDist}
-													width={width}
-													height={400}
-												/>
-											),
-										},
-									].map((graph, idx) => (
-										<div
-											key={idx}
-											className="flex flex-col w-full outline outline-base-300 shadow-xl rounded-xl overflow-hidden"
-										>
-											<div className="flex justify-center w-full bg-base-300 py-3 px-4 text-center">
-												<article className="text-base-content font-semibold text-sm md:text-base">
-													{` ${graph.title} (${selectedMonth > 0 ? `${MONTHS.find((m) => m.value === selectedMonth)?.label} - ` : ""}${selectedYear})`}
+							) : (
+								<React.Fragment>
+									{/* Pie Charts Layout */}
+									<div className="flex flex-col lg:flex-row justify-between mt-8 gap-6">
+										<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
+											<div className="flex justify-center w-full bg-base-300 py-3 text-center">
+												<article className="text-base-content font-semibold text-sm">
+													Sex Distribution: Cases
 												</article>
 											</div>
-											<div
-												ref={
-													idx === 0 ? graphRef : null
-												}
-												className="flex w-full justify-center p-2 md:p-4 overflow-x-hidden"
-											>
-												{graph.component}
+											<div className="flex w-full justify-center p-4">
+												<PieChart
+													data={
+														graphData.sexDist || []
+													}
+													categoryKey="sex"
+													valueKey="percentOfTotal"
+													width={
+														width > 600
+															? width / 2
+															: width - 40
+													}
+													height={300}
+												/>
 											</div>
 										</div>
-									))}
-								</div>
-							</React.Fragment>
-						)}
+										<div className="flex flex-col w-full lg:w-[49%] outline outline-base-300 shadow-xl rounded-xl overflow-hidden">
+											<div className="flex justify-center w-full bg-base-300 py-3 text-center">
+												<article className="text-base-content font-semibold text-sm">
+													Sex Distribution: Deaths
+												</article>
+											</div>
+											<div className="flex w-full justify-center p-4">
+												<PieChart
+													data={
+														graphData.sexDist || []
+													}
+													categoryKey="sex"
+													valueKey="mortalityRate"
+													width={
+														width > 600
+															? width / 2
+															: width - 40
+													}
+													height={300}
+												/>
+											</div>
+										</div>
+									</div>
+
+									{/* Bar Plots Layout */}
+									<div className="space-y-8 mt-8">
+										{[
+											{
+												title: "Mortality distribution by age",
+												component: (
+													<VerticalBarplot
+														data={
+															graphData.mortalityDist ||
+															[]
+														}
+														width={width}
+														height={400}
+													/>
+												),
+											},
+											{
+												title: "Age distribution: Cases vs Deaths",
+												component: (
+													<GroupedBarplot
+														data={
+															graphData.caseDeathDist ||
+															[]
+														}
+														width={width}
+														height={400}
+													/>
+												),
+											},
+											{
+												title: "Age distribution of cases",
+												component: (
+													<VerticalBarplot
+														data={
+															graphData.caseDist ||
+															[]
+														}
+														width={width}
+														height={400}
+													/>
+												),
+											},
+										].map((graph, idx) => (
+											<div
+												key={idx}
+												className="flex flex-col w-full outline outline-base-300 shadow-xl rounded-xl overflow-hidden"
+											>
+												<div className="flex justify-center w-full bg-base-300 py-3 px-4 text-center">
+													<article className="text-base-content font-semibold text-sm md:text-base">
+														{`${graph.title} (${selectedMonth > 0 ? `${MONTHS.find((m) => m.value === selectedMonth)?.label} - ` : ""}${selectedYear})`}
+													</article>
+												</div>
+												<div
+													ref={
+														idx === 0
+															? graphRef
+															: null
+													}
+													className="flex w-full justify-center p-2 md:p-4 overflow-x-hidden"
+												>
+													{graph.component}
+												</div>
+											</div>
+										))}
+									</div>
+								</React.Fragment>
+							)}
+						</div>
 					</React.Fragment>
 				)}
 			</div>
