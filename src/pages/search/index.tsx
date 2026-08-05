@@ -4,9 +4,7 @@ import axios from "axios"
 import React from "react"
 import DateRangeInput from "@/components/search/DateRangeInput"
 import DropdownInput from "@/components/search/DropdownInput"
-import { KEY_TO_TITLE } from "@/constants/search/keyToTitle"
 import { CircularProgress, TablePagination } from "@mui/material"
-import { FormatDate } from "@/utilities/FormatDate"
 import searchReducer, { ACTION } from "@/reducers/searchReducer"
 import ClusteredBarplot from "@/components/search/ClusteredBarplot"
 import { useSession } from "next-auth/react"
@@ -52,7 +50,6 @@ function SearchPage() {
 	// loading
 	const [loading, setLoading] = useState(false)
 
-	const modalRef = useRef<HTMLDialogElement>(null)
 	const graphContainer = useRef<HTMLDivElement | null>(null)
 
 	// returns to query page
@@ -111,40 +108,33 @@ function SearchPage() {
 			$H: number | undefined
 			$m: number | undefined
 		}) => {
+			const clearState = () => {
+				setUserEnteredQuery((oldState) => {
+					const { [area]: _, ...newState } = oldState
+					return newState
+				})
+			}
+
 			if (event) {
 				if (!Number.isNaN(event.$d.getTime())) {
 					const UtcDate = new Date(
 						Date.UTC(
 							event.$y,
-							event.$M,
-							event.$D,
-							event.$H,
-							event.$m,
+							event.$M ?? 0,
+							event.$D ?? 1,
+							event.$H ?? 0,
+							event.$m ?? 0,
 						),
 					)
 					setUserEnteredQuery({
 						...userEnteredQuery,
 						[area]: UtcDate,
 					})
+				} else {
+					clearState()
 				}
 			} else {
-				if (area === "hospadm_date_time_after") {
-					setUserEnteredQuery((oldState) => {
-						const {
-							["hospadm_date_time_after"]: Date,
-							...newState
-						} = oldState
-						return newState
-					})
-				} else if (area === "hospadm_date_time_before") {
-					setUserEnteredQuery((oldState) => {
-						const {
-							["hospadm_date_time_before"]: Date,
-							...newState
-						} = oldState
-						return newState
-					})
-				}
+				clearState()
 			}
 		}
 
@@ -255,10 +245,11 @@ function SearchPage() {
 	}
 
 	return (
-		<div className="flex flex-col grow w-full items-center">
-			<div className="w-2/3 h-full">
-				<article className="my-2 text-3xl font-semibold">
-					Cohort Construction
+		<div className="flex flex-col grow w-full items-center px-4 md:px-0">
+			{/* Main container: changed from w-2/3 to responsive width */}
+			<div className="w-full md:w-2/3 h-full">
+				<article className="my-4 text-2xl md:text-3xl font-semibold">
+					Cohort Identification
 				</article>
 				{loading === true ? (
 					<div className="flex flex-col justify-center items-center h-[83vh]">
@@ -270,106 +261,24 @@ function SearchPage() {
 				) : state.searchResults !== null ? (
 					// search completed
 					<React.Fragment>
-						{/* dialog overlay for modal */}
-						<dialog ref={modalRef} className="modal">
-							<div className="modal-box max-w-3xl">
-								<React.Fragment>
-									<article className="font-bold text-xl">
-										Request Cohort Export
-									</article>
-									<div className="flex flex-col mt-4">
-										<article className="font-semibold text-lg">
-											Searched for Patients With
-										</article>
-										{`Site: ${
-											selectedSite === "all"
-												? "All Sites"
-												: FormatName(selectedSite)
-										}`}{" "}
-										{Object.keys(userEnteredQuery).map(
-											(key) => {
-												const rawValue =
-													userEnteredQuery[
-														key as keyof UserEnteredQuery
-													]
-												let value:
-													| string
-													| null
-													| undefined
-
-												if (Array.isArray(rawValue)) {
-													if (rawValue.length === 0)
-														return null
-													value = rawValue.join(", ")
-												} else if (
-													rawValue instanceof Date
-												) {
-													value = FormatDate(rawValue)
-												} else {
-													value = rawValue?.toString()
-												}
-												if (
-													value === null ||
-													value === undefined
-												)
-													return null
-
-												return (
-													<div key={key}>
-														{
-															KEY_TO_TITLE[
-																key as keyof UserEnteredQuery
-															]
-														}
-														: {value}
-													</div>
-												)
-											},
-										)}
-										<article className="my-3">
-											Total Cohort Size:{" "}
-											{state.searchResults.length}{" "}
-											patient(s)
-										</article>
-										<article>
-											Please send these details to the
-											administrator of EXCEL to request an
-											export of this cohort
-										</article>
-									</div>
-								</React.Fragment>
-							</div>
-							<form method="dialog" className="modal-backdrop">
-								<button>close</button>
-							</form>
-						</dialog>
-						{/* rest of the page */}
-						<div className="flex w-full justify-between mb-2">
+						<div className="flex flex-col sm:flex-row w-full gap-2 justify-between">
 							<button
-								className="btn btn-primary"
+								className="btn btn-primary w-full sm:w-auto"
 								onClick={handleBack}
 							>
 								New Search
 							</button>
 							<button
-								className="btn btn-primary"
+								className="btn btn-primary w-full sm:w-auto"
 								onClick={handleToggleVis}
 							>
 								{showingVis
 									? "Close Graphs"
 									: "Visualise Cohort"}
 							</button>
-							<button
-								className="btn btn-primary"
-								onClick={() => {
-									modalRef.current!.showModal()
-								}}
-							>
-								Export Cohort
-							</button>
 						</div>
-						<div className="flex w-full items-center justify-between mb-2">
-							<article className="w-2/3 text-md">
+						<div className="flex flex-col md:flex-row w-full min-h-8 items-start md:items-center justify-between my-2 gap-4">
+							<article className="w-full md:w-2/3 text-sm md:text-md">
 								{`Filters: ${[
 									selectedSite === "all"
 										? "All Sites"
@@ -395,7 +304,7 @@ function SearchPage() {
 									.join(", ")}`}
 							</article>
 							{!showingVis && (
-								<div className="flex items-center">
+								<div className="flex items-center self-end md:self-auto">
 									<article className="text-sm w-24 mr-4">
 										Rows Per Page:
 									</article>
@@ -421,12 +330,12 @@ function SearchPage() {
 						</div>
 						{showingVis ? (
 							<div className="flex flex-col items-center mt-4">
-								<article className="font-semibold text-lg">
+								<article className="font-semibold text-lg text-center">
 									Outcomes for Primary Respiratory Diagnoses
 								</article>
 								<div
 									ref={graphContainer}
-									className="flex justify-center w-[85vw]"
+									className="flex justify-center w-[90vw]"
 								>
 									<ClusteredBarplot
 										data={state.graphDataResp}
@@ -438,7 +347,7 @@ function SearchPage() {
 								<article className="font-semibold text-lg mt-16">
 									Outcomes for Primary Cardiac Diagnoses
 								</article>
-								<div className="flex justify-center w-[85vw]">
+								<div className="flex justify-center w-[90vw]">
 									<ClusteredBarplot
 										data={state.graphDataCardiac}
 										keys={state.graphKeys}
@@ -446,14 +355,15 @@ function SearchPage() {
 										height={600}
 									/>
 								</div>
-								{/* footer */}
 								<div className="h-8" />
 							</div>
 						) : (
 							<React.Fragment>
-								<SearchTable
-									patientData={state.slicedResults}
-								/>
+								<div className="w-full overflow-x-auto">
+									<SearchTable
+										patientData={state.slicedResults}
+									/>
+								</div>
 								<div className="flex flex-col items-center">
 									<TablePagination
 										component="div"
@@ -467,6 +377,7 @@ function SearchPage() {
 										sx={{
 											"& .MuiToolbar-root": {
 												color: "var(--color-base-content)",
+												paddingLeft: "8px",
 											},
 											"& .MuiSelect-icon": {
 												color: "var(--color-base-content)",
@@ -483,13 +394,13 @@ function SearchPage() {
 						)}
 					</React.Fragment>
 				) : (
-					// search page
+					// search form page
 					<React.Fragment>
 						<div className="flex flex-col w-full">
 							<article className="mb-2 text-xl">
 								Select site to search
 							</article>
-							<label className="form-control w-1/4">
+							<label className="form-control w-full md:w-1/2 lg:w-1/4">
 								<select
 									className="select w-full"
 									onChange={handleSiteSelect}
@@ -518,11 +429,31 @@ function SearchPage() {
 									)}
 								</select>
 							</label>
-							<article className="mt-4 mb-2 text-xl">
+							<article className="mt-6 text-xl">
 								Patient attributes
 							</article>
+							<div className="alert alert-primary w-1/2 my-4 shadow-sm rounded-lg flex gap-2 items-center text-sm">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									className="h-6 w-6 shrink-0 stroke-current"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+									/>
+								</svg>
+								<article>
+									Select filters to apply to the search. None
+									of the filters are mandatory. Click "Search"
+									when done.
+								</article>
+							</div>
 							<div className="flex flex-col w-full">
-								<div className="flex flex-col w-1/4 gap-y-2">
+								<div className="flex flex-col w-full md:w-1/2 lg:w-1/4 gap-y-3">
 									<DropdownMultiSelect
 										title="Primary Respiratory Diagnosis"
 										selectedValues={
@@ -534,21 +465,21 @@ function SearchPage() {
 										onClearAll={handleClearAll}
 									/>
 									<DropdownMultiSelect
-										title="Hospital Discharge Location"
-										selectedValues={
-											userEnteredQuery.outcm_hosp_discharge_loc as string[]
-										}
-										queryKey="outcm_hosp_discharge_loc"
-										onSelect={handleMultiSelect}
-										onSelectAll={handleSelectAll}
-										onClearAll={handleClearAll}
-									/>
-									<DropdownMultiSelect
 										title="Primary Cardiac Diagnosis"
 										selectedValues={
 											userEnteredQuery.diagnosis_cardiac as string[]
 										}
 										queryKey="diagnosis_cardiac"
+										onSelect={handleMultiSelect}
+										onSelectAll={handleSelectAll}
+										onClearAll={handleClearAll}
+									/>
+									<DropdownMultiSelect
+										title="Hospital Discharge Location"
+										selectedValues={
+											userEnteredQuery.outcm_hosp_discharge_loc as string[]
+										}
+										queryKey="outcm_hosp_discharge_loc"
 										onSelect={handleMultiSelect}
 										onSelectAll={handleSelectAll}
 										onClearAll={handleClearAll}
@@ -571,7 +502,7 @@ function SearchPage() {
 									/>
 								</div>
 
-								<div className="flex flex-col gap-y-3 mt-2">
+								<div className="flex flex-col gap-y-4 mt-6">
 									<DateRangeInput
 										title={"Hospital Admission Time"}
 										handleDateChange={handleDateChange}
@@ -605,14 +536,14 @@ function SearchPage() {
 								</div>
 							</div>
 						</div>
-						<div className="flex items-center">
+						<div className="flex flex-col sm:flex-row items-center mt-6">
 							<button
-								className="btn btn-primary my-4"
+								className="btn btn-primary w-full sm:w-auto my-4"
 								onClick={handleSearch}
 							>
 								Search
 							</button>
-							<article className="ml-12 text-error font-semibold">
+							<article className="sm:ml-12 text-error font-semibold text-center sm:text-left">
 								{errorMessage}
 							</article>
 						</div>

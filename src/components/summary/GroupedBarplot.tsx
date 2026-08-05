@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import * as d3 from "d3"
 
-const MARGIN = { top: 30, right: 30, bottom: 70, left: 70 }
+const MARGIN = { top: 40, right: 30, bottom: 70, left: 70 } // Bumped top margin slightly for stacked labels
 const BAR_PADDING = 0.3
 const GROUP_PADDING = 0.1
 const KEYS = ["totalCases", "totalDeaths"] as const
@@ -80,9 +80,7 @@ export const GroupedBarplot = ({
 						fontSize={12}
 						fill="var(--color-base-content)"
 						opacity={0.8}
-					>
-						{value}
-					</text>
+					/>
 				</g>
 			))
 	}, [yScale, boundsWidth])
@@ -93,7 +91,7 @@ export const GroupedBarplot = ({
 				{gridElements}
 
 				{/* Bars Rendering */}
-				{data.map((group, i) => (
+				{data.map((group) => (
 					<g
 						key={group.ageRange}
 						transform={`translate(${x0Scale(group.ageRange)}, 0)`}
@@ -102,15 +100,25 @@ export const GroupedBarplot = ({
 							const val = group[key]
 							const isDeath = key === "totalDeaths"
 
+							const baseSum = group.totalCases + group.totalDeaths
+							const percentage = (val / baseSum) * 100
+
+							const barWidth = x1Scale.bandwidth()
+							const textXPosition =
+								(x1Scale(key) ?? 0) + barWidth / 2
+							const barYPosition = yScale(val)
+
+							const showLabels = barWidth > 22
+
 							return (
 								<g key={key}>
 									<rect
 										x={x1Scale(key)}
-										y={yScale(val)}
-										width={x1Scale.bandwidth()}
+										y={barYPosition}
+										width={barWidth}
 										height={Math.max(
 											0,
-											boundsHeight - yScale(val),
+											boundsHeight - barYPosition,
 										)}
 										fill={
 											isDeath
@@ -122,18 +130,32 @@ export const GroupedBarplot = ({
 										strokeWidth={1}
 										rx={1}
 									/>
-									<text
-										x={
-											(x1Scale(key) ?? 0) +
-											x1Scale.bandwidth() / 2
-										}
-										y={yScale(val) - 7}
-										textAnchor="middle"
-										fontSize={12}
-										fill="var(--color-base-content)"
-									>
-										{val.toFixed(0)}
-									</text>
+
+									{showLabels && (
+										<g>
+											<text
+												x={textXPosition}
+												y={barYPosition - 20}
+												textAnchor="middle"
+												fontSize={12}
+												fontWeight="600"
+												fill="var(--color-base-content)"
+											>
+												{val.toFixed(0)}
+											</text>
+
+											<text
+												x={textXPosition}
+												y={barYPosition - 5}
+												textAnchor="middle"
+												fontSize={12}
+												fill="var(--color-base-content)"
+												opacity={0.7}
+											>
+												{percentage.toFixed(1)}%
+											</text>
+										</g>
+									)}
 								</g>
 							)
 						})}

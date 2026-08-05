@@ -6,45 +6,40 @@ export async function getServerSideProps() {
 
 function Home() {
 	return (
-		<div className="flex flex-col grow w-full items-center justify-center">
-			<div className="flex flex-col h-full w-2/3 items-center justify-center bg-base-100">
-				<article className="text-5xl font-semibold mb-8">
+		<div className="flex flex-col grow w-full items-center md:justify-center p-6 md:p-0">
+			<div className="flex flex-col h-full w-full md:w-2/3 items-center justify-center bg-base-100">
+				<article className="text-3xl md:text-5xl font-semibold mb-6 md:mb-8 text-center">
 					EXCEL QI Project
 				</article>
-				<article className="w-3/4">
-					The EXCEL QI Project is an innovative in development project
-					to provide an intelligent platform for users of the EXCEL
-					Registry by allowing them to efficiently explore and
-					visualize data. The project aims to enhance the
-					accessibility and usability of the data, making it easier
-					for researchers and healthcare professionals to derive
-					insights and make informed decisions.
-					<br />
-					<br />
-					The platform will also leverage AI-driven analysis to
-					interpret patient conditions and support recovery strategies
-					bringing advanced intelligence to the forefront of patient
-					care.
+
+				<article className="w-full md:w-3/4 text-center md:text-left leading-relaxed">
+					The EXCEL QI Project is an innovative, in-development
+					platform that enables users of the EXCEL Registry to
+					efficiently explore and visualise data. The project aims to
+					enhance accessibility and usability of data, supporting
+					researchers and healthcare professionals to derive insights
+					and make informed decisions.
 				</article>
-				<div className="flex mt-12 w-2/3 justify-between">
-					<Link href={"/search"}>
-						<button className="btn btn-lg w-30 h-20 btn-primary">
-							Registry Search
+
+				<div className="flex flex-col md:flex-row mt-8 md:mt-12 w-full md:w-2/3 gap-4 md:justify-between items-center">
+					<Link href={"/summary"} className="w-full md:w-auto">
+						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
+							Summary Statistics
 						</button>
 					</Link>
-					<Link href={"/reporting"}>
-						<button className="btn btn-lg w-30 h-20 btn-primary">
+					<Link href={"/search"} className="w-full md:w-auto">
+						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
+							Cohort Identification
+						</button>
+					</Link>
+					<Link href={"/reporting"} className="w-full md:w-auto">
+						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
 							Reporting
 						</button>
 					</Link>
-					<Link href={"/ecmo-pal"}>
-						<button className="btn btn-lg w-30 h-20 btn-primary">
+					<Link href={"/ecmo-pal"} className="w-full md:w-auto">
+						<button className="btn btn-lg w-full md:w-30 md:h-20 btn-primary">
 							ECMO Prediction
-						</button>
-					</Link>
-					<Link href={"/resources"}>
-						<button className="btn btn-lg w-30 h-20 btn-primary">
-							ECMO Resources
 						</button>
 					</Link>
 				</div>

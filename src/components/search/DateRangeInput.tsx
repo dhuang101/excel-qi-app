@@ -11,14 +11,14 @@ function DateRangeInput({ title, queryAttribute, handleDateChange }: Props) {
 		<div>
 			<article className="mb-2">{title}</article>
 			<div className="flex w-full">
-				<div className="w-1/4">
+				<div className="w-1/2 lg:w-1/4">
 					<StyledDatePicker
 						label="After"
 						onChange={handleDateChange(queryAttribute + "_after")}
 					/>
 				</div>
 				<div className="w-1/12" />
-				<div className="w-1/4">
+				<div className="w-1/2 lg:w-1/4">
 					<StyledDatePicker
 						label="Before"
 						onChange={handleDateChange(queryAttribute + "_before")}

@@ -32,7 +32,8 @@ function DropdownInput({
 				<span className="label-text">{title}</span>
 			</div>
 
-			<div className="dropdown dropdown-right w-full">
+			{/* Changed to dropdown-bottom by default, dropdown-right only for small screens and up */}
+			<div className="dropdown dropdown-bottom sm:dropdown-right w-full">
 				<div
 					tabIndex={0}
 					role="button"
@@ -45,18 +46,19 @@ function DropdownInput({
 						viewBox="0 0 24 24"
 						className="inline-block w-4 h-4 stroke-current"
 					>
+						{/* Changed path to a downward chevron to reflect the mobile-first behavior */}
 						<path
 							strokeLinecap="round"
 							strokeLinejoin="round"
 							strokeWidth="2"
-							d="M9 5l7 7-7 7"
+							d="M19 9l-7 7-7-7"
 						></path>
 					</svg>
 				</div>
 
 				<ul
 					tabIndex={0}
-					className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 ml-2 border border-base-200"
+					className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full sm:w-52 sm:ml-2 border border-base-200"
 				>
 					{optionsMap[queryAttribute].map((value) => (
 						<li key={value}>

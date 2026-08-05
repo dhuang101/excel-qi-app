@@ -1,9 +1,9 @@
 import { useMemo } from "react"
 import * as d3 from "d3"
 
-const MARGIN = { top: 40, right: 40, bottom: 40, left: 40 }
-const LEGEND_WIDTH = 120 // Width reserved for legend text
-const GAP = 40 // Space between the pie and the legend
+const MARGIN = { top: 20, right: 20, bottom: 20, left: 20 }
+const LEGEND_WIDTH = 120
+const GAP = 20
 
 const THEME_COLORS = [
 	"var(--color-primary)",
@@ -29,26 +29,39 @@ export const PieChart = <T,>({
 	categoryKey,
 	valueKey,
 }: PieChartProps<T>) => {
+	const isMobile = width < 500
+
 	const { radius, centerX, centerY, legendX, legendY } = useMemo(() => {
 		const innerW = width - MARGIN.left - MARGIN.right
 		const innerH = height - MARGIN.top - MARGIN.bottom
 
-		const r = Math.min(innerW - LEGEND_WIDTH - GAP, innerH) / 2
+		let r: number
+		let cX: number
+		let cY: number
+		let lX: number
+		let lY: number
 
-		const totalContentWidth = r * 2 + GAP + LEGEND_WIDTH
-		const totalContentHeight = Math.max(r * 2, data.length * 25)
+		if (isMobile) {
+			const reservedLegendHeight = data.length * 25 + GAP
+			r = Math.min(innerW, innerH - reservedLegendHeight) / 2
+			cX = width / 2
+			cY = MARGIN.top + r
+			lX = MARGIN.left + (innerW - 100) / 2
+			lY = cY + r + GAP
+		} else {
+			r = Math.min(innerW - LEGEND_WIDTH - GAP, innerH) / 2
+			const totalContentWidth = r * 2 + GAP + LEGEND_WIDTH
+			const horizontalCenteringOffset =
+				MARGIN.left + (innerW - totalContentWidth) / 2
 
-		const horizontalCenteringOffset =
-			MARGIN.left + (innerW - totalContentWidth) / 2
-
-		return {
-			radius: r,
-			centerX: horizontalCenteringOffset + r,
-			centerY: height / 2,
-			legendX: horizontalCenteringOffset + r * 2 + GAP,
-			legendY: (height - data.length * 25) / 10,
+			cX = horizontalCenteringOffset + r
+			cY = height / 2
+			lX = horizontalCenteringOffset + r * 2 + GAP
+			lY = (height - data.length * 25) / 2
 		}
-	}, [width, height, data.length])
+
+		return { radius: r, centerX: cX, centerY: cY, legendX: lX, legendY: lY }
+	}, [width, height, data.length, isMobile])
 
 	const pieGenerator = useMemo(() => {
 		return d3
@@ -95,16 +108,17 @@ export const PieChart = <T,>({
 								fill={colorScale(label) as string}
 								fillOpacity={1}
 							/>
-							{arc.endAngle - arc.startAngle > 0.25 && (
+							{arc.endAngle - arc.startAngle > 0.3 && (
 								<text
-									transform={`translate(${labelArcGenerator.centroid(
-										arc,
-									)})`}
+									transform={`translate(${labelArcGenerator.centroid(arc)})`}
 									textAnchor="middle"
 									alignmentBaseline="middle"
-									fontSize={12}
+									fontSize={isMobile ? 10 : 12}
 									fill="var(--color-primary-content)"
-									style={{ pointerEvents: "none" }}
+									style={{
+										pointerEvents: "none",
+										fontWeight: "bold",
+									}}
 								>
 									{percentage}%
 								</text>
@@ -124,10 +138,9 @@ export const PieChart = <T,>({
 								width={12}
 								height={12}
 								fill={colorScale(label) as string}
-								fillOpacity={1}
 								stroke="var(--color-base-content)"
 								strokeWidth={1}
-								rx={1}
+								rx={2}
 							/>
 							<text
 								x={20}

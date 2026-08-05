@@ -11,7 +11,7 @@ function Table<T>({ data, headers, renderRow, emptyMessage }: TableProps<T>) {
 	return (
 		<React.Fragment>
 			{data.length > 0 ? (
-				<div className="overflow-x-auto w-full max-h-[75vh]">
+				<div className="overflow-x-auto w-full max-h-[70vh]">
 					<table className="table table-lg w-full border-separate border-spacing-0">
 						<thead>
 							<tr>

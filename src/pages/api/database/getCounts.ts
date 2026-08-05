@@ -87,9 +87,14 @@ async function GetCounts(params: ParamsType) {
 						[key]: {
 							$sum: {
 								$cond: [
-									{ $in: [`$${key}`, [1, "1", "Yes", true]] },
-									1,
+									{
+										$in: [
+											{ $ifNull: [`$${key}`, ""] },
+											["", "N/A", 0, "0"],
+										],
+									},
 									0,
+									1,
 								],
 							},
 						},
